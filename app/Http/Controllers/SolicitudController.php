@@ -491,7 +491,7 @@ class SolicitudController extends Controller
         $archivo = $request->file('archivo');
         $datosArchivo = Excel::toArray([], $archivo);
         $filasEstatus = array_slice($datosArchivo[0], 1);
-
+        
         // Agrupar las filas por ID
         $filasPorId = array_reduce($filasEstatus, function ($carry, $fila) {
             $id = $fila[0];
@@ -510,6 +510,7 @@ class SolicitudController extends Controller
                 return $a[1] <=> $b[1];
             });
 
+            $id = (int) $id;
             $solicitud = DB::table('solicitudes')->where('id', $id)->first();
             $costo = $solicitud ? $solicitud->costo : 0;
             $cliente = $solicitud ? $solicitud->cliente : null;
@@ -603,7 +604,7 @@ class SolicitudController extends Controller
         }
 
         $datos = array_filter($datos);
-        $cantidadInsertada = count($datos);
+        $cantidadInsertada = count($datos);        
 
         if ($cantidadInsertada > 0) {
             DB::table('estatus')->insert($datos);
