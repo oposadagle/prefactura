@@ -12,24 +12,23 @@ class PrefacturasExport implements FromCollection, WithHeadings
      * @return \Illuminate\Support\Collection
      */
 
-     protected $month;
+    protected $month;
 
-     public function __construct($year, $month)
-     {
+    public function __construct($year, $month)
+    {
         $this->year = $year;
         $this->month = $month;
-     }
+    }
 
     public function collection()
     {
-        $currentYear = date('Y');
         return DB::table('infoestatus')
             ->select(
                 'id',
-                'guia',                
+                'guia',
                 'razon',
                 'remesa',
-                'radicado',                
+                'radicado',
                 'tipo_servicio',
                 'fecha_solicitud',
                 'nit',
@@ -71,7 +70,6 @@ class PrefacturasExport implements FromCollection, WithHeadings
                 'valor_servicios',
                 'valor_cobrar',
                 'utilidad',
-                'rentabilidad',
                 'facturar',
                 'plfpli',
                 'factura_siigo',
@@ -80,8 +78,14 @@ class PrefacturasExport implements FromCollection, WithHeadings
             ->whereYear('fecha_cargue', $this->year)
             ->whereMonth('fecha_cargue', $this->month)
             ->where('facturar', 'SI')
-            ->get();
+            ->get()
+            ->map(function ($item) {
+                $item->valor_cobrar = round($item->valor_cobrar ?? 0);
+                $item->utilidad = round($item->utilidad ?? 0);
+                return $item;
+            });
     }
+
     public function headings(): array
     {
         return [
@@ -89,7 +93,7 @@ class PrefacturasExport implements FromCollection, WithHeadings
             'GUIA',
             'MANIFIESTO',
             'REMESA',
-            'RADICADO',            
+            'RADICADO',
             'TIPO SERVICIO',
             'FECHA SOLICITUD',
             'NIT',
@@ -129,7 +133,7 @@ class PrefacturasExport implements FromCollection, WithHeadings
             'VALOR SOBRE COSTOS',
             'VALOR COSTO MANEJO',
             'VALOR SERVICIOS COMP.',
-            'VALOR POR COBRAR',            
+            'VALOR POR COBRAR',
             'UTILIDAD',
             'RENTABILIDAD',
             'CONGELADO',
