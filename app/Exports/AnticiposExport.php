@@ -3,28 +3,30 @@
 namespace App\Exports;
 
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Carbon\Carbon;
 
-class AnticiposExport implements FromCollection, WithHeadings
+class AnticiposExport implements FromQuery, WithHeadings, WithMapping
 {
-    public function collection()
+    private $festivos = [
+        '2025-01-01', '2025-01-05', '2025-01-06', '2025-01-12', '2025-01-19', '2025-01-26', '2025-02-02', '2025-02-09',
+        '2025-02-16', '2025-02-23', '2025-03-02', '2025-03-09', '2025-03-16', '2025-03-23', '2025-03-24', '2025-03-30', 
+        '2025-04-06', '2025-04-13', '2025-04-17', '2025-04-18', '2025-04-20', '2025-04-27', '2025-05-01', '2025-05-04', 
+        '2025-05-11', '2025-05-18', '2025-05-25', '2025-06-01', '2025-06-02', '2025-06-08', '2025-06-15', '2025-06-22', 
+        '2025-06-23', '2025-06-29', '2025-06-30', '2025-07-06', '2025-07-13', '2025-07-20', '2025-07-27', '2025-08-03', 
+        '2025-08-07', '2025-08-10', '2025-08-17', '2025-08-18', '2025-08-24', '2025-08-31', '2025-09-07', '2025-09-14', 
+        '2025-09-21', '2025-09-28', '2025-10-05', '2025-10-12', '2025-10-13', '2025-10-19', '2025-10-26', '2025-11-02', 
+        '2025-11-03', '2025-11-09', '2025-11-16', '2025-11-17', '2025-11-23', '2025-11-30', '2025-12-07', '2025-12-08', 
+        '2025-12-14', '2025-12-21', '2025-12-25', '2025-12-28'
+    ];
+
+    public function query()
     {
         $incluidos = ['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.'];
-        $festivos = [
-            '2025-01-01', '2025-01-05', '2025-01-06', '2025-01-12', '2025-01-19', '2025-01-26', '2025-02-02', '2025-02-09',
-            '2025-02-16', '2025-02-23', '2025-03-02', '2025-03-09', '2025-03-16', '2025-03-23', '2025-03-24', '2025-03-30', 
-            '2025-04-06', '2025-04-13', '2025-04-17', '2025-04-18', '2025-04-20', '2025-04-27', '2025-05-01', '2025-05-04', 
-            '2025-05-11', '2025-05-18', '2025-05-25', '2025-06-01', '2025-06-02', '2025-06-08', '2025-06-15', '2025-06-22', 
-            '2025-06-23', '2025-06-29', '2025-06-30', '2025-07-06', '2025-07-13', '2025-07-20', '2025-07-27', '2025-08-03', 
-            '2025-08-07', '2025-08-10', '2025-08-17', '2025-08-18', '2025-08-24', '2025-08-31', '2025-09-07', '2025-09-14', 
-            '2025-09-21', '2025-09-28', '2025-10-05', '2025-10-12', '2025-10-13', '2025-10-19', '2025-10-26', '2025-11-02', 
-            '2025-11-03', '2025-11-09', '2025-11-16', '2025-11-17', '2025-11-23', '2025-11-30', '2025-12-07', '2025-12-08', 
-            '2025-12-14', '2025-12-21', '2025-12-25', '2025-12-28'
-        ];
 
-        $records = DB::table('peticiones')
+        return DB::table('peticiones')
             ->select(
                 'id', 'fecha_cargue', 'razon', 'paytype', 'state', 'cliente', 'origen', 'destino', 'placa', 'conductor',
                 'asociado', 'cedula_asociado','pagarsaldo','cedula_saldo','facele','tipo_vehiculo', 'costo', 'costo_tiposerv', 'pago_completo','observacion_pago',
@@ -33,13 +35,55 @@ class AnticiposExport implements FromCollection, WithHeadings
                 'tranote', 'egreso_anticipo','egreso_saldo', 'fecha_saldo', 'saldo_final'
             )
             ->whereIn('paytype', $incluidos)
-            ->get();
+            ->orderBy('id'); // Good practice for chunking
+    }
 
-        foreach ($records as $record) {
-            $record->fecha_tentativa = $this->calcularFechaTentativa($record->fecha_envio, 9, $festivos);
-        }
-
-        return $records;
+    public function map($record): array
+    {
+        return [
+            $record->id,
+            $record->fecha_cargue,
+            $record->razon,
+            $record->paytype,
+            $record->state,
+            $record->cliente,
+            $record->origen,
+            $record->destino,
+            $record->placa,
+            $record->conductor,
+            $record->asociado,
+            $record->cedula_asociado,
+            $record->pagarsaldo,
+            $record->cedula_saldo,
+            $record->facele,
+            $record->tipo_vehiculo,
+            $record->costo,
+            $record->costo_tiposerv,
+            $record->pago_completo,
+            $record->observacion_pago,
+            $record->anticipo,
+            $record->estado_anticipo,
+            $record->saldo,
+            $record->estado_saldo,
+            $record->recibido_cumplido,
+            $record->cumplido,
+            $record->pagar_saldo,
+            $record->tipo_pago,
+            $record->fecha_envio,
+            $record->estado_pago,
+            $record->carnote,
+            $record->orinote,
+            $record->salnote,
+            $record->desnote,
+            $record->finnote,
+            $record->cannote,
+            $record->tranote,
+            $record->egreso_anticipo,
+            $record->egreso_saldo,
+            $record->fecha_saldo,
+            $record->saldo_final,
+            $this->calcularFechaTentativa($record->fecha_envio, 9, $this->festivos)
+        ];
     }
 
     private function calcularFechaTentativa($fechaInicial, $diasHabiles, $festivos)
