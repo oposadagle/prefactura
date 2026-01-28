@@ -27,28 +27,28 @@ class PriceController extends Controller
     public function store(Request $request)
     {
         $request->merge([
-            'CAPACIDAD' => str_replace('.', '', $request->input('CAPACIDAD')),
-            'COSTO' => str_replace('.', '', $request->input('COSTO')),
-            'COSTO_NEGOCIO' => str_replace('.', '', $request->input('COSTO_NEGOCIO'))
+            'capacidad' => str_replace('.', '', $request->input('capacidad')),
+            'costo' => str_replace('.', '', $request->input('costo')),
+            'costo_negocio' => str_replace('.', '', $request->input('costo_negocio'))
         ]);
         $fields = [
-            'CLIENTE' => 'required',
-            'FECHA_SOLICITUD' => 'required',
-            'ORIGEN' => 'required',
-            'DESTINO' => 'required',
-            'TRAYECTO' => 'required',            
-            'TIPO_VEHICULO' => 'required',
-            'CAPACIDAD' => 'required|numeric|min:500|max:32000',
-            'COSTO' => 'required|numeric',            
-            'PUNTOS' => 'required|numeric',
-            'COSTO_NEGOCIO' => 'required|numeric',
-            'CODIGO_SEGUIMIENTO' => 'required|numeric',
-            'TIPO_CARROCERIA' => 'required',
-            'ESTADO_COTIZACION' => 'required',
-            'RESPONSABLE' => 'required',
-            'COSTO_ADICIONAL' => 'required|numeric',
-            'QUIEN_SOLICITA' => 'required',
-            'OBSERVACIONES' => 'required'
+            'cliente' => 'required',
+            'fecha_solicitud' => 'required',
+            'origen' => 'required',
+            'destino' => 'required',
+            'trayecto' => 'required',            
+            'tipo_vehiculo' => 'required',
+            'capacidad' => 'required|numeric|min:500|max:32000',
+            'costo' => 'required|numeric',            
+            'puntos' => 'required|numeric',
+            'costo_negocio' => 'required|numeric',
+            'codigo_seguimiento' => 'required|numeric',
+            'tipo_carroceria' => 'required',
+            'estado_cotizacion' => 'required',
+            'responsable' => 'required',
+            'costo_adicional' => 'required|numeric',
+            'quien_solicita' => 'required',
+            'observaciones' => 'required'
         ];
         $message = [];
         $this->validate($request, $fields, $message);
