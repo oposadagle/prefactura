@@ -21,36 +21,36 @@ class PricesExport implements FromCollection, WithHeadings
         $currentYear = date('Y');
         return DB::table('prices')
             ->select(
-                'ID',
-                'CLIENTE',                
-                'FECHA_SOLICITUD',
-                'ORIGEN',
-                'DESTINO',                
-                'TRAYECTO',
-                'TIPO_VEHICULO',
-                'CAPACIDAD',
-                'COSTO',
-                'FECHA_RESPUESTA',
-                'APROBACION'                
+                'id',
+                'cliente',                
+                'fecha_solicitud',
+                'origen',
+                'destino',                
+                'trayecto',
+                'tipo_vehiculo',
+                'capacidad',
+                'costo',
+                'fecha_respuesta',
+                'aprobacion'                
             )
-            ->whereYear('FECHA_SOLICITUD', $this->year)
-            ->whereMonth('FECHA_SOLICITUD', $this->month)
+            ->whereYear('fecha_solicitud', $this->year)
+            ->whereMonth('fecha_solicitud', $this->month)
             ->get();
     }
     public function headings(): array
     {
         return [
-            'ID',
-            'CLIENTE',                
-            'FECHA DE SOLICITUD',
-            'ORIGEN',
-            'DESTINO',                
-            'TRAYECTO',
-            'TIPO DE VEHICULO',
-            'CAPACIDAD',
-            'COSTO',
-            'FECHA DE RESPUESTA',
-            'APROBACION'  
+            'id',
+            'cliente',                
+            'fecha de solicitud',
+            'origen',
+            'destino',                
+            'trayecto',
+            'tipo de vehiculo',
+            'capacidad',
+            'costo',
+            'fecha de respuesta',
+            'aprobacion'  
         ];
     }
 }

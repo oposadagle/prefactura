@@ -64,7 +64,7 @@ C<x-header />
 
                             <div class="col-lg-3 col-md-12">
                                 <div class="form-floating mb-3 mx-3">
-                                    <select class="form-select" id="CLIENTE" name="CLIENTE" autocomplete="off"
+                                    <select class="form-select" id="CLIENTE" name="cliente" autocomplete="off"
                                         aria-label="Floating label select example">
                                         <option selected disabled>Seleccionar</option>
                                         @foreach ($clientes as $cliente)
@@ -77,14 +77,14 @@ C<x-header />
 
                             <div class="col-lg-3 col-md-3">                                
                                 <div class="form-floating mb-3 mx-3">
-                                    <input type="datetime-local" class="form-control" id="datetime" name="FECHA_SOLICITUD" autocomplete="off">
+                                    <input type="datetime-local" class="form-control" id="datetime" name="fecha_solicitud" autocomplete="off">
                                     <label for="ejecutivo">Fecha de solicitud</label>
                                 </div>
                             </div>
 
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
-                                    <select class="form-select" id="origen" name="ORIGEN" autocomplete="off"
+                                    <select class="form-select" id="origen" name="origen" autocomplete="off"
                                         aria-label="Floating label select example">
                                         <option selected disabled>Seleccionar</option>
                                         @foreach ($municipios as $municipio)
@@ -98,7 +98,7 @@ C<x-header />
 
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
-                                    <select class="form-select" id="destino" name="DESTINO" autocomplete="off"
+                                    <select class="form-select" id="destino" name="destino" autocomplete="off"
                                         aria-label="Floating label select example">
                                         <option selected disabled>Seleccionar</option>
                                         @foreach ($municipios as $municipio)
@@ -120,7 +120,7 @@ C<x-header />
 
                             <div class="col-lg-3 col-md-3">                                
                                 <div class="form-floating mb-3 mx-3">
-                                    <select class="form-select" id="tipo_trayecto" name="TRAYECTO" autocomplete="off"
+                                    <select class="form-select" id="tipo_trayecto" name="trayecto" autocomplete="off"
                                         aria-label="Floating label select example">
                                         <option selected disabled>Seleccionar</option>
                                         <option>URBANO</option>
@@ -138,7 +138,7 @@ C<x-header />
 
                             <div class="col-lg-3 col-md-3">                                
                                 <div class="form-floating mb-3 mx-3">
-                                    <select class="form-select" id="TIPO_VEHICULO" name="TIPO_VEHICULO" autocomplete="off"
+                                    <select class="form-select" id="TIPO_VEHICULO" name="tipo_vehiculo" autocomplete="off"
                                         aria-label="Floating label select example">
                                         <option selected disabled>Seleccionar</option>
                                         <option>PATINETA 9 A 15_CONTENEDOR</option>
@@ -162,14 +162,14 @@ C<x-header />
 
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
-                                    <input type="text" class="form-control" id="CAPACIDAD" name="CAPACIDAD" autocomplete="off">
+                                    <input type="text" class="form-control" id="CAPACIDAD" name="capacidad" autocomplete="off">
                                     <label for="cliente">Capacidad de carga (Kg)</label>                                    
                                 </div>
                             </div>
 
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
-                                    <input type="text" class="form-control" id="COSTO" name="COSTO" autocomplete="off">
+                                    <input type="text" class="form-control" id="COSTO" name="costo" autocomplete="off">
                                     <label for="cliente">Base cotización ($)</label>                                    
                                 </div>
                             </div>                            
@@ -184,28 +184,28 @@ C<x-header />
 
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
-                                    <input type="text" class="form-control" id="PUNTOS" name="PUNTOS" autocomplete="off">
+                                    <input type="text" class="form-control" id="PUNTOS" name="puntos" autocomplete="off">
                                     <label for="cliente">Puntos</label>                                    
                                 </div>
                             </div>
 
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
-                                    <input type="text" class="form-control" id="COSTO_NEGOCIO" name="COSTO_NEGOCIO" autocomplete="off">
+                                    <input type="text" class="form-control" id="COSTO_NEGOCIO" name="costo_negocio" autocomplete="off">
                                     <label for="cliente">Tarifa conductor ($)</label>                                    
                                 </div>
                             </div>
 
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
-                                    <input type="number" min="0" class="form-control" id="CODIGO_SEGUIMIENTO" name="CODIGO_SEGUIMIENTO" autocomplete="off">
+                                    <input type="number" min="0" class="form-control" id="CODIGO_SEGUIMIENTO" name="codigo_seguimiento" autocomplete="off">
                                     <label for="cliente">Codigo de seguimiento</label>                                    
                                 </div>
                             </div>
 
                             <div class="col-lg-3 col-md-3">                                
                                 <div class="form-floating mb-3 mx-3">
-                                    <select class="form-select" id="TIPO_CARROCERIA" name="TIPO_CARROCERIA" autocomplete="off"
+                                    <select class="form-select" id="TIPO_CARROCERIA" name="tipo_carroceria" autocomplete="off"
                                         aria-label="Floating label select example">
                                         <option selected disabled>Seleccionar</option>
                                         <option>FURGONADO</option>
@@ -229,7 +229,7 @@ C<x-header />
 
                             <div class="col-lg-2 col-md-3">                                
                                 <div class="form-floating mb-3 mx-3">
-                                    <select class="form-select" id="ESTADO_COTIZACION" name="ESTADO_COTIZACION" autocomplete="off"
+                                    <select class="form-select" id="ESTADO_COTIZACION" name="estado_cotizacion" autocomplete="off"
                                         aria-label="Floating label select example">
                                         <option selected disabled>Seleccionar</option>
                                         <option>APROBADO</option>
@@ -243,7 +243,7 @@ C<x-header />
 
                             <div class="col-lg-2 col-md-3">                                
                                 <div class="form-floating mb-3 mx-3">
-                                    <select class="form-select" id="RESPONSABLE" name="RESPONSABLE" autocomplete="off"
+                                    <select class="form-select" id="RESPONSABLE" name="responsable" autocomplete="off"
                                         aria-label="Floating label select example">
                                         <option selected disabled>Seleccionar</option>
                                         <option>MASIVOS CALI</option>
@@ -260,14 +260,14 @@ C<x-header />
 
                             <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
-                                    <input type="number" min="0" class="form-control" id="COSTO_ADICIONAL" name="COSTO_ADICIONAL" autocomplete="off">
+                                    <input type="number" min="0" class="form-control" id="COSTO_ADICIONAL" name="costo_adicional" autocomplete="off">
                                     <label for="cliente">Otros costos</label>                                    
                                 </div>
                             </div>
 
                             <div class="col-lg-2 col-md-3">                                
                                 <div class="form-floating mb-3 mx-3">
-                                    <select class="form-select" id="QUIEN_SOLCITA" name="QUIEN_SOLICITA" autocomplete="off"
+                                    <select class="form-select" id="QUIEN_SOLICITA" name="quien_solicita" autocomplete="off"
                                         aria-label="Floating label select example">
                                         <option selected disabled>Seleccionar</option>
                                         <option>Eryka Lopez / medellin</option>
@@ -312,7 +312,7 @@ C<x-header />
                             
                             <div class="col-lg-4 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
-                                    <input type="text" min="0" class="form-control" id="OBSERVACIONES" name="OBSERVACIONES" autocomplete="off">
+                                    <input type="text" min="0" class="form-control" id="OBSERVACIONES" name="observaciones" autocomplete="off">
                                     <label for="cliente">Observaciones</label>                                    
                                 </div>
                             </div>

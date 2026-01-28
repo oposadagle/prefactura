@@ -98,65 +98,65 @@
                                 <tr style="text-align: center">
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ $diario->ID }}</td>
+                                        {{ $diario->id }}</td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ $diario->CLIENTE }}</td>
+                                        {{ $diario->cliente }}</td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ $diario->FECHA_SOLICITUD }}</td>
+                                        {{ $diario->fecha_solicitud }}</td>
                                         
                                         @can('edita.cotizacion')
                                             <td class="celdas"
                                                 style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                                 <a href="#" class="editable" data-type="text"
-                                                    data-name="CODIGO_SEGUIMIENTO" data-pk="{{ $diario->ID }}">
-                                                    {{ $diario->CODIGO_SEGUIMIENTO }}
+                                                    data-name="codigo_seguimiento" data-pk="{{ $diario->id }}">
+                                                    {{ $diario->codigo_seguimiento }}
                                                 </a>
                                             </td>
                                             <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">                             
                                             @php
                                                 $estadoClase = '';
-                                                if ($diario->ESTADO_COTIZACION == 'COTIZACION') {
+                                                if ($diario->estado_cotizacion == 'COTIZACION') {
                                                     $estadoClase = 'badge bg-info';
                                                 } 
-                                                if ($diario->ESTADO_COTIZACION == 'APROBADO') {
+                                                if ($diario->estado_cotizacion == 'APROBADO') {
                                                     $estadoClase = 'badge bg-success';
                                                 }
-                                                if ($diario->ESTADO_COTIZACION == 'COMERCIAL') {
+                                                if ($diario->estado_cotizacion == 'COMERCIAL') {
                                                     $estadoClase = 'badge bg-secondary';
                                                 }
-                                                if ($diario->ESTADO_COTIZACION == 'NO APROBADO') {
+                                                if ($diario->estado_cotizacion == 'NO APROBADO') {
                                                     $estadoClase = 'badge bg-danger';
                                                 }
                                             @endphp
-                                                <a href="#" class="editable {{ $estadoClase }}" data-type="select" data-name="ESTADO_COTIZACION" data-pk="{{$diario->ID}}" data-source='[{"value":"APROBADO","text":"APROBADO"},{"value":"COMERCIAL","text":"COMERCIAL"},{"value":"COTIZACION","text":"COTIZACION"},{"value":"NO APROBADO","text":"NO APROBADO"}]'>
-                                                    {{$diario->ESTADO_COTIZACION}}
+                                                <a href="#" class="editable {{ $estadoClase }}" data-type="select" data-name="ESTADO_COTIZACION" data-pk="{{$diario->id}}" data-source='[{"value":"APROBADO","text":"APROBADO"},{"value":"COMERCIAL","text":"COMERCIAL"},{"value":"COTIZACION","text":"COTIZACION"},{"value":"NO APROBADO","text":"NO APROBADO"}]'>
+                                                    {{$diario->estado_cotizacion}}
                                                 </a>    
                                             </td>
                                         @else
                                             <td class="celdas"
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            {{ $diario->CODIGO_SEGUIMIENTO }}</td>
+                                            {{ $diario->codigo_seguimiento }}</td>
                                             <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                                {{ $diario->ESTADO_COTIZACION }}
+                                                {{ $diario->estado_cotizacion }}
                                             </td>
                                         @endcan
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ strToUpper($diario->QUIEN_SOLICITA) }}</td>
+                                        {{ strToUpper($diario->quien_solicita) }}</td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ $diario->TRAYECTO }}</td>
+                                        {{ $diario->trayecto }}</td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ strToUpper($diario->ORIGEN) }}</td>
+                                        {{ strToUpper($diario->origen) }}</td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ strToUpper($diario->DESTINO) }}</td>
+                                        {{ strToUpper($diario->destino) }}</td>
                                     @can('edita.cotizacion')
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                    	<a href="#" class="editable" data-type="select" data-name="TIPO_VEHICULO" data-pk="{{$diario->ID}}" 
+                                    	<a href="#" class="editable" data-type="select" data-name="tipo_vehiculo" data-pk="{{$diario->id}}" 
                                     	data-source='[
                                     	{"value":"PATINETA 9 A 15_CONTENEDOR","text":"PATINETA 9 A 15_CONTENEDOR"},
                                     	{"value":"PATINETA 9 A 18_FURGONADO","text":"PATINETA 9 A 18_FURGONADO"},
@@ -173,11 +173,11 @@
                                     	{"value":"TURBO","text":"TURBO"},
                                     	{"value":"TURBO SENCILLO","text":"TURBO SENCILLO"}
                                     	]'>
-                                    	{{$diario->TIPO_VEHICULO}}
+                                    	{{$diario->tipo_vehiculo}}
                                     	</a>
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                    	<a href="#" class="editable" data-type="select" data-name="TIPO_CARROCERIA" data-pk="{{$diario->ID}}" 
+                                    	<a href="#" class="editable" data-type="select" data-name="tipo_carroceria" data-pk="{{$diario->id}}" 
                                     	data-source='[
                                     	{"value":"FURGONADO","text":"FURGONADO"},
                                     	{"value":"CARROZADO","text":"CARROZADO"},
@@ -186,101 +186,101 @@
                                     	{"value":"PORTACONTENEDOR - 20","text":"PORTACONTENEDOR - 20"},
                                     	{"value":"PORTACONTENEDOR - 40","text":"PORTACONTENEDOR - 40"}
                                     	]'>
-                                    	{{$diario->TIPO_CARROCERIA}}
+                                    	{{$diario->tipo_carroceria}}
                                     	</a>
                                     </td>
                                     <td class="celdas"
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                             <a href="#" class="editable" data-type="text"
-                                                data-name="CAPACIDAD" data-pk="{{ $diario->ID }}">
-                                                {{ number_format($diario->CAPACIDAD, 0, ',', '.') }}
+                                                data-name="capacidad" data-pk="{{ $diario->id }}">
+                                                {{ number_format($diario->capacidad, 0, ',', '.') }}
                                             </a>
                                         </td>
                                     @else
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ $diario->TIPO_VEHICULO }}</td>
+                                        {{ $diario->tipo_vehiculo }}</td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ $diario->TIPO_CARROCERIA }}</td>
+                                        {{ $diario->tipo_carroceria }}</td>
                                     <td class="      "
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ number_format($diario->CAPACIDAD, 0, ',', '.') }}</td>
+                                        {{ number_format($diario->capacidad, 0, ',', '.') }}</td>
                                     @endcan
                                     @can('edita.cotizacion')
                                         <td class="celdas"
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                             <a href="#" class="editable" data-type="text"
-                                                data-name="COSTO" data-pk="{{ $diario->ID }}">
-                                                {{ number_format($diario->COSTO, 0, ',', '.') }}
+                                                data-name="costo" data-pk="{{ $diario->id }}">
+                                                {{ number_format($diario->costo, 0, ',', '.') }}
                                             </a>
                                         </td>
                                     @endcan
                                     @can('ver.base')
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ number_format($diario->COSTO, 0, ',', '.') }}
+                                        {{ number_format($diario->costo, 0, ',', '.') }}
                                     </td>
                                     @endcan
                                     @can('edita.cotizacion')
                                         <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         <a href="#" class="editable" data-type="text"
-                                            data-name="COSTO_NEGOCIO" data-pk="{{ $diario->ID }}">
-                                            {{ number_format($diario->COSTO_NEGOCIO, 0, ',', '.') }}
+                                            data-name="costo_negocio" data-pk="{{ $diario->id }}">
+                                            {{ number_format($diario->costo_negocio, 0, ',', '.') }}
                                         </a>
                                     </td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         <a href="#" class="editable" data-type="text"
-                                            data-name="COSTO_ADICIONAL" data-pk="{{ $diario->ID }}">
-                                            {{ number_format($diario->COSTO_ADICIONAL, 0, ',', '.') }}
+                                            data-name="COSTO_ADICIONAL" data-pk="{{ $diario->id }}">
+                                            {{ number_format($diario->costo_adicional, 0, ',', '.') }}
                                         </a>
                                     </td>
                                     @else
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ number_format($diario->COSTO_NEGOCIO, 0, ',', '.') }}
+                                        {{ number_format($diario->costo_negocio, 0, ',', '.') }}
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ number_format($diario->COSTO_ADICIONAL, 0, ',', '.') }}
+                                        {{ number_format($diario->costo_adicional, 0, ',', '.') }}
                                     </td>
                                     @endcan
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ number_format($diario->TOTALS, 0, ',', '.') }}</td>
+                                        {{ number_format($diario->totals, 0, ',', '.') }}</td>
                                     @can('edita.cotizacion')
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ number_format($diario->DIFBN, 0, ',', '.') }}</td>
+                                        {{ number_format($diario->difbn, 0, ',', '.') }}</td>
                                     @endcan
                                     @can('edita.cotizacion')
                                         <td class="celdas"
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                             <a href="#" class="editable" data-type="text"
-                                                data-name="PUNTOS" data-pk="{{ $diario->ID }}">
-                                                {{ $diario->PUNTOS }}
+                                                data-name="puntos" data-pk="{{ $diario->id }}">
+                                                {{ $diario->puntos }}
                                             </a>
                                         </td>
                                         <td class="celdas"
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                             <a href="#" class="editable" data-type="text"
-                                                data-name="OBSERVACIONES" data-pk="{{ $diario->ID }}">
-                                                {{ $diario->OBSERVACIONES }}
+                                                data-name="observaciones" data-pk="{{ $diario->id }}">
+                                                {{ $diario->observaciones }}
                                             </a>
                                         </td>
                                     @else
                                         <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ number_format($diario->PUNTOS, 0, ',', '.') }}</td>
+                                        {{ number_format($diario->puntos, 0, ',', '.') }}</td>
                                         <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ $diario->OBSERVACIONES }}
+                                        {{ $diario->observaciones }}
                                         </td>
                                     @endcan
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ $diario->RESPONSABLE }}</td>
+                                        {{ $diario->responsable }}</td>
                                     @can('edita.cotizacion')
                                         <td class="celdas" style="border: 1px solid #9FAACC">
-                                        <form action="{{ route('price.destroy', $diario->ID) }}" method="POST" onsubmit="return confirmDelete();">
+                                        <form action="{{ route('price.destroy', $diario->id) }}" method="POST" onsubmit="return confirmDelete();">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-link"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0" /><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" /><g id="SVGRepo_iconCarrier"><path d="M10 12V17" stroke="#FF3C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><path d="M14 12V17" stroke="#FF3C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><path d="M4 7H20" stroke="#FF3C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><path d="M6 10V18C6 19.6569 7.34315 21 9 21H15C16.6569 21 18 19.6569 18 18V10" stroke="#FF3C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#FF3C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></g></svg></button>

@@ -107,7 +107,7 @@ class PriceController extends Controller
 
     public function destroy(string $id)
     {        
-        DB::table('prices')->where('ID', $id)->delete();
+        DB::table('prices')->where('id', $id)->delete();
        return redirect()->route('price.index');
     }
 
