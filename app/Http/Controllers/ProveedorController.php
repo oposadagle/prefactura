@@ -25,10 +25,41 @@ class ProveedorController extends Controller
             'estado' => 'required'            
         ];
         $message = [];
-        $this->validate($request, $fields, $message);
-        $dataProveedor = request()->except('_token');
-        DB::table('transportadoras')->insert($dataProveedor);        
-        return back()->with('success', 'Proveedor creado correctamente');    
+        
+        $validator = validator($request->all(), $fields, $message);
+        
+        if ($validator->fails()) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Error de validación',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+            return back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            $dataProveedor = request()->except('_token');
+            DB::table('transportadoras')->insert($dataProveedor);
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Proveedor creado correctamente'
+                ], 201);
+            }
+
+            return back()->with('success', 'Proveedor creado correctamente');
+        } catch (\Exception $e) {
+            \Log::error('Error al crear proveedor: ' . $e->getMessage());
+            
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Error al guardar el proveedor: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return back()->with('error', 'Error al guardar el proveedor: ' . $e->getMessage())->withInput();
+        }
     }
     
     public function edit(string $id)

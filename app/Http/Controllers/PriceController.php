@@ -51,14 +51,43 @@ class PriceController extends Controller
             'observaciones' => 'required'
         ];
         $message = [];
-        $this->validate($request, $fields, $message);
+        
+        $validator = validator($request->all(), $fields, $message);
+        
+        if ($validator->fails()) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Error de validación',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+            return back()->withErrors($validator)->withInput();
+        }
 
-        $dataPrice = request()->except(['_token']);
-        $dataPrice['created_at'] = Carbon::now();
-        $dataPrice['updated_at'] = Carbon::now();
-        DB::table('prices')->insert($dataPrice);
+        try {
+            $dataPrice = request()->except(['_token']);
+            $dataPrice['created_at'] = Carbon::now();
+            $dataPrice['updated_at'] = Carbon::now();
+            DB::table('prices')->insert($dataPrice);
 
-        return back()->with('success', 'Cotizacion ingresada correctamente');        
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Cotización ingresada correctamente'
+                ], 201);
+            }
+
+            return back()->with('success', 'Cotizacion ingresada correctamente');
+        } catch (\Exception $e) {
+            \Log::error('Error al crear cotización: ' . $e->getMessage());
+            
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Error al guardar la cotización: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return back()->with('error', 'Error al guardar la cotización: ' . $e->getMessage())->withInput();
+        }
     }
     
     public function update(Request $request, $ID)

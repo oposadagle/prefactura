@@ -1,5 +1,16 @@
 C<x-header />
 
+<style>
+    .is-invalid {
+        border-color: #dc3545 !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath fill='%23dc3545' d='M8 4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0 0 1h3A.5.5 0 0 0 8 4z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(.375em + .1875rem) center;
+        background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+        padding-right: calc(1.5em + .75rem);
+    }
+</style>
+
 @if (count($errors) > 0)
     <div class="box-body">
         <div class="bg-red-50 border border-red-200 alert mb-0" role="alert">
@@ -52,7 +63,7 @@ C<x-header />
             <div class="card-body">
 
 
-                <form id="form-horizontal" class="form-horizontal form-wizard-wrapper" action="{{ url('/price') }}"
+                <form id="priceForm" class="form-horizontal form-wizard-wrapper" action="{{ url('/price') }}"
                     method="POST" enctype="multipart/form-data">
                     @csrf
 
@@ -374,20 +385,109 @@ C<x-header />
 <!-- end page-wrapper -->
 
 <script>
-    document.getElementById('CAPACIDAD').addEventListener('input', function (e) {
-    let value = e.target.value.replace(/\D/g, '');
-    value = Number(value).toLocaleString('es');
-    e.target.value = value;
-    });
-    document.getElementById('COSTO').addEventListener('input', function (e) {
-    let value = e.target.value.replace(/\D/g, '');
-    value = Number(value).toLocaleString('es');
-    e.target.value = value;
-    });
-    document.getElementById('COSTO_NEGOCIO').addEventListener('input', function (e) {
-    let value = e.target.value.replace(/\D/g, '');
-    value = Number(value).toLocaleString('es');
-    e.target.value = value;
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('priceForm');
+        
+        if (form) {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                
+                try {
+                    const response = await fetch('{{ url('/price') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    if (response.ok) {
+                        Swal.fire({
+                            title: "¡Éxito!",
+                            text: "Cotización ingresada correctamente",
+                            icon: "success",
+                            confirmButtonText: "Aceptar"
+                        }).then(() => {
+                            window.location = "/price";
+                        });
+                    } else {
+                        const contentType = response.headers.get('content-type');
+                        
+                        if (response.status === 422 && contentType && contentType.includes('application/json')) {
+                            const errors = await response.json();
+                            let errorMessages = '';
+                            
+                            document.querySelectorAll('.form-control, .form-select').forEach(el => {
+                                el.classList.remove('is-invalid');
+                            });
+
+                            if (errors.errors) {
+                                Object.keys(errors.errors).forEach(field => {
+                                    const messages = errors.errors[field];
+                                    const fieldElement = document.querySelector(`[name="${field}"]`);
+                                    
+                                    if (fieldElement) {
+                                        fieldElement.classList.add('is-invalid');
+                                    }
+                                    
+                                    errorMessages += '<li>' + messages.join('</li><li>') + '</li>';
+                                });
+                            }
+
+                            Swal.fire({
+                                title: "¡Validación fallida!",
+                                html: '<div style="text-align: left;"><ul style="list-style: disc; margin-left: 20px;">' + errorMessages + '</ul></div>',
+                                icon: "error",
+                                confirmButtonText: "Aceptar",
+                                allowOutsideClick: false,
+                                width: '500px'
+                            });
+                        } else {
+                            let errorText = 'Hubo un error al guardar la cotización';
+                            try {
+                                const data = await response.json();
+                                if (data.message) {
+                                    errorText = data.message;
+                                }
+                            } catch (e) {}
+
+                            Swal.fire({
+                                title: "¡Error!",
+                                text: errorText,
+                                icon: "error",
+                                confirmButtonText: "Aceptar"
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: "¡Error!",
+                        text: "Error de red: " + error.message,
+                        icon: "error",
+                        confirmButtonText: "Aceptar"
+                    });
+                }
+            });
+        }
+
+        document.getElementById('CAPACIDAD').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = Number(value).toLocaleString('es');
+            e.target.value = value;
+        });
+        document.getElementById('COSTO').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = Number(value).toLocaleString('es');
+            e.target.value = value;
+        });
+        document.getElementById('COSTO_NEGOCIO').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = Number(value).toLocaleString('es');
+            e.target.value = value;
+        });
     });
 </script>
 

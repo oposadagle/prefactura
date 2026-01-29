@@ -59,25 +59,56 @@ class ClienteController extends Controller
             'tipo_servicio.required' => 'El tipo de servicio es requerido',
             'centrocosto.required' => 'El Centro de costo es requerido',
         ];
-        $this->validate($request, $fields, $message);
+        
+        $validator = validator($request->all(), $fields, $message);
+        
+        if ($validator->fails()) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Error de validación',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+            return back()->withErrors($validator)->withInput();
+        }
 
-        // insertar información del cliente
-        $dataCliente = request()->only([
-            'nit', 'razon_social', 'razon_comercial', 'direccion', 'telefono', 'contacto', 'email_1', 'email_2', 'email_3', 'comercial', 'email_comercial',
-            'proceso_comercial', 'regional_comercial', 'analista', 'email_analista', 'proceso_analista', 'regional_analista', 'tipo_servicio', 'factor', 'estado'
-        ]);
-        $dataCliente['created_at'] = Carbon::now();
-        $dataCliente['updated_at'] = Carbon::now();
-        DB::table('clientes')->insert($dataCliente);
-        // insertar centros de costos        
-        $nit = $request->input('nit');
-        $centrocosto = $request->input('centrocosto');
-        $subcentros = $request->input('costo');
-        DB::table('costos')->insert([
-            'nit' => $nit,
-            'centro' => $centrocosto,
-            'tipo' => 'Principal'
-        ]);
+        try {
+            // insertar información del cliente
+            $dataCliente = request()->only([
+                'nit', 'razon_social', 'razon_comercial', 'direccion', 'telefono', 'contacto', 'email_1', 'email_2', 'email_3', 'comercial', 'email_comercial',
+                'proceso_comercial', 'regional_comercial', 'analista', 'email_analista', 'proceso_analista', 'regional_analista', 'tipo_servicio', 'factor', 'estado'
+            ]);
+            $dataCliente['created_at'] = Carbon::now();
+            $dataCliente['updated_at'] = Carbon::now();
+            DB::table('clientes')->insert($dataCliente);
+            // insertar centros de costos        
+            $nit = $request->input('nit');
+            $centrocosto = $request->input('centrocosto');
+            $subcentros = $request->input('costo');
+            DB::table('costos')->insert([
+                'nit' => $nit,
+                'centro' => $centrocosto,
+                'tipo' => 'Principal'
+            ]);
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Cliente creado correctamente'
+                ], 201);
+            }
+
+            return back()->with('success', 'Cliente creado correctamente');
+        } catch (\Exception $e) {
+            \Log::error('Error al crear cliente: ' . $e->getMessage());
+            
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Error al guardar el cliente: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return back()->with('error', 'Error al guardar el cliente: ' . $e->getMessage())->withInput();
+        }
         if ($subcentros) {
             $datosSubcentros = [];
             foreach ($subcentros as $subcentro) {

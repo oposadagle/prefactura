@@ -70,20 +70,48 @@ class VehiculoController extends Controller
             'ano_fabricacion.gte' => 'El año digitado no pertenece a esta generación'
         ];
 
-        $this->validate($request, $fields, $message);
+        $validator = validator($request->all(), $fields, $message);
+        
+        if ($validator->fails()) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Error de validación',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+            return back()->withErrors($validator)->withInput();
+        }
 
-        $dataVehiculo = $request->except('_token');
+        try {
+            $dataVehiculo = $request->except('_token');
 
-        // Agregar los campos de auditoría
-        $dataVehiculo['fecha_creacion'] = now();
-        $dataVehiculo['create_user'] = Auth::user()->name;
-        $dataVehiculo['update_user'] = Auth::user()->name;
-        $dataVehiculo['created_at'] = now();
-        $dataVehiculo['updated_at'] = now();
+            // Agregar los campos de auditoría
+            $dataVehiculo['fecha_creacion'] = now();
+            $dataVehiculo['create_user'] = Auth::user()->name;
+            $dataVehiculo['update_user'] = Auth::user()->name;
+            $dataVehiculo['created_at'] = now();
+            $dataVehiculo['updated_at'] = now();
 
-        DB::table('vehiculos')->insert($dataVehiculo);
+            DB::table('vehiculos')->insert($dataVehiculo);
 
-        return back()->with('success', 'Vehículo creado correctamente');
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Vehículo creado correctamente'
+                ], 201);
+            }
+
+            return back()->with('success', 'Vehículo creado correctamente');
+        } catch (\Exception $e) {
+            \Log::error('Error al crear vehículo: ' . $e->getMessage());
+            
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Error al guardar el vehículo: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return back()->with('error', 'Error al guardar el vehículo: ' . $e->getMessage())->withInput();
+        }
     }
 
     public function edit($id)

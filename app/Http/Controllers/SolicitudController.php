@@ -938,34 +938,62 @@ class SolicitudController extends Controller
             'valor_declarado.required' => 'El valor declarado es requerido',
         ];
 
-        $this->validate($request, $fields, $message);
+        $validator = validator($request->all(), $fields, $message);
+        
+        if ($validator->fails()) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Error de validación',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+            return back()->withErrors($validator)->withInput();
+        }
 
-        $dataSolicitud = request()->only([
-            'fecha_solicitud',
-            'fecha_cargue',
-            'hora_cargue',
-            'fecha_descargue',
-            'hora_descargue',
-            'cliente',
-            'origen',
-            'destino',
-            'ejecutivo',
-            'tipo_vehiculo',
-            'carroceria',
-            'tipo_trayecto',
-            'observaciones',
-            'documento_cliente',
-            'destinatario',
-            'direccion',
-            'piezas',
-            'peso',
-            'valor_declarado'
-        ]);
+        try {
+            $dataSolicitud = request()->only([
+                'fecha_solicitud',
+                'fecha_cargue',
+                'hora_cargue',
+                'fecha_descargue',
+                'hora_descargue',
+                'cliente',
+                'origen',
+                'destino',
+                'ejecutivo',
+                'tipo_vehiculo',
+                'carroceria',
+                'tipo_trayecto',
+                'observaciones',
+                'documento_cliente',
+                'destinatario',
+                'direccion',
+                'piezas',
+                'peso',
+                'valor_declarado'
+            ]);
 
-        $dataSolicitud['created_at'] = Carbon::now();
-        DB::table('solicitudes')->insert($dataSolicitud);
+            $dataSolicitud['created_at'] = Carbon::now();
+            DB::table('solicitudes')->insert($dataSolicitud);
 
-        return back()->with('success', 'Solicitud creada correctamente');
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Solicitud creada correctamente'
+                ], 201);
+            }
+
+            return back()->with('success', 'Solicitud creada correctamente');
+        } catch (\Exception $e) {
+            \Log::error('Error al crear solicitud: ' . $e->getMessage());
+            
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Error al guardar la solicitud: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return back()->with('error', 'Error al guardar la solicitud: ' . $e->getMessage())->withInput();
+        }
     }
 
     public function store2(Request $request)
