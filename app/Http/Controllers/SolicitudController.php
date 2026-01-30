@@ -783,19 +783,12 @@ class SolicitudController extends Controller
 
     public function total(Request $request)
     {
-        $monthYear = $request->input('month_year'); // Formato esperado: YYYY-MM
+        $year = $request->input('year');
+        $month = $request->input('month');
 
-        // Validar que el formato sea correcto
-        if (!preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $monthYear)) {
-            return redirect()->back()->withErrors(['month_year' => 'Formato de mes y año inválido']);
-        }
-
-        // Separar año y mes
-        [$year, $month] = explode('-', $monthYear);
-
-        // Verificar que los valores sean válidos
+        // Validar que los valores sean válidos
         if (!checkdate($month, 1, $year)) {
-            return redirect()->back()->withErrors(['month_year' => 'Fecha inválida']);
+            return redirect()->back()->withErrors(['date' => 'Fecha inválida']);
         }
 
         // Generar el nombre del archivo dinámicamente
