@@ -180,10 +180,10 @@ C<x-header />
 
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
-                                    <input type="text" class="form-control" id="COSTO" name="costo" autocomplete="off">
-                                    <label for="cliente">Base cotización ($)</label>                                    
+                                    <input type="text" class="form-control" id="SISETAC" name="sisetac" autocomplete="off">
+                                    <label for="sisetac">Sisetac ($)</label>                                    
                                 </div>
-                            </div>                            
+                            </div>                                                       
 
                         </div>
                     </div>
@@ -192,6 +192,13 @@ C<x-header />
                     <!--container 3-->
                     <div class="container">
                         <div class="row gx-1 justify-content-between">
+
+                            <div class="col-lg-3 col-md-6">
+                                <div class="form-floating mb-3 mx-3">
+                                    <input type="text" class="form-control" id="COSTO" name="costo" autocomplete="off">
+                                    <label for="cliente">Base cotización ($)</label>                                    
+                                </div>
+                            </div> 
 
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
@@ -212,7 +219,15 @@ C<x-header />
                                     <input type="number" min="0" class="form-control" id="CODIGO_SEGUIMIENTO" name="codigo_seguimiento" autocomplete="off">
                                     <label for="cliente">Codigo de seguimiento</label>                                    
                                 </div>
-                            </div>
+                            </div>                                                      
+
+                        </div>
+                    </div>
+                    
+                    <br>
+                    <!--container 4-->
+                    <div class="container">
+                        <div class="row gx-1 justify-content-between">
 
                             <div class="col-lg-3 col-md-3">                                
                                 <div class="form-floating mb-3 mx-3">
@@ -228,15 +243,7 @@ C<x-header />
                                     </select>
                                     <label for="ejecutivo">Tipo de carroceria</label>
                                 </div>
-                            </div>                            
-
-                        </div>
-                    </div>
-                    
-                    <br>
-                    <!--container 4-->
-                    <div class="container">
-                        <div class="row gx-1 justify-content-between">
+                            </div>  
 
                             <div class="col-lg-2 col-md-3">                                
                                 <div class="form-floating mb-3 mx-3">
@@ -321,7 +328,7 @@ C<x-header />
                                 </div>
                             </div> 
                             
-                            <div class="col-lg-4 col-md-6">
+                            <div class="col-lg-9 col-md-6 mt-4">
                                 <div class="form-floating mb-3 mx-3">
                                     <input type="text" min="0" class="form-control" id="OBSERVACIONES" name="observaciones" autocomplete="off">
                                     <label for="cliente">Observaciones</label>                                    
@@ -479,6 +486,11 @@ C<x-header />
             e.target.value = value;
         });
         document.getElementById('COSTO').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = Number(value).toLocaleString('es');
+            e.target.value = value;
+        });
+        document.getElementById('SISETAC').addEventListener('input', function (e) {
             let value = e.target.value.replace(/\D/g, '');
             value = Number(value).toLocaleString('es');
             e.target.value = value;

@@ -5,6 +5,7 @@ use App\Exports\PricesExport;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 use Illuminate\Http\Request;
 
@@ -29,6 +30,7 @@ class PriceController extends Controller
         $request->merge([
             'capacidad' => str_replace('.', '', $request->input('capacidad')),
             'costo' => str_replace('.', '', $request->input('costo')),
+            'sisetac'=> str_replace('.', '', $request->input('sisetac')),
             'costo_negocio' => str_replace('.', '', $request->input('costo_negocio'))
         ]);
         $fields = [
@@ -39,6 +41,7 @@ class PriceController extends Controller
             'trayecto' => 'required',            
             'tipo_vehiculo' => 'required',
             'capacidad' => 'required|numeric|min:500|max:32000',
+            'sisetac'=> 'required|numeric',
             'costo' => 'required|numeric',            
             'puntos' => 'required|numeric',
             'costo_negocio' => 'required|numeric',
@@ -78,7 +81,7 @@ class PriceController extends Controller
 
             return back()->with('success', 'Cotizacion ingresada correctamente');
         } catch (\Exception $e) {
-            \Log::error('Error al crear cotización: ' . $e->getMessage());
+            Log::error('Error al crear cotización: ' . $e->getMessage());
             
             if ($request->wantsJson()) {
                 return response()->json([

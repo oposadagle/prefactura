@@ -76,6 +76,7 @@
                                 <th class="      " style="color: #C4F4FF;border: 1px solid #0C213A;">TIPO CARROCERIA</th>
                                 <th class="      " style="color: #00FF9C;border: 1px solid #0C213A;">CAPACIDAD (KG)</th>
                                 @can('edita.cotizacion')
+                                <th class="      " style="color: #00FF9C;border: 1px solid #0C213A;">SISETAC</th>
                                 <th class="      " style="color: #00FF9C;border: 1px solid #0C213A;">BASE COTIZACION</th>
                                 @endcan
                                 @can('ver.base')
@@ -211,12 +212,22 @@
                                         <td class="celdas"
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                             <a href="#" class="editable" data-type="text"
+                                                data-name="sisetac" data-pk="{{ $diario->id }}">
+                                                {{ number_format($diario->sisetac, 0, ',', '.') }}
+                                            </a>
+                                        </td>
+                                        <td class="celdas"
+                                            style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                            <a href="#" class="editable" data-type="text"
                                                 data-name="costo" data-pk="{{ $diario->id }}">
                                                 {{ number_format($diario->costo, 0, ',', '.') }}
                                             </a>
                                         </td>
                                     @endcan
                                     @can('ver.base')
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        {{ number_format($diario->sisetac, 0, ',', '.') }}
+                                    </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         {{ number_format($diario->costo, 0, ',', '.') }}
                                     </td>
