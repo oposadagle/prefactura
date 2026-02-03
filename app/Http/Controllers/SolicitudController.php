@@ -114,8 +114,8 @@ class SolicitudController extends Controller
     {
         // Último año/mes disponibles en infoestatus (PostgreSQL)
         $ultimoRegistro = DB::table('infoestatus')
-            ->selectRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year, EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month")
-            ->orderBy('fecha_cargue', 'desc')
+            ->selectRaw("EXTRACT(YEAR FROM fecha_elaboracion::timestamp) AS year, EXTRACT(MONTH FROM fecha_elaboracion::timestamp) AS month")
+            ->orderBy('fecha_elaboracion', 'desc')
             ->first();
 
         $defaultYear  = isset($ultimoRegistro->year) ? (int) $ultimoRegistro->year : Carbon::now()->year;
@@ -379,8 +379,8 @@ class SolicitudController extends Controller
     {
         // Obtener el último año y mes disponibles en la tabla infoestatus (PostgreSQL)
         $ultimoRegistro = DB::table('infoestatus')
-            ->selectRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year, EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month")
-            ->orderBy('fecha_cargue', 'desc')
+            ->selectRaw("EXTRACT(YEAR FROM fecha_elaboracion::timestamp) AS year, EXTRACT(MONTH FROM fecha_elaboracion::timestamp) AS month")
+            ->orderBy('fecha_elaboracion', 'desc')
             ->first();
 
         // Establecer valores predeterminados basados en el último registro
@@ -395,22 +395,22 @@ class SolicitudController extends Controller
         // (puedes dejar whereYear/whereMonth; en PgSQL suele funcionar. Si te falla, usa EXTRACT como abajo)
         $diarias = DB::table('infoestatus')
             ->where('facturar', 'SI')
-            ->whereRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?", [$year])
-            ->whereRaw("EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?", [$month])
-            ->orderBy('fecha_cargue', 'desc')
+            ->whereRaw("EXTRACT(YEAR FROM fecha_elaboracion::timestamp) = ?", [$year])
+            ->whereRaw("EXTRACT(MONTH FROM fecha_elaboracion::timestamp) = ?", [$month])
+            ->orderBy('fecha_elaboracion', 'desc')
             ->get();
 
-        // Obtener los años únicos del campo fecha_cargue
+        // Obtener los años únicos del campo fecha_elaboracion
         $years = DB::table('infoestatus')
-            ->selectRaw("DISTINCT EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year")
+            ->selectRaw("DISTINCT EXTRACT(YEAR FROM fecha_elaboracion::timestamp) AS year")
             ->orderBy('year', 'desc')
             ->pluck('year')
             ->map(fn($y) => (int) $y);
 
-        // Obtener los meses únicos del campo fecha_cargue para el año seleccionado
+        // Obtener los meses únicos del campo fecha_elaboracion para el año seleccionado
         $months = DB::table('infoestatus')
-            ->selectRaw("DISTINCT EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month")
-            ->whereRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?", [$year])
+            ->selectRaw("DISTINCT EXTRACT(MONTH FROM fecha_elaboracion::timestamp) AS month")
+            ->whereRaw("EXTRACT(YEAR FROM fecha_elaboracion::timestamp) = ?", [$year])
             ->orderBy('month', 'asc')
             ->pluck('month')
             ->map(fn($m) => (int) $m);
