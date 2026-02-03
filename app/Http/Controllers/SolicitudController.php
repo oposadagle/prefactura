@@ -302,13 +302,13 @@ class SolicitudController extends Controller
             ->orderBy('fecha_cargue', 'desc')
             ->get();
 
-        $years = DB::table('infoestatus')
+        $years = DB::table('peticiones')
             ->selectRaw("DISTINCT EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year")
             ->orderBy('year', 'desc')
             ->pluck('year')
             ->map(fn($y) => (int) $y);
 
-        $months = DB::table('infoestatus')
+        $months = DB::table('peticiones')
             ->selectRaw("DISTINCT EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month")
             ->whereRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?", [$year])
             ->orderBy('month', 'asc')
