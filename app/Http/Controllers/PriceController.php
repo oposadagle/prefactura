@@ -96,7 +96,7 @@ class PriceController extends Controller
     public function update(Request $request, $ID)
     {
         if ($request->ajax()) {            
-            if ($request->name === 'costo') {                
+            if ($request->name === 'costo' || $request->name === 'sisetac') {                
                 $value = str_replace('.', '', $request->value);
                 
                 if (!is_numeric($value)) {
