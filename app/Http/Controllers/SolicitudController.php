@@ -377,29 +377,6 @@ class SolicitudController extends Controller
 
     public function congelado(Request $request)
     {
-        // Obtener el último año y mes disponibles en la tabla infoestatus (PostgreSQL)
-        $ultimoRegistro = DB::table('infoestatus')
-            ->selectRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year, EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month")
-            ->orderBy('fecha_cargue', 'desc')
-            ->first();
-
-        // Establecer valores predeterminados basados en el último registro
-        $defaultYear  = isset($ultimoRegistro->year) ? (int) $ultimoRegistro->year : Carbon::now()->year;
-        $defaultMonth = isset($ultimoRegistro->month) ? (int) $ultimoRegistro->month : Carbon::now()->month;
-
-        // Obtener el año y mes desde la solicitud o usar los valores predeterminados
-        $year  = (int) $request->input('year', $defaultYear);
-        $month = (int) $request->input('month', $defaultMonth);
-
-        // Filtrar por año y mes seleccionados
-        // (puedes dejar whereYear/whereMonth; en PgSQL suele funcionar. Si te falla, usa EXTRACT como abajo)
-        $diarias = DB::table('infoestatus')
-            ->where('facturar', 'SI')
-            ->whereRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?", [$year])
-            ->whereRaw("EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?", [$month])
-            ->orderBy('fecha_cargue', 'desc')
-            ->get();
-
         // Obtener los años únicos del campo fecha_cargue
         $years = DB::table('infoestatus')
             ->selectRaw("DISTINCT EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year")
@@ -407,13 +384,35 @@ class SolicitudController extends Controller
             ->pluck('year')
             ->map(fn($y) => (int) $y);
 
-        // Obtener los meses únicos del campo fecha_cargue para el año seleccionado
+        // Determinar año seleccionado (por defecto el último disponible o el actual)
+        $defaultYear = $years->first() ?: Carbon::now()->year;
+        $year = (int) $request->input('year', $defaultYear);
+
+        // Obtener los meses únicos para el año seleccionado
         $months = DB::table('infoestatus')
             ->selectRaw("DISTINCT EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month")
             ->whereRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?", [$year])
             ->orderBy('month', 'asc')
             ->pluck('month')
             ->map(fn($m) => (int) $m);
+
+        // Determinar mes seleccionado
+        // Si el mes solicitado está en la lista de meses disponibles, usarlo.
+        // Si no (ej. cambio de año), usar el último mes disponible.
+        $requestedMonth = $request->input('month');
+        if ($requestedMonth && $months->contains((int)$requestedMonth)) {
+            $month = (int)$requestedMonth;
+        } else {
+            $month = $months->last() ?: Carbon::now()->month;
+        }
+
+        // Filtrar por año y mes seleccionados
+        $diarias = DB::table('infoestatus')
+            ->where('facturar', 'SI')
+            ->whereRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?", [$year])
+            ->whereRaw("EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?", [$month])
+            ->orderBy('fecha_cargue', 'desc')
+            ->get();
 
         // Datos adicionales para la vista
         $services = DB::table('servicios')->orderBy('nombre')->get();
