@@ -13,7 +13,7 @@ class PriceController extends Controller
 {    
     public function index()
     {
-        $diarias = DB::table('prices')->get();
+        $diarias = DB::table('prices')->orderBy('id','asc')->get();
         return view('Price.index', compact('diarias'));
     }
 
@@ -93,7 +93,7 @@ class PriceController extends Controller
         }
     }
     
-    public function update(Request $request, $ID)
+    public function update(Request $request)
     {
         if ($request->ajax()) {            
             if ($request->name === 'costo' || $request->name === 'sisetac') {                
@@ -103,12 +103,14 @@ class PriceController extends Controller
                     return response()->json(['success' => false, 'message' => 'El valor no es un número válido.']);
                 }
                 
-                DB::table('prices')->where('ID', $request->pk)->update([$request->name => $value]);
+                $affected = DB::table('prices')->where('id', $request->pk)->update([$request->name => $value]);
+                
+                Log::info("Update Price: ID={$request->pk}, Name={$request->name}, Value={$value}, Affected={$affected}");
 
                 return response()->json(['success' => true]);
             }
             
-            DB::table('prices')->where('ID', $request->pk)->update([$request->name => $request->value]);
+            DB::table('prices')->where('id', $request->pk)->update([$request->name => $request->value]);
             return response()->json(['success' => true]);
         }
     }
