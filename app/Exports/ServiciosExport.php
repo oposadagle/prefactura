@@ -12,6 +12,7 @@ class ServiciosExport implements FromCollection, WithHeadings
     * @return \Illuminate\Support\Collection
     */
 
+    protected $year;
     protected $month;
 
     public function __construct($year, $month)
@@ -24,11 +25,13 @@ class ServiciosExport implements FromCollection, WithHeadings
     {        
         $currentYear = date('Y');
         return DB::table('peticiones')
-                    ->select('id','fecha_solicitud',DB::raw('MONTH(fecha_cargue) as mes'),'fecha_cargue','fecha_descargue','hora_cargue','hora_descargue',
+                    ->select('id','fecha_solicitud',DB::raw('EXTRACT(MONTH FROM fecha_cargue) as mes'),'fecha_cargue','fecha_descargue','hora_cargue','hora_descargue',
                     'oridate','saldate','desdate','findate','sacnote','responsable','cliente','origen','destino','ejecutivo','tipo_vehiculo','observaciones','tipo_trayecto',
                     'razon','placa','states')
                     ->whereYear('fecha_cargue', $this->year)
-                    ->whereMonth('fecha_cargue', $this->month)
+                    ->when($this->month !== 'todos', function ($query) {
+                        return $query->whereMonth('fecha_cargue', $this->month);
+                    })
                     ->get();
     }
     public function headings(): array

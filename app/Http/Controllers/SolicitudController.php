@@ -143,7 +143,21 @@ class SolicitudController extends Controller
             ->pluck('month')
             ->map(fn($m) => (int) $m);
 
-        return view('Solicitud.sac', compact('diarias', 'years', 'months', 'year', 'month'));
+        // Obtener años y meses disponibles para el selector de descarga
+        $availableDatesRaw = DB::table('peticiones')
+            ->selectRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) as year, EXTRACT(MONTH FROM fecha_cargue::timestamp) as month")
+            ->whereNotNull('fecha_cargue')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->get();
+
+        $availableDates = [];
+        foreach ($availableDatesRaw as $date) {
+            $availableDates[(int)$date->year][] = (int)$date->month;
+        }
+
+        return view('Solicitud.sac', compact('diarias', 'years', 'months', 'year', 'month', 'availableDates'));
     }
 
     public function anticipo()
@@ -851,23 +865,25 @@ class SolicitudController extends Controller
 
     public function servicio(Request $request)
     {
-        $monthYear = $request->input('month_year'); // Formato esperado: YYYY-MM
+        $year = $request->input('year');
+        $month = $request->input('month');
 
-        // Validar que el formato sea correcto
-        if (!preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $monthYear)) {
-            return redirect()->back()->withErrors(['month_year' => 'Formato de mes y año inválido']);
+        // Validar año
+        if (!$year || !is_numeric($year)) {
+            return redirect()->back()->withErrors(['year' => 'Año inválido']);
         }
 
-        // Separar año y mes
-        [$year, $month] = explode('-', $monthYear);
-
-        // Verificar que los valores sean válidos
-        if (!checkdate($month, 1, $year)) {
-            return redirect()->back()->withErrors(['month_year' => 'Fecha inválida']);
+        // Validar mes (puede ser número o 'todos')
+        if ($month !== 'todos' && (!is_numeric($month) || $month < 1 || $month > 12)) {
+            return redirect()->back()->withErrors(['month' => 'Mes inválido']);
         }
 
-        // Generar el nombre del archivo dinámicamente
-        $filename = 'sac_' . $year . '_' . str_pad($month, 2, '0', STR_PAD_LEFT) . '.xlsx';
+        // Generar nombre de archivo
+        if ($month === 'todos') {
+            $filename = 'sac_' . $year . '_completo.xlsx';
+        } else {
+            $filename = 'sac_' . $year . '_' . str_pad($month, 2, '0', STR_PAD_LEFT) . '.xlsx';
+        }
 
         // Descargar el archivo usando los parámetros
         return Excel::download(new ServiciosExport($year, $month), $filename);
