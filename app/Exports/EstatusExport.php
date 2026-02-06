@@ -12,6 +12,7 @@ class EstatusExport implements FromCollection, WithHeadings
      * @return \Illuminate\Support\Collection
      */
 
+    protected $year;
     protected $month;
 
     public function __construct($year, $month)
@@ -103,7 +104,9 @@ class EstatusExport implements FromCollection, WithHeadings
                 'fecha_saldo'
             )
             ->whereYear('fecha_cargue', $this->year)
-            ->whereMonth('fecha_cargue', $this->month)
+            ->when($this->month !== 'todos', function ($query) {
+                return $query->whereMonth('fecha_cargue', $this->month);
+            })
             ->get();
     }
     public function headings(): array

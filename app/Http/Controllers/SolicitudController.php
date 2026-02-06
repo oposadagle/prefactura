@@ -233,25 +233,27 @@ class SolicitudController extends Controller
 
     public function estatus(Request $request)
     {
-        $monthYear = $request->input('month_year'); // Formato esperado: YYYY-MM
+        $year = $request->input('year');
+        $month = $request->input('month');
 
-        // Validar que el formato sea correcto
-        if (!preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $monthYear)) {
-            return redirect()->back()->withErrors(['month_year' => 'Formato de mes y año inválido']);
+        // Validar año
+        if (!$year || !is_numeric($year)) {
+            return redirect()->back()->withErrors(['year' => 'Año inválido']);
         }
 
-        // Separar año y mes
-        [$year, $month] = explode('-', $monthYear);
-
-        // Verificar que los valores sean válidos
-        if (!checkdate($month, 1, $year)) {
-            return redirect()->back()->withErrors(['month_year' => 'Fecha inválida']);
+        // Validar mes (puede ser número o "todos")
+        if ($month !== 'todos' && (!is_numeric($month) || $month < 1 || $month > 12)) {
+            return redirect()->back()->withErrors(['month' => 'Mes inválido']);
         }
 
-        // Generar el nombre del archivo dinámicamente
-        $filename = 'estatus_' . $year . '_' . str_pad($month, 2, '0', STR_PAD_LEFT) . '.xlsx';
+        // Generar nombre de archivo
+        if ($month === 'todos') {
+            $filename = 'estatus_' . $year . '_completo.xlsx';
+        } else {
+            $filename = 'estatus_' . $year . '_' . str_pad($month, 2, '0', STR_PAD_LEFT) . '.xlsx';
+        }
 
-        // Descargar el archivo usando los parámetros
+        // Descargar usando el Export modificado
         return Excel::download(new EstatusExport($year, $month), $filename);
     }
 
@@ -369,10 +371,28 @@ class SolicitudController extends Controller
         $causales = $causes->map(function ($cause) {
             return ['value' => $cause->nombre, 'text' => $cause->nombre];
         });
+        
         $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth()->toDateString(); // Inicio del mes anterior
         $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString(); // Fin del mes actual
         $diarias = DB::table('infoestatus')->where('facturar', 'NO')->whereBetween('fecha_cargue', [$startOfLastMonth, $endOfCurrentMonth])->orderBy('fecha_cargue', 'desc')->get();
-        return view('Solicitud.infoestatus', compact('diarias', 'servicios', 'autos', 'causales'));
+
+        // Obtener Años y Meses disponibles para el filtro
+        $fechasDisponibles = DB::table('infoestatus')
+            ->selectRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) as year, EXTRACT(MONTH FROM fecha_cargue::timestamp) as month")
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->get();
+
+        // Estructurar datos: [ 2024 => [1, 2, ...], 2023 => [12, 11, ...] ]
+        $availableDates = [];
+        foreach ($fechasDisponibles as $fecha) {
+            $year = (int)$fecha->year;
+            $month = (int)$fecha->month;
+            $availableDates[$year][] = $month;
+        }
+
+        return view('Solicitud.infoestatus', compact('diarias', 'servicios', 'autos', 'causales', 'availableDates'));
     }
 
     public function congelado(Request $request)
