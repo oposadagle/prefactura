@@ -66,7 +66,7 @@
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">ID</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">CLIENTE</th>
                                 <th class="      " style="color: #EE66A6;border: 1px solid #0C213A;">FECHA SOLICITUD</th>
-                                <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">CODIGO SEGUIMIENTO</th>
+                                {{-- <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">CODIGO SEGUIMIENTO</th> --}}
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">ESTADO COTIZACION</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">QUIEN SOLICITA</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">TRAYECTO</th>
@@ -108,13 +108,13 @@
                                         {{ $diario->fecha_solicitud }}</td>
                                         
                                         @can('edita.cotizacion')
-                                            <td class="celdas"
+                                            {{-- <td class="celdas"
                                                 style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                                 <a href="#" class="editable" data-type="text"
                                                     data-name="codigo_seguimiento" data-pk="{{ $diario->id }}">
                                                     {{ $diario->codigo_seguimiento }}
                                                 </a>
-                                            </td>
+                                            </td> --}}
                                             <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">                             
                                             @php
                                                 $estadoClase = '';
@@ -136,9 +136,9 @@
                                                 </a>    
                                             </td>
                                         @else
-                                            <td class="celdas"
+                                            {{-- <td class="celdas"
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            {{ $diario->codigo_seguimiento }}</td>
+                                            {{ $diario->codigo_seguimiento }}</td> --}}
                                             <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                                 {{ $diario->estado_cotizacion }}
                                             </td>

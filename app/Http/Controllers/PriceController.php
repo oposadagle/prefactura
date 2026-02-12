@@ -45,7 +45,7 @@ class PriceController extends Controller
             'costo' => 'required|numeric',            
             'puntos' => 'required|numeric',
             'costo_negocio' => 'required|numeric',
-            'codigo_seguimiento' => 'required|numeric',
+            //'codigo_seguimiento' => 'required|numeric',
             'tipo_carroceria' => 'required',
             'estado_cotizacion' => 'required',
             'responsable' => 'required',

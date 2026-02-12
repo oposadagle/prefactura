@@ -214,21 +214,6 @@ C<x-header />
                                 </div>
                             </div>
 
-                            <div class="col-lg-3 col-md-6">
-                                <div class="form-floating mb-3 mx-3">
-                                    <input type="number" min="0" class="form-control" id="CODIGO_SEGUIMIENTO" name="codigo_seguimiento" autocomplete="off">
-                                    <label for="cliente">Codigo de seguimiento</label>                                    
-                                </div>
-                            </div>                                                      
-
-                        </div>
-                    </div>
-                    
-                    <br>
-                    <!--container 4-->
-                    <div class="container">
-                        <div class="row gx-1 justify-content-between">
-
                             <div class="col-lg-3 col-md-3">                                
                                 <div class="form-floating mb-3 mx-3">
                                     <select class="form-select" id="TIPO_CARROCERIA" name="tipo_carroceria" autocomplete="off"
@@ -243,9 +228,17 @@ C<x-header />
                                     </select>
                                     <label for="ejecutivo">Tipo de carroceria</label>
                                 </div>
-                            </div>  
+                            </div>                                                     
 
-                            <div class="col-lg-2 col-md-3">                                
+                        </div>
+                    </div>
+                    
+                    <br>
+                    <!--container 4-->
+                    <div class="container">
+                        <div class="row gx-1 justify-content-between">                            
+
+                            <div class="col-lg-3 col-md-3">                                
                                 <div class="form-floating mb-3 mx-3">
                                     <select class="form-select" id="ESTADO_COTIZACION" name="estado_cotizacion" autocomplete="off"
                                         aria-label="Floating label select example">
@@ -259,7 +252,7 @@ C<x-header />
                                 </div>
                             </div>
 
-                            <div class="col-lg-2 col-md-3">                                
+                            <div class="col-lg-3 col-md-3">                                
                                 <div class="form-floating mb-3 mx-3">
                                     <select class="form-select" id="RESPONSABLE" name="responsable" autocomplete="off"
                                         aria-label="Floating label select example">
@@ -276,14 +269,14 @@ C<x-header />
                                 </div>
                             </div>
 
-                            <div class="col-lg-2 col-md-6">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
                                     <input type="number" min="0" class="form-control" id="COSTO_ADICIONAL" name="costo_adicional" autocomplete="off">
                                     <label for="cliente">Otros costos</label>                                    
                                 </div>
                             </div>
 
-                            <div class="col-lg-2 col-md-3">                                
+                            <div class="col-lg-3 col-md-3">                                
                                 <div class="form-floating mb-3 mx-3">
                                     <select class="form-select" id="QUIEN_SOLICITA" name="quien_solicita" autocomplete="off"
                                         aria-label="Floating label select example">
@@ -328,7 +321,7 @@ C<x-header />
                                 </div>
                             </div> 
                             
-                            <div class="col-lg-9 col-md-6 mt-4">
+                            <div class="col-lg-12 col-md-6 mt-4">
                                 <div class="form-floating mb-3 mx-3">
                                     <input type="text" min="0" class="form-control" id="OBSERVACIONES" name="observaciones" autocomplete="off">
                                     <label for="cliente">Observaciones</label>                                    
