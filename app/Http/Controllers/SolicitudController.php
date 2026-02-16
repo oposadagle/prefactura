@@ -1054,14 +1054,18 @@ class SolicitudController extends Controller
             // Obtener el usuario de la sesión actual
             $usuarioSesion = auth()->user()->name; // Ajusta según tu modelo de usuario
 
-            // Manejar el campo 'costo'
-            if ($request->name === 'costo') {
+            // Definir los campos numéricos que requieren limpieza de puntos
+            $camposNumericos = ['costo', 'cargaone', 'cargatwo', 'standby', 'costo_desplazamiento'];
+
+            // Manejar campos numéricos
+            if (in_array($request->name, $camposNumericos)) {
                 $value = str_replace('.', '', $request->value); // Limpiar puntos para números
+                
                 if (!is_numeric($value)) {
                     return response()->json(['success' => false, 'message' => 'El valor no es un número válido.']);
                 }
 
-                // Actualizar tanto el campo 'costo' como el campo 'registrado'
+                // Actualizar el campo numérico junto con el campo 'registrado'
                 DB::table('solicitudes')
                     ->where('id', $request->pk)
                     ->update([
@@ -1074,7 +1078,6 @@ class SolicitudController extends Controller
 
             // Manejar el campo 'placa'
             if ($request->name === 'placa') {
-
                 DB::table('solicitudes')
                     ->where('id', $request->pk)
                     ->update([
@@ -1153,7 +1156,7 @@ class SolicitudController extends Controller
 
         $restricciones = DB::table('solicitudes')
             ->where('id', '=', $id)
-            ->select('remesa', 'radicado', 'retorno', 'razon', 'paytype', 'confirmado', 'nota_cumplido')
+            ->select('remesa', 'radicado', 'retorno', 'razon', 'paytype', 'confirmado', 'nota_cumplido', 'avalado', 'fecha_solicitud')
             ->first();
 
         // Validación: paytype no puede ser NULL
@@ -1176,6 +1179,22 @@ class SolicitudController extends Controller
         if (in_array($restricciones->paytype, $incluidos)) {
             if ($restricciones->confirmado !== 'SI') {
                 return back()->with('error', 'El anticipo debe estar confirmado para poder cerrar el caso.');
+            }
+        }
+
+        // Validación de Aprobación (Paso 5)
+        if (!$restricciones->avalado) {
+            $fechaSolicitud = Carbon::parse($restricciones->fecha_solicitud);
+            // diffInDays devuelve la diferencia absoluta en días
+            if ($fechaSolicitud->diffInDays(now()) >= 5) {
+                // Aprobar automáticamente
+                DB::table('solicitudes')->where('id', $id)->update([
+                    'avalado' => true,
+                    'usercc' => 'auto',
+                    'datecc' => now()
+                ]);
+            } else {
+                return back()->with('error', 'Solicitud sin aprobación, solicite la aprobación o espere 5 días calendario para cerrar el caso.');
             }
         }
 
@@ -1442,5 +1461,47 @@ class SolicitudController extends Controller
             ->map(fn($m) => (int) $m);
 
         return view('Solicitud.logs', compact('diarias', 'years', 'months', 'year', 'month'));
+    }
+
+    public function aprobar(Request $request, $id)
+    {
+        if ($request->ajax()) {
+            $solicitud = DB::table('solicitudes')->where('id', $id)->first();
+            if ($solicitud) {
+                if (!$solicitud->avalado) {
+                    DB::table('solicitudes')
+                        ->where('id', $id)
+                        ->update([
+                            'avalado' => true,
+                            'usercc' => Auth::user()->name,
+                            'datecc' => Carbon::now()
+                        ]);
+                    return response()->json(['success' => true]);
+                }
+                return response()->json(['success' => false, 'message' => 'Ya fue aprobado']);
+            }
+            return response()->json(['success' => false, 'message' => 'Solicitud no encontrada']);
+        }
+        return response()->json(['success' => false, 'message' => 'Petición inválida']);
+    }
+
+    public function verificar(Request $request, $id)
+    {
+        if ($request->ajax()) {
+            $solicitud = DB::table('solicitudes')->where('id', $id)->first();
+            if ($solicitud) {
+                if (!$solicitud->verificado) {
+                    DB::table('solicitudes')
+                        ->where('id', $id)
+                        ->update([
+                            'verificado' => true
+                        ]);
+                    return response()->json(['success' => true]);
+                }
+                return response()->json(['success' => false, 'message' => 'Ya fue verificado']);
+            }
+            return response()->json(['success' => false, 'message' => 'Solicitud no encontrada']);
+        }
+        return response()->json(['success' => false, 'message' => 'Petición inválida']);
     }
 }
