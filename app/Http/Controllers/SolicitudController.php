@@ -1182,21 +1182,22 @@ class SolicitudController extends Controller
             }
         }
 
-        // Validación de Aprobación (Paso 5)
-        if (!$restricciones->avalado) {
-            $fechaSolicitud = Carbon::parse($restricciones->fecha_solicitud);
-            // diffInDays devuelve la diferencia absoluta en días
-            if ($fechaSolicitud->diffInDays(now()) >= 5) {
-                // Aprobar automáticamente
-                DB::table('solicitudes')->where('id', $id)->update([
-                    'avalado' => true,
-                    'usercc' => 'auto',
-                    'datecc' => now()
-                ]);
-            } else {
-                return back()->with('error', 'Solicitud sin aprobación, solicite la aprobación o espere 5 días calendario para cerrar el caso.');
-            }
-        }
+        // SUSPENDIDO TEMPORALMENTE - Validación de Aprobación (Paso 5)
+        // Se suspende mientras se decide si esta restricción es funcional o no.
+        // if (!$restricciones->avalado) {
+        //     $fechaSolicitud = Carbon::parse($restricciones->fecha_solicitud);
+        //     // diffInDays devuelve la diferencia absoluta en días
+        //     if ($fechaSolicitud->diffInDays(now()) >= 5) {
+        //         // Aprobar automáticamente
+        //         DB::table('solicitudes')->where('id', $id)->update([
+        //             'avalado' => true,
+        //             'usercc' => 'auto',
+        //             'datecc' => now()
+        //         ]);
+        //     } else {
+        //         return back()->with('error', 'Solicitud sin aprobación, solicite la aprobación o espere 5 días calendario para cerrar el caso.');
+        //     }
+        // }
 
         // Actualizar los datos de cierre
         $dataFinal = $request->only(['finuser', 'findate', 'finnote', 'responsable', 'cte', 'ays', 'nota_cierre']);
