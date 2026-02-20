@@ -11,6 +11,8 @@ use App\Http\Controllers\PriceController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\UtilidadController;
+use App\Http\Controllers\BancoController;
+use App\Http\Controllers\DatosBancariosController;
 use App\Http\Controllers\VehiculoController;
 use Illuminate\Support\Facades\Route;
 
@@ -111,3 +113,7 @@ Route::get('/gle/export-facturas', [GleController::class, 'exportFacturas'])->na
 Route::get('/cuenta', [CuentaController::class, 'index'])->name('cuenta.index');
 Route::post('/cuenta', [CuentaController::class, 'store'])->name('cuenta.store');
 Route::get('/facturar', [CuentaController::class, 'facturar'])->name('cuenta.facturar');
+Route::get('/bancos', [BancoController::class, 'index'])->name('banco.index');
+Route::post('/bancos', [BancoController::class, 'store'])->name('banco.store');
+Route::delete('/bancos/{id}', [BancoController::class, 'destroy'])->name('banco.destroy');
+Route::resource('datos-bancarios', DatosBancariosController::class)->except(['show']);

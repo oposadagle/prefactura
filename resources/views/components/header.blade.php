@@ -232,6 +232,9 @@
                                             @can('prefactura.masivos')
                                             <li><a href="{{ route('solicitud.prefactura') }}">Estatus masivos</a></li>                                                                           
                                             @endcan
+                                            @can('bancos')
+                                                <li><a href="{{ route('datos-bancarios.index') }}">Datos bancarios</a></li>
+                                            @endcan
                                         </ul>
                                     </li>  
                                 </ul>
@@ -251,6 +254,11 @@
                                                     </li>
                                                     <li>
                                                         <a href="{{ route('proveedor.index') }}">Proveedores de masivos</a>
+                                                    </li>
+                                                    @endcan
+                                                    @can('bancos')
+                                                    <li>
+                                                        <a href="{{ route('banco.index') }}">Bancos</a>
                                                     </li>
                                                     @endcan
                                                     {{-- <li>

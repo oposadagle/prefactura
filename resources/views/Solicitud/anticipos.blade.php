@@ -46,10 +46,7 @@
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">TIPO VEHICULO</th>                                
                                 
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">COSTO</th>
-                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">EXTRA</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">PAGO COMPLETO</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">OBSERVACION PAGO</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">ANTICIPO</th>
+                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">EXTRA</th>                                
                                 
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">CONFIRMAR</th>
                             </tr>
@@ -103,32 +100,8 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->tipo_vehiculo }}</td>                                                                        
                                     
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo, 0, ',', '.') }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo_tiposerv, 0, ',', '.') }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        @php
-                                            $estadoClase = '';
-                                            if ($diario->pago_completo == 'SI') {
-                                                $estadoClase = 'badge bg-info';
-                                            } 
-                                            if ($diario->pago_completo == 'NO') {
-                                                $estadoClase = 'badge bg-danger';
-                                            }
-                                        @endphp
-                                        <span class="{{ $estadoClase }}">{{ $diario->pago_completo }}</span>
-                                    </td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        @php
-                                            $estadoClase = '';
-                                            if ($diario->observacion_pago == 'DESCONTAR 6.000') {
-                                                $estadoClase = 'badge badge-outline-info';
-                                            } 
-                                            if ($diario->observacion_pago == 'DESCONTAR 10.000') {
-                                                $estadoClase = 'badge badge-outline-primary';
-                                            }                                            
-                                        @endphp
-                                        <span class="{{ $estadoClase }}">{{$diario->observacion_pago}}</span>
-                                    </td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->anticipo, 0, ',', '.') }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo_tiposerv, 0, ',', '.') }}</td>                                                                       
+                                    
                                     <td class="celdas" style="border: 1px solid #9FAACC; padding-top: 10px; padding-bottom: 10px;">
                                         @php
                                             $estadoClase = '';
