@@ -63,11 +63,18 @@ class VehiculoController extends Controller
             'soat' => 'required',
             'tecnomecanica' => 'required',
             'simur' => 'required',
-            'simit' => 'required'
+            'simit' => 'required',
+            'ica' => 'required|in:SI,NO',
+            'certia' => 'required|file|mimes:pdf,png,jpg,jpeg|max:2048',
+            'certib' => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:2048',
         ];
 
         $message = [
-            'ano_fabricacion.gte' => 'El año digitado no pertenece a esta generación'
+            'ano_fabricacion.gte' => 'El año digitado no pertenece a esta generación',
+            'ica.required' => 'El campo ICA es obligatorio.',
+            'certia.required' => 'El certificado bancario 1 es obligatorio.',
+            'certia.mimes' => 'El certificado bancario 1 debe ser un archivo PDF, PNG o JPG.',
+            'certib.mimes' => 'El certificado bancario 2 debe ser un archivo PDF, PNG o JPG.',
         ];
 
         $validator = validator($request->all(), $fields, $message);
@@ -83,7 +90,21 @@ class VehiculoController extends Controller
         }
 
         try {
-            $dataVehiculo = $request->except('_token');
+            $dataVehiculo = $request->except(['_token']);
+
+            // Manejar subida de certificados bancarios
+            if ($request->hasFile('certia')) {
+                $file = $request->file('certia');
+                $filename = time() . '_certia_' . $file->getClientOriginalName();
+                // Opcional: store en public
+                // $path = $file->storeAs('certificados', $filename, 'public');
+                // Generalmente se guarda en storage, vamos a usar storeAs pero si el server web apunta a public/ necesitamos link storage
+                $dataVehiculo['certia'] = $request->file('certia')->store('certificados', 'public');
+            }
+
+            if ($request->hasFile('certib')) {
+                $dataVehiculo['certib'] = $request->file('certib')->store('certificados', 'public');
+            }
 
             // Agregar los campos de auditoría
             $dataVehiculo['fecha_creacion'] = now();

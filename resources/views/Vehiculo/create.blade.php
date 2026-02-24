@@ -430,22 +430,22 @@
                         <div class="row">
                             <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
-                                    <select class="form-select" id="simur" name="simur" autocomplete="off"
+                                    <select class="form-select @error('simur') is-invalid @enderror" id="simur" name="simur" autocomplete="off"
                                         aria-label="Floating label select example">
                                         <option selected disabled></option>
-                                        <option>Presenta siniestros viales</option>
-                                        <option>No presenta siniestros viales</option>
+                                        <option value="Presenta siniestros viales" {{ old('simur') == 'Presenta siniestros viales' ? 'selected' : '' }}>Presenta siniestros viales</option>
+                                        <option value="No presenta siniestros viales" {{ old('simur') == 'No presenta siniestros viales' ? 'selected' : '' }}>No presenta siniestros viales</option>
                                     </select>
                                     <label style="font-size: 11px;">Simur</label>
                                 </div>
                             </div>
                             <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
-                                    <select class="form-select" id="simit" name="simit" autocomplete="off"
+                                    <select class="form-select @error('simit') is-invalid @enderror" id="simit" name="simit" autocomplete="off"
                                         aria-label="Floating label select example">
                                         <option selected disabled></option>
-                                        <option>Posee multas y/o Infracciones</option>
-                                        <option>No posee multas y/o Infracciones</option>
+                                        <option value="Posee multas y/o Infracciones" {{ old('simit') == 'Posee multas y/o Infracciones' ? 'selected' : '' }}>Posee multas y/o Infracciones</option>
+                                        <option value="No posee multas y/o Infracciones" {{ old('simit') == 'No posee multas y/o Infracciones' ? 'selected' : '' }}>No posee multas y/o Infracciones</option>
                                     </select>
                                     <label style="font-size: 11px;">Simit</label>
                                 </div>
@@ -453,19 +453,49 @@
                             <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control"
-                                        id="infracciones" name="infracciones" placeholder="name@example.com">
+                                        id="infracciones" name="infracciones" value="{{ old('infracciones') }}" placeholder="Infracciones">
                                     <label style="font-size: 11px;">Infracciones</label>
                                 </div>
                             </div>
-
-                            <div class="col-lg-6 col-md-12">
+                            
+                            <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
-                                    <textarea name="observacion" id="textarea" class="form-control" maxlength="255" rows="4" autocomplete="off"
-                                        placeholder="This textarea has a limit of 225 chars."></textarea>
-                                    <label for="fecha_solicitud">Observaciones: </label>
+                                    <select class="form-select @error('ica') is-invalid @enderror" id="ica" name="ica" autocomplete="off"
+                                        aria-label="Floating label select example">
+                                        <option selected disabled></option>
+                                        <option value="SI" {{ old('ica') == 'SI' ? 'selected' : '' }}>SI</option>
+                                        <option value="NO" {{ old('ica') == 'NO' ? 'selected' : '' }}>NO</option>
+                                    </select>
+                                    <label style="font-size: 11px;">ReteICA</label>
                                 </div>
                             </div>
-                            <div class="col-lg-12 col-md-4 pt-4">
+
+                            <div class="col-lg-2 col-md-6">
+                                <div class="mb-3">
+                                    <label for="certia" class="form-label mb-0" style="font-size: 11px; margin-left: 10px; color: #656C82;">Certificación bancaria 1</label>
+                                    <input type="file" class="form-control @error('certia') is-invalid @enderror" id="certia" name="certia" accept=".pdf,.png,.jpg,.jpeg">
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 col-md-6">
+                                <div class="mb-3">
+                                    <label for="certib" class="form-label mb-0" style="font-size: 11px; margin-left: 10px; color: #656C82;">Certificación bancaria 2</label>
+                                    <input type="file" class="form-control @error('certib') is-invalid @enderror" id="certib" name="certib" accept=".pdf,.png,.jpg,.jpeg">
+                                </div>
+                            </div>
+
+                        </div><!--end row-->
+
+                        {{-- linea 8 --}}
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <div class="form-floating mb-3">
+                                    <textarea name="observacion" id="textarea" class="form-control" maxlength="255" rows="4" autocomplete="off"
+                                        placeholder="This textarea has a limit of 225 chars.">{{ old('observacion') }}</textarea>
+                                    <label for="observacion">Observaciones: </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 pt-4">
                                 <div class="button-items" style="text-align: right">
                                     <button type="submit" class="btn btn-outline-primary py-2"><i
                                             class="mdi mdi-content-save-all me-2"></i>Guardar</button>
