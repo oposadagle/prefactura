@@ -260,6 +260,9 @@
                                                     <li>
                                                         <a href="{{ route('banco.index') }}">Bancos</a>
                                                     </li>
+                                                    <li>
+                                                        <a href="#">Centros de costo</a>
+                                                    </li>
                                                     @endcan
                                                     {{-- <li>
                                                         <a href="javascript: void(0);"><i class="ti-control-record"></i>Advanced UI <span
