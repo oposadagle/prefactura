@@ -261,7 +261,7 @@
                                                         <a href="{{ route('banco.index') }}">Bancos</a>
                                                     </li>
                                                     <li>
-                                                        <a href="#">Centros de costo</a>
+                                                        <a href="{{ route('centro-costo.index') }}">Centros de costo</a>
                                                     </li>
                                                     @endcan
                                                     {{-- <li>
