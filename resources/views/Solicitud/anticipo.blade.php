@@ -56,22 +56,24 @@
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">PAGAR SALDO A</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">CEDULA SALDO</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">FACT ELECTRONICA</th>
-                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">TIPO VEHICULO</th>                                
-                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">NOTAS</th>
-                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">NOTA CUMPLIDO</th>                                                              
+                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">TIPO VEHICULO</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">COSTO</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">EXTRA</th>
                                 <th class="celdas" style="color: #FFF;border: 1px solid #0c213a;">EDITAR</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">PAGO COMPLETO</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">OBSERVACION PAGO</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">ANTICIPO</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">ESTADO ANTICIPO</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">SALDO</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">SALDO FINAL</th>
+                                <th class="celdas" style="color: #FFF;border: 1px solid #0c213a;">ANTICIPO</th>
+
+                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">PAGO COMPLETO</th>
+                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">TIPO LEGALIZACION</th>
+                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">CENTRO DE COSTO</th>
+                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">RETEICA</th>
+                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">RETEFUENTE</th>
+                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">SEGURO</th>
+                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">VALOR A PAGAR</th>
+                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">VALOR SALDO</th>
+                                
+                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">ESTADO ANTICIPO</th>                                
                                 <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">ESTADO SALDO</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">RECIBIDO CUMPLIDO</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">CUMPLIDO</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">PAGAR SALDO</th>
+                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">RECIBIDO CUMPLIDO</th>                               
                                 <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">TIPO PAGO</th>
                                 <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">FECHA ENVIO</th>
                                 <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">FECHA TENTATIVA</th>
@@ -79,12 +81,7 @@
                                     <th class="celdas" style="color: #FFF;border: 1px solid #0c213a;">ENVIAR</th>
                                 @endcan
                                 <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">ESTADO PAGO SALDO</th>
-                                @can('anticipos')
-                                    <th class="celdas" style="color: #FFF;border: 1px solid #0c213a;">EDITAR</th>
-                                @endcan
-                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">EGRESO ANTICIPO</th>
-                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">EGRESO SALDO</th>                                
-                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">FECHA PAGO SALDO</th>
+                                
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">CONFIRMADO</th>
                             </tr>
                         </thead>
@@ -150,10 +147,7 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->cedula_saldo) }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->facele }}</td>                                                                        
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->tipo_vehiculo }}</td>                                                                        
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        <a href="{{ url('/solicitud/'.$diario->id) }}"><svg height="16" width="16" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 385 385" xml:space="preserve"><g id="XMLID_1027_">	<polygon id="XMLID_1029_" style="fill:#FF9811;" points="77.326,355 83.327,385 233.318,355 157.5,355  " />	<polygon id="XMLID_1030_" style="fill:#FF9811;" points="307.5,340.163 377.5,326.162 318.663,31.988 203.612,55 307.5,55  " />	<path id="XMLID_1031_" style="fill:#FFE98F;" d="M157.5,150c-24.813,0-45-20.186-45-45V85h30v20c0,8.271,6.729,15,15,15V55h-15h-30   H7.5v300h69.826H157.5V150z" />	<path id="XMLID_1032_" style="fill:#FFDA44;" d="M307.5,340.163V55H203.612H202.5v50c0,24.814-20.187,45-45,45v205h75.818H307.5   V340.163z" />	<path id="XMLID_1033_" style="fill:#FFDA44;" d="M172.5,105V55h-15v65C165.771,120,172.5,113.271,172.5,105z" />	<path id="XMLID_1034_" style="fill:#565659;" d="M142.5,45c0-8.271,6.729-15,15-15s15,6.729,15,15v10v50c0,8.271-6.729,15-15,15   s-15-6.729-15-15V85h-30v20c0,24.814,20.187,45,45,45s45-20.186,45-45V55V45c0-24.813-20.187-45-45-45s-45,20.187-45,45v10h30V45z" /></g></svg></a>
-                                    </td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strtoupper($diario->nota_cumplido) }}</td>
+                                    
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo_tiposerv, 0, ',', '.') }}</td>
                                     {{-- @if ($diario->enviado == 'NO') --}}
@@ -165,6 +159,9 @@
                                             <span class="py-0 my-0"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" height="16" width="16"><path style="fill:#DCE5FA;" d="M354.051,8.414H61.167c-18.093,0-32.759,14.667-32.759,32.759v429.653  c0,18.093,14.667,32.759,32.759,32.759h292.885c18.093,0,32.759-14.667,32.759-32.759V41.173  C386.811,23.08,372.144,8.414,354.051,8.414z" /><path style="opacity:0.1;enable-background:new    ;" d="M386.811,104.541c-10.408,2.671-19.954,8.08-27.75,15.877L156.393,323.085  l-4.583,144.975l144.976-4.58l90.025-90.024V104.541H386.811z" /><path style="fill:#FF999A;" d="M475.656,198.696l-54.479-54.479c-10.582-10.582-27.738-10.582-38.32,0l-30.269,30.268l25.777,67.022  l67.022,25.777l30.269-30.269C486.239,226.434,486.239,209.277,475.656,198.696z" /><polygon style="fill:#FFEBBF;" points="186.581,433.292 189.61,337.464 218.416,308.657 311.216,401.456 282.409,430.263 " /><polygon style="fill:#FFD782;" points="282.409,430.263 189.61,337.464 313.464,213.609 378.367,241.507 406.264,306.408 " /><rect x="313.801" y="212.786" transform="matrix(-0.7071 -0.7071 0.7071 -0.7071 477.6891 678.7643)" style="fill:#515262;" width="131.24" height="55.328" /><path style="opacity:0.1;enable-background:new    ;" d="M475.656,198.696l-39.662-39.662c10.582,10.582,10.582,27.738,0,38.32  L242.746,390.6l-54.872,1.734l-1.295,40.957l95.828-3.029l193.247-193.247C486.239,226.434,486.239,209.277,475.656,198.696z" /><path d="M427.136,138.267c-6.707-6.707-15.625-10.4-25.11-10.4c-2.306,0-4.578,0.222-6.794,0.65V41.173  C395.232,18.47,376.762,0,354.06,0H134.375c-4.648,0-8.414,3.767-8.414,8.414s3.766,8.414,8.414,8.414H354.06  c13.424,0,24.345,10.921,24.345,24.346v95.692c-0.009,0.008-0.018,0.017-0.027,0.026c-0.497,0.444-0.985,0.9-1.461,1.375  c0,0-95.944,95.941-95.961,95.958c-3.245,3.245-3.242,8.657,0,11.898c3.19,3.192,8.635,3.265,11.899,0l20.617-20.616l80.9,80.9  L282.417,418.363l-80.9-80.901l67.543-67.541c3.286-3.286,3.286-8.613,0-11.898c-3.286-3.286-8.612-3.286-11.899,0l-73.492,73.49  c-0.036,0.036-0.067,0.076-0.102,0.112c-0.061,0.063-0.116,0.128-0.174,0.192c-1.29,1.424-2.071,3.304-2.167,5.223  c-0.002,0.053-0.015,0.103-0.017,0.156l-3.029,95.828c-0.073,2.322,0.818,4.571,2.459,6.215c1.581,1.581,3.721,2.465,5.95,2.465  c0.088,0,0.177-0.001,0.266-0.004l95.828-3.029c0.053-0.001,0.103-0.013,0.156-0.017c2-0.103,3.97-0.948,5.414-2.34  c0.037-0.036,0.077-0.067,0.113-0.103l90.038-90.037v124.652c0,13.425-10.921,24.346-24.345,24.346h-60.687  c-4.648,0-8.414,3.767-8.414,8.414c0,4.647,3.766,8.414,8.414,8.414h60.687c22.702,0,41.172-18.47,41.172-41.173V329.347  l86.382-86.382c13.844-13.844,13.844-36.373,0-50.218L427.136,138.267z M195.282,424.599l2.131-67.442l57.847,57.847l7.462,7.462  L195.282,424.599z M406.272,294.509l-80.9-80.9l27.224-27.224l80.901,80.9L406.272,294.509z M469.715,231.066l-24.319,24.319  l-4.597-4.597l-76.303-76.303c0,0,24.312-24.312,24.321-24.321c3.488-3.488,8.278-5.471,13.208-5.471  c4.99,0,9.681,1.943,13.209,5.472l54.479,54.479C476.999,211.93,476.999,223.782,469.715,231.066z" /><path d="M268.133,503.586c0-4.647-3.766-8.414-8.414-8.414H61.175c-13.425,0-24.346-10.921-24.346-24.346V41.173  c0-13.425,10.921-24.346,24.346-24.346h39.545c4.648,0,8.414-3.767,8.414-8.414S105.368,0,100.721,0H61.175  C38.473,0,20.002,18.47,20.002,41.173v429.654C20.002,493.53,38.473,512,61.175,512h198.543  C264.366,512,268.133,508.233,268.133,503.586z" /></svg></span>
                                         </td>
                                     @endif --}}
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->anticipo, 0, ',', '.') }}</td>
+                                    
+                                    
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @php
                                             $estadoClase = '';
@@ -176,20 +173,17 @@
                                             }
                                         @endphp
                                         <span class="{{ $estadoClase }}">{{ $diario->pago_completo }}</span>
-                                    </td>                                                                        
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        @php
-                                            $estadoClase = '';
-                                            if ($diario->observacion_pago == 'DESCONTAR 6.000') {
-                                                $estadoClase = 'badge badge-outline-info';
-                                            } 
-                                            if ($diario->observacion_pago == 'DESCONTAR 10.000') {
-                                                $estadoClase = 'badge badge-outline-primary';
-                                            }                                            
-                                        @endphp
-                                        <span class="{{ $estadoClase }}">{{$diario->observacion_pago}}</span>
-                                    </td>                                      
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->anticipo, 0, ',', '.') }}</td>
+                                    </td>                     
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->tipo_legalizacion }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->centro_costo }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->reteica, 0, ',', '.') }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->retefuente, 0, ',', '.') }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->seguro, 0, ',', '.') }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->valor_a_pagar, 0, ',', '.') }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->valor_saldo, 0, ',', '.') }}</td>
+
+                                    
+                                    
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">                             
                                         @php
                                             $estadoClase = '';
@@ -202,8 +196,7 @@
                                         @endphp
                                         <span class="{{ $estadoClase }}">{{$diario->estado_anticipo}}</span>
                                     </td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->saldo, 0, ',', '.') }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->saldo_final, 0, ',', '.') }}</td>
+                                    
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">                             
                                         @php
                                             $estadoClase = '';
@@ -219,30 +212,7 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">                                        
                                         <span>{{ $diario->recibido_cumplido }}</span>                                        
                                     </td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">                             
-                                        @php
-                                            $estadoClase = '';
-                                            if ($diario->cumplido == 'SI') {
-                                                $estadoClase = 'badge bg-info';
-                                            } 
-                                            if ($diario->cumplido == 'NO') {
-                                                $estadoClase = 'badge bg-danger';
-                                            }
-                                        @endphp
-                                        <span class="{{ $estadoClase }}">{{$diario->cumplido}}</span>    
-                                    </td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">                             
-                                        @php
-                                            $estadoClase = '';
-                                            if ($diario->pagar_saldo == 'SI') {
-                                                $estadoClase = 'badge bg-info';
-                                            } 
-                                            if ($diario->pagar_saldo == 'NO') {
-                                                $estadoClase = 'badge bg-danger';
-                                            }
-                                        @endphp
-                                        <span class="{{ $estadoClase }}">{{$diario->pagar_saldo}}</span>    
-                                    </td>
+                                    
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">                             
                                         @php
                                             $estadoClase = '';
@@ -308,15 +278,7 @@
                                         <span class="{{ $estadoClase }}" style="font-weight: 600">{{ $estadoPago }}</span>
                                     </td>
                                     
-                                     @can('anticipos')
-                                        <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">                                        
-                                            <a href="#" data-id="{{ $diario->id }}" class="btn btn-icon-square-xs py-0 my-0" data-bs-toggle="modal" data-bs-target="#exampleModalCenter15"><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" height="16" width="16"><path style="fill:#DCE5FA;" d="M354.051,8.414H61.167c-18.093,0-32.759,14.667-32.759,32.759v429.653  c0,18.093,14.667,32.759,32.759,32.759h292.885c18.093,0,32.759-14.667,32.759-32.759V41.173  C386.811,23.08,372.144,8.414,354.051,8.414z" /><path style="opacity:0.1;enable-background:new    ;" d="M386.811,104.541c-10.408,2.671-19.954,8.08-27.75,15.877L156.393,323.085  l-4.583,144.975l144.976-4.58l90.025-90.024V104.541H386.811z" /><path style="fill:#FF999A;" d="M475.656,198.696l-54.479-54.479c-10.582-10.582-27.738-10.582-38.32,0l-30.269,30.268l25.777,67.022  l67.022,25.777l30.269-30.269C486.239,226.434,486.239,209.277,475.656,198.696z" /><polygon style="fill:#FFEBBF;" points="186.581,433.292 189.61,337.464 218.416,308.657 311.216,401.456 282.409,430.263 " /><polygon style="fill:#FFD782;" points="282.409,430.263 189.61,337.464 313.464,213.609 378.367,241.507 406.264,306.408 " /><rect x="313.801" y="212.786" transform="matrix(-0.7071 -0.7071 0.7071 -0.7071 477.6891 678.7643)" style="fill:#515262;" width="131.24" height="55.328" /><path style="opacity:0.1;enable-background:new    ;" d="M475.656,198.696l-39.662-39.662c10.582,10.582,10.582,27.738,0,38.32  L242.746,390.6l-54.872,1.734l-1.295,40.957l95.828-3.029l193.247-193.247C486.239,226.434,486.239,209.277,475.656,198.696z" /><path d="M427.136,138.267c-6.707-6.707-15.625-10.4-25.11-10.4c-2.306,0-4.578,0.222-6.794,0.65V41.173  C395.232,18.47,376.762,0,354.06,0H134.375c-4.648,0-8.414,3.767-8.414,8.414s3.766,8.414,8.414,8.414H354.06  c13.424,0,24.345,10.921,24.345,24.346v95.692c-0.009,0.008-0.018,0.017-0.027,0.026c-0.497,0.444-0.985,0.9-1.461,1.375  c0,0-95.944,95.941-95.961,95.958c-3.245,3.245-3.242,8.657,0,11.898c3.19,3.192,8.635,3.265,11.899,0l20.617-20.616l80.9,80.9  L282.417,418.363l-80.9-80.901l67.543-67.541c3.286-3.286,3.286-8.613,0-11.898c-3.286-3.286-8.612-3.286-11.899,0l-73.492,73.49  c-0.036,0.036-0.067,0.076-0.102,0.112c-0.061,0.063-0.116,0.128-0.174,0.192c-1.29,1.424-2.071,3.304-2.167,5.223  c-0.002,0.053-0.015,0.103-0.017,0.156l-3.029,95.828c-0.073,2.322,0.818,4.571,2.459,6.215c1.581,1.581,3.721,2.465,5.95,2.465  c0.088,0,0.177-0.001,0.266-0.004l95.828-3.029c0.053-0.001,0.103-0.013,0.156-0.017c2-0.103,3.97-0.948,5.414-2.34  c0.037-0.036,0.077-0.067,0.113-0.103l90.038-90.037v124.652c0,13.425-10.921,24.346-24.345,24.346h-60.687  c-4.648,0-8.414,3.767-8.414,8.414c0,4.647,3.766,8.414,8.414,8.414h60.687c22.702,0,41.172-18.47,41.172-41.173V329.347  l86.382-86.382c13.844-13.844,13.844-36.373,0-50.218L427.136,138.267z M195.282,424.599l2.131-67.442l57.847,57.847l7.462,7.462  L195.282,424.599z M406.272,294.509l-80.9-80.9l27.224-27.224l80.901,80.9L406.272,294.509z M469.715,231.066l-24.319,24.319  l-4.597-4.597l-76.303-76.303c0,0,24.312-24.312,24.321-24.321c3.488-3.488,8.278-5.471,13.208-5.471  c4.99,0,9.681,1.943,13.209,5.472l54.479,54.479C476.999,211.93,476.999,223.782,469.715,231.066z" /><path d="M268.133,503.586c0-4.647-3.766-8.414-8.414-8.414H61.175c-13.425,0-24.346-10.921-24.346-24.346V41.173  c0-13.425,10.921-24.346,24.346-24.346h39.545c4.648,0,8.414-3.767,8.414-8.414S105.368,0,100.721,0H61.175  C38.473,0,20.002,18.47,20.002,41.173v429.654C20.002,493.53,38.473,512,61.175,512h198.543  C264.366,512,268.133,508.233,268.133,503.586z" /></svg></a>
-                                        </td>                                        
-                                    @endcan
-                                    
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->egreso_anticipo }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->egreso_saldo }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_saldo }}</td>
+
                                     <td class="celdas" style="border: 1px solid #9FAACC; padding-top: 10px; padding-bottom: 10px;">
                                         @php
                                             $estadoClase = '';
@@ -398,37 +360,7 @@
                     <div class="card-body">
                         <form id="crn3" action="" method="POST" enctype="multipart/form-data">
                             @csrf
-                            {{ method_field('PUT') }}
-                            <div class="form-floating mb-2">
-                                <select class="form-select" id="floatingSelectGrid" aria-label="Floating label select example" name="tipo_pago" autocomplete="off">
-                                    <option selected></option>
-                                    <option>CUENTA DE COBRO</option>
-                                    <option>FACTURA</option>                                        
-                                </select>
-                                <label for="floatingSelectGrid">Tipo de pago</label>
-                            </div> 
-                            <div class="row g-2">
-                                <div class="col-md">
-                                    <div class="form-floating mb-2">
-                                    <select class="form-select" id="floatingSelectGrid" aria-label="Floating label select example" name="cumplido" autocomplete="off">
-                                        <option selected></option>
-                                        <option>SI</option>
-                                        <option>NO</option>                                        
-                                    </select>
-                                    <label for="floatingSelectGrid">Cumplido</label>
-                                    </div>
-                                </div>
-                                <div class="col-md">
-                                    <div class="form-floating mb-2">
-                                    <select class="form-select" id="floatingSelectGrid" aria-label="Floating label select example" name="pagar_saldo" autocomplete="off">
-                                        <option selected></option>
-                                        <option>SI</option>
-                                        <option>NO</option>                                        
-                                    </select>
-                                    <label for="floatingSelectGrid">Pagar saldo</label>
-                                    </div>
-                                </div>
-                            </div>
+                            {{ method_field('PUT') }}                            
                             <div class="row g-2">
                                 <div class="col-md">
                                     <div class="form-floating mb-2">                                    

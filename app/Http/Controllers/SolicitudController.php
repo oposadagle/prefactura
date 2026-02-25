@@ -681,14 +681,11 @@ class SolicitudController extends Controller
 
             // Asignar variables con control de índices
             $razon = trim($fila[0] ?? '');
-            $tipo_pago = trim($fila[1] ?? '');
-            $cumplido = trim($fila[2] ?? '');
-            $pagar_saldo = trim($fila[3] ?? '');
-            $recibido_cumplido = trim($fila[4] ?? '');
-            $fecha_envio = trim($fila[5] ?? '');
+            $recibido_cumplido = trim($fila[1] ?? '');
+            $fecha_envio = trim($fila[2] ?? '');
 
             // Validar que al menos uno de los campos tenga valor
-            if ($tipo_pago === '' && $cumplido === '' && $pagar_saldo === '' && $recibido_cumplido === '' && $fecha_envio === '') {
+            if ($recibido_cumplido === '' && $fecha_envio === '') {
                 continue;
             }
 
@@ -697,9 +694,6 @@ class SolicitudController extends Controller
                 'updated_at' => now(),
             ];
 
-            if ($tipo_pago !== '') $camposActualizar['tipo_pago'] = $tipo_pago;
-            if ($cumplido !== '') $camposActualizar['cumplido'] = $cumplido;
-            if ($pagar_saldo !== '') $camposActualizar['pagar_saldo'] = $pagar_saldo;
             if ($recibido_cumplido !== '') $camposActualizar['recibido_cumplido'] = $recibido_cumplido;
             if ($fecha_envio !== '') $camposActualizar['fecha_envio'] = $fecha_envio;
 
@@ -1298,7 +1292,7 @@ class SolicitudController extends Controller
 
     public function update13(Request $request, $id)
     {
-        $dataFinal13 = request()->only(['recibido_cumplido', 'cumplido', 'pagar_saldo', 'tipo_pago', 'fecha_envio']);
+        $dataFinal13 = request()->only(['recibido_cumplido','fecha_envio']);
         DB::table('solicitudes')->where('id', '=', $id)->update($dataFinal13);
         return back()->with('success', 'ok');
     }
