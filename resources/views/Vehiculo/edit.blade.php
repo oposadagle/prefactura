@@ -25,8 +25,8 @@
         <div class="bg-red-50 border border-red-200 alert mb-0" role="alert">
             <div class="flex">
                 <div class="flex-shrink-0">
-                    <svg class="h-4 w-4 text-red-400 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16"
-                        height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <svg class="h-4 w-4 text-red-400 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                        fill="currentColor" viewBox="0 0 16 16">
                         <path
                             d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" />
                     </svg>
@@ -98,8 +98,8 @@
                         </div>
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" value="{{ $datos->conductor }}" class="form-control"
-                                    id="conductor" name="conductor" placeholder="name@example.com">
+                                <input type="text" value="{{ $datos->conductor }}" class="form-control" id="conductor"
+                                    name="conductor" placeholder="name@example.com">
                                 <label style="font-size: 11px;">Conductor</label>
                             </div>
                         </div>
@@ -132,7 +132,7 @@
 
                     {{-- linea 2 --}}
                     <div class="row">
-                        
+
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
                                 <input type="text" value="{{ $datos->propietario }}" class="form-control"
@@ -143,30 +143,30 @@
 
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" value="{{ $datos->cedpro }}" class="form-control"
-                                    id="cedpro" name="cedpro" placeholder="name@example.com">
+                                <input type="text" value="{{ $datos->cedpro }}" class="form-control" id="cedpro"
+                                    name="cedpro" placeholder="name@example.com">
                                 <label style="font-size: 11px;">Documento propietario</label>
                             </div>
                         </div>
 
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="email" value="{{ $datos->corpro }}" class="form-control"
-                                    id="corpro" name="corpro" placeholder="name@example.com">
+                                <input type="email" value="{{ $datos->corpro }}" class="form-control" id="corpro"
+                                    name="corpro" placeholder="name@example.com">
                                 <label style="font-size: 11px;">Correo propietario</label>
                             </div>
                         </div>
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" value="{{ $datos->dirpro }}" class="form-control"
-                                    id="dirpro" name="dirpro" placeholder="name@example.com">
+                                <input type="text" value="{{ $datos->dirpro }}" class="form-control" id="dirpro"
+                                    name="dirpro" placeholder="name@example.com">
                                 <label style="font-size: 11px;">Dirección propietario</label>
                             </div>
                         </div>
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" value="{{ $datos->telpro }}" class="form-control"
-                                    id="telpro" name="telpro" placeholder="name@example.com">
+                                <input type="text" value="{{ $datos->telpro }}" class="form-control" id="telpro"
+                                    name="telpro" placeholder="name@example.com">
                                 <label style="font-size: 11px;">Teléfono propietario</label>
                             </div>
                         </div>
@@ -200,24 +200,24 @@
                         </div>
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" value="{{ $datos->nomten }}" class="form-control"
-                                    id="nomten" name="nomten" placeholder="name@example.com">
+                                <input type="text" value="{{ $datos->nomten }}" class="form-control" id="nomten"
+                                    name="nomten" placeholder="name@example.com">
                                 <label style="font-size: 11px;">Nombre tenedor</label>
                             </div>
                         </div>
 
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" value="{{ $datos->cedten }}" class="form-control"
-                                    id="cedten" name="cedten" placeholder="name@example.com">
+                                <input type="text" value="{{ $datos->cedten }}" class="form-control" id="cedten"
+                                    name="cedten" placeholder="name@example.com">
                                 <label style="font-size: 11px;">Documento tenedor</label>
                             </div>
                         </div>
 
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="email" value="{{ $datos->corten }}" class="form-control"
-                                    id="corten" name="corten" placeholder="name@example.com">
+                                <input type="email" value="{{ $datos->corten }}" class="form-control" id="corten"
+                                    name="corten" placeholder="name@example.com">
                                 <label style="font-size: 11px;">Correo tenedor</label>
                             </div>
                         </div>
@@ -225,16 +225,16 @@
 
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" value="{{ $datos->dirten }}" class="form-control"
-                                    id="dirten" name="dirten" placeholder="name@example.com">
+                                <input type="text" value="{{ $datos->dirten }}" class="form-control" id="dirten"
+                                    name="dirten" placeholder="name@example.com">
                                 <label style="font-size: 11px;">Dirección tenedor</label>
                             </div>
                         </div>
 
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" value="{{ $datos->telten }}" class="form-control"
-                                    id="telten" name="telten" placeholder="name@example.com">
+                                <input type="text" value="{{ $datos->telten }}" class="form-control" id="telten"
+                                    name="telten" placeholder="name@example.com">
                                 <label style="font-size: 11px;">Teléfono tenedor</label>
                             </div>
                         </div>
@@ -290,8 +290,8 @@
                         </div>
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" value="{{ $datos->clave_gps }}" class="form-control"
-                                    id="clave_gps" name="clave_gps" placeholder="name@example.com">
+                                <input type="text" value="{{ $datos->clave_gps }}" class="form-control" id="clave_gps"
+                                    name="clave_gps" placeholder="name@example.com">
                                 <label style="font-size: 11px;">Clave GPS</label>
                             </div>
                         </div>
@@ -308,7 +308,7 @@
 
                     {{-- linea 5 --}}
                     <div class="row">
-                        
+
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
                                 <select class="form-select" id="creado_contable" name="creado_contable"
@@ -322,8 +322,8 @@
                         </div>
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" value="{{ $datos->estudio3 }}" class="form-control"
-                                    id="estudio3" name="estudio3" placeholder="name@example.com">
+                                <input type="text" value="{{ $datos->estudio3 }}" class="form-control" id="estudio3"
+                                    name="estudio3" placeholder="name@example.com">
                                 <label style="font-size: 11px;">Estudio 3+</label>
                             </div>
                         </div>
@@ -383,15 +383,15 @@
 
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" value="{{ $datos->num_chasis }}" class="form-control"
-                                    id="num_chasis" name="num_chasis" placeholder="name@example.com">
+                                <input type="text" value="{{ $datos->num_chasis }}" class="form-control" id="num_chasis"
+                                    name="num_chasis" placeholder="name@example.com">
                                 <label style="font-size: 11px;">Numero chasis</label>
                             </div>
                         </div>
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" value="{{ $datos->num_motor }}" class="form-control"
-                                    id="num_motor" name="num_motor" placeholder="name@example.com">
+                                <input type="text" value="{{ $datos->num_motor }}" class="form-control" id="num_motor"
+                                    name="num_motor" placeholder="name@example.com">
                                 <label style="font-size: 11px;">Numero motor</label>
                             </div>
                         </div>
@@ -423,8 +423,8 @@
                         </div>
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <select class="form-select" id="tecnomecanica" name="tecnomecanica"
-                                    autocomplete="off" aria-label="Floating label select example">
+                                <select class="form-select" id="tecnomecanica" name="tecnomecanica" autocomplete="off"
+                                    aria-label="Floating label select example">
                                     <option selected disabled>{{ $datos->tecnomecanica }}</option>
                                     <option>Vigente</option>
                                     <option>Vencido</option>
@@ -438,43 +438,86 @@
                         <div class="row">
                             <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
-                                    <select class="form-select" id="simur" name="simur" autocomplete="off"
-                                        aria-label="Floating label select example">
+                                    <select class="form-select @error('simur') is-invalid @enderror" id="simur"
+                                        name="simur" autocomplete="off" aria-label="Floating label select example">
                                         <option selected disabled>{{ $datos->simur }}</option>
-                                        <option>Presenta siniestros viales</option>
-                                        <option>No presenta siniestros viales</option>
+                                        <option value="Presenta siniestros viales" {{ old('simur', $datos->simur) == 'Presenta siniestros viales' ? 'selected' : '' }}>Presenta
+                                            siniestros viales</option>
+                                        <option value="No presenta siniestros viales" {{ old('simur', $datos->simur) == 'No presenta siniestros viales' ? 'selected' : '' }}>No
+                                            presenta siniestros viales</option>
                                     </select>
                                     <label style="font-size: 11px;">Simur</label>
                                 </div>
                             </div>
                             <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
-                                    <select class="form-select" id="simit" name="simit" autocomplete="off"
-                                        aria-label="Floating label select example">
+                                    <select class="form-select @error('simit') is-invalid @enderror" id="simit"
+                                        name="simit" autocomplete="off" aria-label="Floating label select example">
                                         <option selected disabled>{{ $datos->simit }}</option>
-                                        <option>Posee multas y/o Infracciones</option>
-                                        <option>No posee multas y/o Infracciones</option>
+                                        <option value="Posee multas y/o Infracciones" {{ old('simit', $datos->simit) == 'Posee multas y/o Infracciones' ? 'selected' : '' }}>Posee
+                                            multas y/o Infracciones</option>
+                                        <option value="No posee multas y/o Infracciones" {{ old('simit', $datos->simit) == 'No posee multas y/o Infracciones' ? 'selected' : '' }}>No
+                                            posee multas y/o Infracciones</option>
                                     </select>
                                     <label style="font-size: 11px;">Simit</label>
                                 </div>
                             </div>
                             <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
-                                    <input type="text" value="{{ $datos->infracciones }}" class="form-control"
-                                        id="infracciones" name="infracciones" placeholder="name@example.com">
+                                    <input type="text" value="{{ old('infracciones', $datos->infracciones) }}"
+                                        class="form-control" id="infracciones" name="infracciones"
+                                        placeholder="Infracciones">
                                     <label style="font-size: 11px;">Infracciones</label>
                                 </div>
                             </div>
 
-                            <div class="col-lg-6 col-md-12">
+                            <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
-                                    <textarea name="observacion" id="textarea" class="form-control" maxlength="255" rows="4" autocomplete="off"
-                                        placeholder="This textarea has a limit of 225 chars."></textarea>
-                                    <label for="fecha_solicitud">Observaciones: <p style="font-size:8px">
-                                            {{ $datos->observacion }}</p></label>
+                                    <select class="form-select @error('ica') is-invalid @enderror" id="ica" name="ica"
+                                        autocomplete="off" aria-label="Floating label select example">
+                                        <option selected disabled>{{ $datos->ica }}</option>
+                                        <option value="SI" {{ old('ica', $datos->ica) == 'SI' ? 'selected' : '' }}>SI
+                                        </option>
+                                        <option value="NO" {{ old('ica', $datos->ica) == 'NO' ? 'selected' : '' }}>NO
+                                        </option>
+                                    </select>
+                                    <label style="font-size: 11px;">ReteICA</label>
                                 </div>
                             </div>
-                            <div class="col-lg-12 col-md-4 pt-4">
+
+                            <div class="col-lg-2 col-md-6">
+                                <div class="mb-3">
+                                    <label for="certia" class="form-label mb-0"
+                                        style="font-size: 11px; margin-left: 10px; color: #656C82;">Certificación
+                                        bancaria 1</label>
+                                    <input type="file" class="form-control @error('certia') is-invalid @enderror"
+                                        id="certia" name="certia" accept=".pdf,.png,.jpg,.jpeg">
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 col-md-6">
+                                <div class="mb-3">
+                                    <label for="certib" class="form-label mb-0"
+                                        style="font-size: 11px; margin-left: 10px; color: #656C82;">Certificación
+                                        bancaria 2</label>
+                                    <input type="file" class="form-control @error('certib') is-invalid @enderror"
+                                        id="certib" name="certib" accept=".pdf,.png,.jpg,.jpeg">
+                                </div>
+                            </div>
+
+                        </div><!--end row-->
+
+                        {{-- linea 8 --}}
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <div class="form-floating mb-3">
+                                    <textarea name="observacion" id="textarea" class="form-control" maxlength="255"
+                                        rows="4" autocomplete="off"
+                                        placeholder="This textarea has a limit of 225 chars.">{{ old('observacion', $datos->observacion) }}</textarea>
+                                    <label for="observacion">Observaciones: </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 pt-4">
                                 <div class="button-items" style="text-align: right">
                                     <button type="submit" class="btn btn-outline-primary py-2"><i
                                             class="mdi mdi-content-save-all me-2"></i>Guardar</button>
@@ -511,6 +554,109 @@
             });
         }
 
+        // Evento para el formulario
+        const form = document.querySelector('#vehiculoForm, .form-wizard-wrapper'); // Buscar por clase ya que edit no tiene ID explícito
+        if (form) {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                
+                try {
+                    const response = await fetch('{{ url('/vehiculo/' . $datos->id) }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    // Si la respuesta es exitosa (2xx)
+                    if (response.ok) {
+                        const contentType = response.headers.get('content-type');
+                        if (contentType && contentType.includes('application/json')) {
+                            const data = await response.json();
+                            Swal.fire({
+                                title: "¡Éxito!",
+                                text: data.message || "Vehículo modificado correctamente!",
+                                icon: "success",
+                                confirmButtonText: "Aceptar"
+                            }).then(() => {
+                                window.location = "/vehiculo";
+                            });
+                        } else {
+                            // Redirigir normalmente
+                            window.location = "/vehiculo";
+                        }
+                    } else {
+                        // Error HTTP (422 = validación, 500 = servidor, etc.)
+                        const contentType = response.headers.get('content-type');
+                        
+                        if (response.status === 422 && contentType && contentType.includes('application/json')) {
+                            // Error de validación
+                            const errors = await response.json();
+                            let errorMessages = '';
+                            
+                            // Limpiar estilos de error previos
+                            document.querySelectorAll('.form-control, .form-select').forEach(el => {
+                                el.classList.remove('is-invalid');
+                            });
+
+                            // Mostrar errores
+                            if (errors.errors) {
+                                Object.keys(errors.errors).forEach(field => {
+                                    const messages = errors.errors[field];
+                                    const fieldElement = document.querySelector(`[name="${field}"]`);
+                                    
+                                    if (fieldElement) {
+                                        fieldElement.classList.add('is-invalid');
+                                    }
+                                    
+                                    errorMessages += '<li>' + messages.join('</li><li>') + '</li>';
+                                });
+                            }
+
+                            Swal.fire({
+                                title: "¡Validación fallida!",
+                                html: '<div style="text-align: left;"><ul style="list-style: disc; margin-left: 20px;">' + errorMessages + '</ul></div>',
+                                icon: "error",
+                                confirmButtonText: "Aceptar",
+                                allowOutsideClick: false,
+                                width: '500px'
+                            });
+                        } else {
+                            // Error del servidor
+                            let errorText = 'Hubo un error al guardar el vehículo';
+                            try {
+                                const data = await response.json();
+                                if (data.message) {
+                                    errorText = data.message;
+                                }
+                            } catch (e) {
+                                // No es JSON, usar el texto por defecto
+                            }
+
+                            Swal.fire({
+                                title: "¡Error!",
+                                text: errorText,
+                                icon: "error",
+                                confirmButtonText: "Aceptar"
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: "¡Error!",
+                        text: "Error de red: " + error.message,
+                        icon: "error",
+                        confirmButtonText: "Aceptar"
+                    });
+                }
+            });
+        }
+
         // Ejecutar al cargar (por si ya tiene valor cargado desde el backend)
         toggleCamposTenedor();
 
@@ -518,22 +664,6 @@
         tenedorSelect.addEventListener('change', toggleCamposTenedor);
     });
 </script>
-
-
-@if (session('success'))
-    <script>
-        Swal.fire({
-            title: "¡Éxito!",
-            text: "{{ session('success') }}",
-            icon: "success",
-            confirmButtonText: "Aceptar"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location = "/vehiculo";
-            }
-        });
-    </script>
-@endif
 
 @if (session('info'))
     <script>

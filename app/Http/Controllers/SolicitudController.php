@@ -386,7 +386,7 @@ class SolicitudController extends Controller
             return ['value' => $cause->nombre, 'text' => $cause->nombre];
         });
         
-        $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth()->toDateString(); // Inicio del mes anterior
+        $startOfLastMonth = Carbon::now()->subMonth(3)->startOfMonth()->toDateString(); // Inicio del mes anterior
         $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString(); // Fin del mes actual
         $diarias = DB::table('infoestatus')->where('facturar', 'NO')->whereBetween('fecha_cargue', [$startOfLastMonth, $endOfCurrentMonth])->orderBy('fecha_cargue', 'desc')->get();
 

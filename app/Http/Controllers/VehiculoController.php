@@ -154,16 +154,36 @@ class VehiculoController extends Controller
             'ano_fabricacion' => ['digits:4', 'gte:1900'],
             'cedula_conductor' => 'numeric',
             'cedpro' => 'numeric',
-            'cedten' => 'numeric'
+            'cedten' => 'numeric',
+            'ica' => 'required|in:SI,NO',
+            'certia' => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:2048',
+            'certib' => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:2048',
         ];
         $message = [
             'ano_fabricacion.gte' => 'El año digitado no pertenece a esta generación',
             'cedula_conductor.numeric' => 'La cedula del conductor corresponde a un número',
             'cedpro.numeric' => 'La cedula del propietario corresponde a un número',
-            'cedten.numeric' => 'La cedula del tenedor corresponde a un número'
+            'cedten.numeric' => 'La cedula del tenedor corresponde a un número',
+            'ica.required' => 'El campo ICA es obligatorio.',
+            'certia.mimes' => 'El certificado bancario 1 debe ser un archivo PDF, PNG o JPG.',
+            'certib.mimes' => 'El certificado bancario 2 debe ser un archivo PDF, PNG o JPG.',
         ];
         $this->validate($request, $fields, $message);
         $dataVehiculos = request()->except(['_token', '_method', 'placa']);
+
+        // Manejar subida de certificados bancarios
+        if ($request->hasFile('certia')) {
+            $dataVehiculos['certia'] = $request->file('certia')->store('certificados', 'public');
+        } else {
+            unset($dataVehiculos['certia']); // Evitar sobreescribir con nulo si no se sube un nuevo archivo
+        }
+
+        if ($request->hasFile('certib')) {
+            $dataVehiculos['certib'] = $request->file('certib')->store('certificados', 'public');
+        } else {
+            unset($dataVehiculos['certib']); // Evitar sobreescribir con nulo si no se sube un nuevo archivo
+        }
+
         DB::table('vehiculos')->where('id', '=', $id)->update($dataVehiculos);
         return back()->with('success', 'Vehiculo modificado correctamente');
     }
