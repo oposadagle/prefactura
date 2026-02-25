@@ -47,13 +47,13 @@
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">COSTO</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">EXTRA</th>
                                 <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">ANTICIPO</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">PAGO COMPLETO</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">CENTRO DE COSTO</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">RETEICA</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">RETEFUENTE</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">SEGURO</th>
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">VALOR A PAGAR</th>                               
-                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">CONFIRMAR</th>
+                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">PAGO COMPLETO</th>
+                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">CENTRO DE COSTO</th>
+                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">RETEICA</th>
+                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">RETEFUENTE</th>
+                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">SEGURO</th>
+                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">VALOR A PAGAR</th>                               
+                                <th class="celdas" style="color: #E4FF30;border: 1px solid #0c213a;">CONFIRMAR</th>
                             </tr>
                         </thead>
                         <tbody style="font-size: 12px;font-family: Titillium Web;">
