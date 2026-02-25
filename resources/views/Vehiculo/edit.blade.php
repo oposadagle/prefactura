@@ -492,6 +492,13 @@
                                         bancaria 1</label>
                                     <input type="file" class="form-control @error('certia') is-invalid @enderror"
                                         id="certia" name="certia" accept=".pdf,.png,.jpg,.jpeg">
+                                    @if($datos->certia)
+                                        <div class="mt-1" style="font-size: 11px; margin-left:10px;">
+                                            <a href="{{ asset('storage/' . $datos->certia) }}" target="_blank" class="text-primary">
+                                                <i class="mdi mdi-download"></i> Ver certificado actual
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
 
@@ -502,6 +509,13 @@
                                         bancaria 2</label>
                                     <input type="file" class="form-control @error('certib') is-invalid @enderror"
                                         id="certib" name="certib" accept=".pdf,.png,.jpg,.jpeg">
+                                    @if($datos->certib)
+                                        <div class="mt-1" style="font-size: 11px; margin-left:10px;">
+                                            <a href="{{ asset('storage/' . $datos->certib) }}" target="_blank" class="text-primary">
+                                                <i class="mdi mdi-download"></i> Ver certificado actual
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
 
