@@ -234,6 +234,7 @@
                                             @endcan
                                             @can('bancos')
                                                 <li><a href="{{ route('datos-bancarios.index') }}">Datos bancarios</a></li>
+                                                <li><a href="{{ route('vehiculo.pendientesBancarios') }}">Pendientes bancarios</a></li>
                                             @endcan
                                         </ul>
                                     </li>  

@@ -35,6 +35,27 @@ class VehiculoController extends Controller
         return Excel::download(new VehiculosExport, 'vehiculos.xlsx');
     }
 
+    public function pendientesBancarios()
+    {
+        $vehiculos = DB::table('vehiculos')
+            ->where('states', 'PENDIENTE')
+            ->where('creado', false)
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        return view('Vehiculo.pendientes', compact('vehiculos'));
+    }
+
+    public function toggleCreado($id)
+    {
+        $vehiculo = DB::table('vehiculos')->where('id', $id)->first();
+        if ($vehiculo) {
+            DB::table('vehiculos')->where('id', $id)->update(['creado' => true]);
+            return back()->with('success', 'Estado modificado correctamente.');
+        }
+        return back()->with('error', 'Vehículo no encontrado.');
+    }
+
     public function create()
     {
         $tipos = DB::table('tipo_vehiculos')->get();

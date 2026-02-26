@@ -84,6 +84,8 @@ Route::get('/anticipos', [SolicitudController::class, 'anticipos'])->name('solic
 Route::get('/prefactura', [SolicitudController::class, 'prefactura'])->name('solicitud.prefactura');
 Route::get('/solicitud/show2/{id}', [SolicitudController::class, 'show2'])->name('solicitud.show2');
 Route::resource('admin', AdminController::class);
+Route::get('vehiculo/pendientes-bancarios', [VehiculoController::class, 'pendientesBancarios'])->name('vehiculo.pendientesBancarios');
+Route::post('vehiculo/{id}/toggle-creado', [VehiculoController::class, 'toggleCreado'])->name('vehiculo.toggleCreado');
 Route::resource('vehiculo', VehiculoController::class);
 Route::get('vehiculo/{vehiculo}/edit2', [VehiculoController::class, 'edit2'])->name('vehiculo.edit2');
 Route::put('/vehiculo/{id}/update2', [VehiculoController::class, 'update2'])->name('vehiculo.update2');
