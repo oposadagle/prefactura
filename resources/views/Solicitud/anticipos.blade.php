@@ -5,6 +5,46 @@
     text-overflow: ellipsis;
     color: #656C82;    
     }
+
+    /* Freeze first two columns */
+    #example th:nth-child(1),
+    #example td:nth-child(1) {
+        position: sticky;
+        left: 0;
+        z-index: 10 !important;
+        background-clip: padding-box;
+    }
+    
+    #example th:nth-child(2),
+    #example td:nth-child(2) {
+        position: sticky;
+        left: 80px; 
+        z-index: 10 !important;
+        background-clip: padding-box;
+    }
+
+    /* Set fixed width for the first column to make the second column's offset stable */
+    #example th:nth-child(1), #example td:nth-child(1) {
+        min-width: 80px;
+        max-width: 80px;
+    }
+
+    /* Handle backgrounds for sticky header */
+    #example thead th:nth-child(1),
+    #example thead th:nth-child(2) {
+        background-color: #212529 !important; /* Table dark header */
+        z-index: 11 !important; /* Higher than body cells */
+    }
+
+    /* Handle backgrounds for striped sticky body rows */
+    #example tbody tr:nth-of-type(odd) td:nth-child(1),
+    #example tbody tr:nth-of-type(odd) td:nth-child(2) {
+        background-color: #f2f2f2 !important; 
+    }
+    #example tbody tr:nth-of-type(even) td:nth-child(1),
+    #example tbody tr:nth-of-type(even) td:nth-child(2) {
+        background-color: #ffffff !important;
+    }
 </style>
 
 <!-- Sweetalert2 -->
@@ -43,6 +83,8 @@
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">CEDULA ANTICIPO</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">PAGAR SALDO A</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">CEDULA SALDO</th>
+                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">PAGAR CONTADO A</th>
+                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">CEDULA CONTADO</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">TIPO VEHICULO</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">COSTO</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">EXTRA</th>
@@ -86,8 +128,6 @@
                                             @endphp
                                         <span class="{{ $estadoClase }}">{{ $diario->paytype }}</span>
                                     </td>
-                                    
-
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->cliente }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->origen) }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->destino) }}</td>
@@ -97,13 +137,14 @@
                                         @endphp
                                         <a href="#" class="{{ $claseBoton }}">{{ $diario->placa }}</a>  
                                     </td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->conductor) }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->asociado) }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->cedula_asociado }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->pagarsaldo) }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->cedula_saldo }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->tipo_vehiculo }}</td>                                                                        
-                                    
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->conductor) }}</td>                                    
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->pagant }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->cpagant }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->pagsal }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->cpagsal }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->pagcon }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->cpagcon }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->tipo_vehiculo }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo_tiposerv, 0, ',', '.') }}</td>                                    
                                     
