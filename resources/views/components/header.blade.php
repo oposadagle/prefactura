@@ -228,7 +228,7 @@
                                             @endcan
                                             @can('anticipos')
                                                 <li><a href="{{ route('solicitud.anticipos') }}">Anticipos diarios</a></li>
-                                                <li><a href="#">Saldos</a></li>                                                                              
+                                                <li><a href="{{ route('solicitud.saldos') }}">Saldos</a></li>                                                                              
                                             @endcan
                                             @can('prefactura.masivos')
                                             <li><a href="{{ route('solicitud.prefactura') }}">Estatus masivos</a></li>                                                                           

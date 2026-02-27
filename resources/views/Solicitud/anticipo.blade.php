@@ -120,9 +120,7 @@
                                 @can('vehiculo.index')
                                     <th class="celdas" style="color: #FFF;border: 1px solid #0c213a;">ENVIAR</th>
                                 @endcan
-                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">ESTADO PAGO SALDO</th>
                                 
-                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">CONFIRMADO</th>
                             </tr>
                         </thead>
                         <tbody style="font-size: 12px;font-family: Titillium Web;">
@@ -225,10 +223,7 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->seguro, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->valor_a_pagar, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->valor_saldo, 0, ',', '.') }}</td>
-
-                                    
-                                    
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">                             
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @php
                                             $estadoClase = '';
                                             if ($diario->estado_anticipo == 'CONFIRMADO') {
@@ -297,7 +292,7 @@
                                         </td>
                                     @endcan
 
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                    {{-- <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @php
                                             $estadoClase = '';
                                             $estadoPago = $diario->estado_pago;
@@ -321,8 +316,6 @@
                                         @endphp
                                         <span class="{{ $estadoClase }}" style="font-weight: 600">{{ $estadoPago }}</span>
                                     </td>
-                                    
-
                                     <td class="celdas" style="border: 1px solid #9FAACC; padding-top: 10px; padding-bottom: 10px;">
                                         @php
                                             $estadoClase = '';
@@ -342,7 +335,7 @@
                                             <i class="dripicons-checkmark"></i>
                                         </span>
                                     @endif
-                                    </td>    
+                                    </td>   --}}  
                                 </tr>
                             @endforeach
                         </tbody>
@@ -360,7 +353,7 @@
         <div class="modal-content">
             <div class="modal-header flex">
                 <h6 class="modal-title" style="color: white;margin-right:5px;">Evento: </h6>
-                <h6 class="modal-title m-0 flex" id="exampleModalCenterTitle" style="color: #FFFFFF">�9�0  Notas de cargue</h6>
+                <h6 class="modal-title m-0 flex" id="exampleModalCenterTitle" style="color: #FFFFFF">Notas de cargue</h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div><!--end modal-header-->
             <div class="modal-body">
@@ -379,7 +372,7 @@
                             </div>
                             <div class="form-floating mb-2">
                                 <textarea class="form-control" id="floatingTextarea2" name="antnote" autocomplete="off" style="height: 100px"></textarea>
-                                <label>Observaci��n evento</label>
+                                <label>Observación evento</label>
                             </div>
                             <button type="submit" class="btn btn-soft-primary">Guardar</button>
                             <button type="button" class="btn btn-soft-secondary" data-bs-dismiss="modal">Cancelar</button>

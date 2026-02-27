@@ -163,7 +163,7 @@ class SolicitudController extends Controller
     public function anticipo()
     {
         $userName = Auth::user()->name;
-        $festivos = ['2025-01-01', '2025-01-05', '2025-01-06', '2025-01-12', '2025-01-19', '2025-01-26', '2025-02-02', '2025-02-09', '2025-02-16', '2025-02-23', '2025-03-02', '2025-03-09', '2025-03-16', '2025-03-23', '2025-03-24', '2025-03-30', '2025-04-06', '2025-04-13', '2025-04-17', '2025-04-18', '2025-04-20', '2025-04-27', '2025-05-01', '2025-05-04', '2025-05-11', '2025-05-18', '2025-05-25', '2025-06-01', '2025-06-02', '2025-06-08', '2025-06-15', '2025-06-22', '2025-06-23', '2025-06-29', '2025-06-30', '2025-07-06', '2025-07-13', '2025-07-20', '2025-07-27', '2025-08-03', '2025-08-07', '2025-08-10', '2025-08-17', '2025-08-18', '2025-08-24', '2025-08-31', '2025-09-07', '2025-09-14', '2025-09-21', '2025-09-28', '2025-10-05', '2025-10-12', '2025-10-13', '2025-10-19', '2025-10-26', '2025-11-02', '2025-11-03', '2025-11-09', '2025-11-16', '2025-11-17', '2025-11-23', '2025-11-30', '2025-12-07', '2025-12-08', '2025-12-14', '2025-12-21', '2025-12-25', '2025-12-28'];
+        $festivos = DB::table('festivos')->pluck('festivo')->toArray();
         $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.']);
         $excluidos = (['Servicio cancelado']);
 
@@ -189,7 +189,7 @@ class SolicitudController extends Controller
     public function anticipos()
     {
         $userName = Auth::user()->name;
-        $festivos = ['2025-01-01', '2025-01-05', '2025-01-06', '2025-01-12', '2025-01-19', '2025-01-26', '2025-02-02', '2025-02-09', '2025-02-16', '2025-02-23', '2025-03-02', '2025-03-09', '2025-03-16', '2025-03-23', '2025-03-24', '2025-03-30', '2025-04-06', '2025-04-13', '2025-04-17', '2025-04-18', '2025-04-20', '2025-04-27', '2025-05-01', '2025-05-04', '2025-05-11', '2025-05-18', '2025-05-25', '2025-06-01', '2025-06-02', '2025-06-08', '2025-06-15', '2025-06-22', '2025-06-23', '2025-06-29', '2025-06-30', '2025-07-06', '2025-07-13', '2025-07-20', '2025-07-27', '2025-08-03', '2025-08-07', '2025-08-10', '2025-08-17', '2025-08-18', '2025-08-24', '2025-08-31', '2025-09-07', '2025-09-14', '2025-09-21', '2025-09-28', '2025-10-05', '2025-10-12', '2025-10-13', '2025-10-19', '2025-10-26', '2025-11-02', '2025-11-03', '2025-11-09', '2025-11-16', '2025-11-17', '2025-11-23', '2025-11-30', '2025-12-07', '2025-12-08', '2025-12-14', '2025-12-21', '2025-12-25', '2025-12-28'];
+        $festivos = DB::table('festivos')->pluck('festivo')->toArray();
         $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.']);
         $excluidos = (['Servicio finalizado', 'Servicio cancelado']);
 
@@ -211,6 +211,35 @@ class SolicitudController extends Controller
         }
 
         return view('Solicitud.anticipos', compact('diarias', 'festivos', 'userName'));
+    }
+
+    public function saldos()
+    {
+        $userName = Auth::user()->name;
+        $festivos = DB::table('festivos')->pluck('festivo')->toArray();
+        $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.']);
+        $excluidos = (['Servicio finalizado', 'Servicio cancelado']);
+
+        $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth()->toDateString();
+        $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString();
+        $diarias = DB::table('peticiones')
+            ->where('enviado', 'SI')
+            ->where('confirmado', 'SI')
+            ->where('valor_saldo', '>', 0)
+            ->whereNotNull('razon')
+            ->whereIn('paytype', $incluidos)
+            ->whereNotIn('states', $excluidos)
+            ->whereBetween('fecha_cargue', [$startOfLastMonth, $endOfCurrentMonth])
+            ->orderBy('fecha_cargue', 'desc')
+            ->get();
+
+        foreach ($diarias as $diario) {
+            $diario->fecha_tentativa = $this->calcularFechaTentativa($diario->fecha_envio, 15, $festivos);
+            // Calculate numeric parts ensuring we don't hit null issues -> force float
+            $diario->saldo_total = floatval($diario->valor_saldo) - floatval($diario->deducciones);
+        }
+
+        return view('Solicitud.saldos', compact('diarias', 'festivos', 'userName'));
     }
 
     private function calcularFechaTentativa($fechaInicial, $diasHabiles, $festivos)

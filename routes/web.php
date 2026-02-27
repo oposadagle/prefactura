@@ -81,6 +81,7 @@ Route::get('/trafico', [SolicitudController::class, 'trafico'])->name('solicitud
 Route::get('/sac', [SolicitudController::class, 'sac'])->name('solicitud.sac');
 Route::get('/anticipo', [SolicitudController::class, 'anticipo'])->name('solicitud.anticipo');
 Route::get('/anticipos', [SolicitudController::class, 'anticipos'])->name('solicitud.anticipos');
+Route::get('/saldos', [SolicitudController::class, 'saldos'])->name('solicitud.saldos');
 Route::get('/prefactura', [SolicitudController::class, 'prefactura'])->name('solicitud.prefactura');
 Route::get('/solicitud/show2/{id}', [SolicitudController::class, 'show2'])->name('solicitud.show2');
 Route::resource('admin', AdminController::class);
