@@ -111,20 +111,21 @@ class VehiculoController extends Controller
         }
 
         try {
-            $dataVehiculo = $request->except(['_token']);
+            $dataVehiculo = $request->except(['_token', 'certia', 'certib']);
 
-            // Manejar subida de certificados bancarios
+            // Manejar subida de certificados bancarios (Ahora a BD)
             if ($request->hasFile('certia')) {
                 $file = $request->file('certia');
-                $filename = time() . '_certia_' . $file->getClientOriginalName();
-                // Opcional: store en public
-                // $path = $file->storeAs('certificados', $filename, 'public');
-                // Generalmente se guarda en storage, vamos a usar storeAs pero si el server web apunta a public/ necesitamos link storage
-                $dataVehiculo['certia'] = $request->file('certia')->store('certificados', 'public');
+                $mimeType = $file->getMimeType();
+                $base64 = base64_encode(file_get_contents($file->getRealPath()));
+                $dataVehiculo['certia_base64'] = 'data:' . $mimeType . ';base64,' . $base64;
             }
 
             if ($request->hasFile('certib')) {
-                $dataVehiculo['certib'] = $request->file('certib')->store('certificados', 'public');
+                $file = $request->file('certib');
+                $mimeType = $file->getMimeType();
+                $base64 = base64_encode(file_get_contents($file->getRealPath()));
+                $dataVehiculo['certib_base64'] = 'data:' . $mimeType . ';base64,' . $base64;
             }
 
             // Agregar los campos de auditoría
@@ -190,19 +191,25 @@ class VehiculoController extends Controller
             'certib.mimes' => 'El certificado bancario 2 debe ser un archivo PDF, PNG o JPG.',
         ];
         $this->validate($request, $fields, $message);
-        $dataVehiculos = request()->except(['_token', '_method', 'placa']);
+        $dataVehiculos = request()->except(['_token', '_method', 'placa', 'certia', 'certib']);
 
-        // Manejar subida de certificados bancarios
+        // Manejar subida de certificados bancarios (Ahora a BD)
         if ($request->hasFile('certia')) {
-            $dataVehiculos['certia'] = $request->file('certia')->store('certificados', 'public');
+            $file = $request->file('certia');
+            $mimeType = $file->getMimeType();
+            $base64 = base64_encode(file_get_contents($file->getRealPath()));
+            $dataVehiculos['certia_base64'] = 'data:' . $mimeType . ';base64,' . $base64;
         } else {
-            unset($dataVehiculos['certia']); // Evitar sobreescribir con nulo si no se sube un nuevo archivo
+            unset($dataVehiculos['certia']); // Evitar sobreescribir con nulo
         }
 
         if ($request->hasFile('certib')) {
-            $dataVehiculos['certib'] = $request->file('certib')->store('certificados', 'public');
+            $file = $request->file('certib');
+            $mimeType = $file->getMimeType();
+            $base64 = base64_encode(file_get_contents($file->getRealPath()));
+            $dataVehiculos['certib_base64'] = 'data:' . $mimeType . ';base64,' . $base64;
         } else {
-            unset($dataVehiculos['certib']); // Evitar sobreescribir con nulo si no se sube un nuevo archivo
+            unset($dataVehiculos['certib']); // Evitar sobreescribir con nulo
         }
 
         DB::table('vehiculos')->where('id', '=', $id)->update($dataVehiculos);
@@ -254,5 +261,32 @@ class VehiculoController extends Controller
     {
         $vehiculo = DB::table('vehiculos')->where('placa', $placa)->first();
         return response()->json($vehiculo);
+    }
+    
+    public function showCertificado($id, $tipo)
+    {
+        $vehiculo = DB::table('vehiculos')->where('id', $id)->first();
+        if (!$vehiculo) abort(404);
+
+        $campo = $tipo == 'a' ? 'certia_base64' : 'certib_base64';
+        $data = $vehiculo->$campo;
+
+        if (!$data) abort(404);
+
+        if (strpos($data, 'data:') === 0) {
+            list($type, $data) = explode(';', $data);
+            list(, $data)      = explode(',', $data);
+            $mimeType = str_replace('data:', '', $type);
+            $fileData = base64_decode($data);
+            
+            $ext = strpos($mimeType, 'pdf') !== false ? 'pdf' : 'png';
+
+            return response($fileData)
+                ->header('Content-Type', $mimeType)
+                ->header('Content-Disposition', 'inline; filename="certificado_' . $tipo . '_' . $id . '.' . $ext . '"');
+        }
+
+        // Si es una ruta antigua o no está en base64
+        abort(404);
     }
 }

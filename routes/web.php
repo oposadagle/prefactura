@@ -87,6 +87,7 @@ Route::get('/solicitud/show2/{id}', [SolicitudController::class, 'show2'])->name
 Route::resource('admin', AdminController::class);
 Route::get('vehiculo/pendientes-bancarios', [VehiculoController::class, 'pendientesBancarios'])->name('vehiculo.pendientesBancarios');
 Route::post('vehiculo/{id}/toggle-creado', [VehiculoController::class, 'toggleCreado'])->name('vehiculo.toggleCreado');
+Route::get('/vehiculo/certificado/{id}/{tipo}', [VehiculoController::class, 'showCertificado'])->name('vehiculo.certificado');
 Route::resource('vehiculo', VehiculoController::class);
 Route::get('vehiculo/{vehiculo}/edit2', [VehiculoController::class, 'edit2'])->name('vehiculo.edit2');
 Route::put('/vehiculo/{id}/update2', [VehiculoController::class, 'update2'])->name('vehiculo.update2');
