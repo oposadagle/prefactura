@@ -224,11 +224,13 @@
                                             href="{{ route('solicitud.congelado') }}">Historico estatus</a></li>
                                             @endcan
                                             @can('anticipo')
-                                                <li><a href="{{ route('solicitud.anticipo') }}">Contable y tesorería</a></li>                                    
+                                                <li><a href="{{ route('solicitud.anticipo') }}">Contable y tesorería</a></li>                                                                     
                                             @endcan
                                             @can('anticipos')
-                                                <li><a href="{{ route('solicitud.anticipos') }}">Anticipos diarios</a></li>
-                                                <li><a href="{{ route('solicitud.saldos') }}">Saldos</a></li>                                                                              
+                                                <li><a href="{{ route('solicitud.anticipos') }}">Anticipos diarios</a></li>                                                                                                                              
+                                            @endcan
+                                            @can('anticipo')                                               
+                                                <li><a href="{{ route('solicitud.saldos') }}">Saldos</a></li>                                   
                                             @endcan
                                             @can('prefactura.masivos')
                                             <li><a href="{{ route('solicitud.prefactura') }}">Estatus masivos</a></li>                                                                           
@@ -236,6 +238,7 @@
                                             @can('bancos')
                                                 <li><a href="{{ route('datos-bancarios.index') }}">Datos bancarios</a></li>
                                                 <li><a href="{{ route('vehiculo.pendientesBancarios') }}">Pendientes bancarios</a></li>
+                                                <li><a href="{{ route('vehiculo.historialBancario') }}">Historial bancario</a></li>
                                             @endcan
                                         </ul>
                                     </li>  

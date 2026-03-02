@@ -86,6 +86,7 @@ Route::get('/prefactura', [SolicitudController::class, 'prefactura'])->name('sol
 Route::get('/solicitud/show2/{id}', [SolicitudController::class, 'show2'])->name('solicitud.show2');
 Route::resource('admin', AdminController::class);
 Route::get('vehiculo/pendientes-bancarios', [VehiculoController::class, 'pendientesBancarios'])->name('vehiculo.pendientesBancarios');
+Route::get('vehiculo/historial-bancario', [VehiculoController::class, 'historialBancario'])->name('vehiculo.historialBancario');
 Route::post('vehiculo/{id}/toggle-creado', [VehiculoController::class, 'toggleCreado'])->name('vehiculo.toggleCreado');
 Route::get('/vehiculo/certificado/{id}/{tipo}', [VehiculoController::class, 'showCertificado'])->name('vehiculo.certificado');
 Route::resource('vehiculo', VehiculoController::class);

@@ -46,6 +46,17 @@ class VehiculoController extends Controller
         return view('Vehiculo.pendientes', compact('vehiculos'));
     }
 
+    public function historialBancario()
+    {
+        $vehiculos = DB::table('vehiculos')
+            ->where('creado', true)
+            ->whereNotNull('certia_base64')
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        return view('Vehiculo.historial_bancario', compact('vehiculos'));
+    }
+
     public function toggleCreado($id)
     {
         $vehiculo = DB::table('vehiculos')->where('id', $id)->first();

@@ -1078,7 +1078,7 @@ class SolicitudController extends Controller
             $usuarioSesion = auth()->user()->name; // Ajusta según tu modelo de usuario
 
             // Definir los campos numéricos que requieren limpieza de puntos
-            $camposNumericos = ['costo', 'cargaone', 'cargatwo', 'standby', 'costo_desplazamiento'];
+            $camposNumericos = ['costo', 'cargaone', 'cargatwo', 'standby', 'costo_desplazamiento', 'deducciones'];
 
             // Manejar campos numéricos
             if (in_array($request->name, $camposNumericos)) {

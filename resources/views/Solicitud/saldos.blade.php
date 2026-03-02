@@ -38,7 +38,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center m-2">
                 <div class="d-flex">
-                    <svg fill="#FE252D" height="24px" width="24px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 345 345" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="M203.922,233.952H93.189c-12.501,0-22.671-10.17-22.671-22.671v-83.513c0-2.762-2.238-5-5-5H9.356 c-5.159,0-9.356,4.197-9.356,9.356v130.63c0,5.158,4.197,9.355,9.356,9.355H24.41c1.618,0,3.143,0.788,4.079,2.108l25.405,35.859 c0.938,1.323,2.459,2.109,4.08,2.109c1.622,0,3.143-0.786,4.08-2.109l25.403-35.857c0.937-1.321,2.462-2.11,4.081-2.11h108.026 c5.159,0,9.357-4.197,9.357-9.355v-23.803C208.922,236.19,206.684,233.952,203.922,233.952z"></path> <path d="M332.329,32.813H98.189c-6.986,0-12.671,5.684-12.671,12.671v160.798c0,6.986,5.685,12.671,12.671,12.671h132.973 c1.619,0,3.145,0.788,4.08,2.109l33.157,46.801c0.938,1.323,2.459,2.109,4.08,2.109c1.622,0,3.143-0.786,4.08-2.109l33.155-46.8 c0.936-1.321,2.463-2.11,4.081-2.11h18.533c6.985,0,12.671-5.685,12.671-12.671V45.483C345,38.496,339.315,32.813,332.329,32.813z M227.577,166.411v11.15c0,1.156-0.938,2.094-2.093,2.094h-16.049c-1.155,0-2.092-0.938-2.092-2.094v-11.559 c-8.457-2.031-16.275-6.367-21.653-12.047l-3.118-3.294c-0.381-0.403-0.586-0.941-0.572-1.497c0.017-0.554,0.253-1.08,0.654-1.463 l11.657-11.031c0.84-0.794,2.165-0.757,2.958,0.082l3.117,3.294c3.964,4.189,11.004,7.002,17.515,7.002 c5.149,0,13.862-1.36,13.862-6.458c0.036-4.405-1.871-6.174-15.357-10.259c-11.533-3.493-30.834-9.34-30.834-31.07 c0-12.172,8.297-21.852,21.771-25.582V61.737c0-1.156,0.937-2.094,2.092-2.094h16.049c1.155,0,2.093,0.938,2.093,2.094v10.834 c6.972,1.027,13.736,3.429,18.799,6.699l3.809,2.461c0.973,0.628,1.25,1.923,0.621,2.895L242.1,98.105 c-0.627,0.97-1.924,1.249-2.895,0.622l-3.811-2.461c-3.6-2.327-9.936-4.016-15.061-4.016c-5.396,0-14.528,1.477-14.528,7.01 c0,5.204,2.161,7.372,16.465,11.705c11.905,3.605,29.898,9.055,29.729,29.707C251.999,153.786,242.693,163.529,227.577,166.411z"></path> </g> </g></svg>
+                    <svg height="28px" width="28px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512.001 512.001" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path style="fill:#FFFFFF;" d="M256,504C119.033,504,8,392.967,8,256S119.033,8,256,8s248,111.033,248,248 C503.846,392.902,392.902,503.846,256,504z"></path> <path style="fill:#E21B1B;" d="M256,16c132.549,0,240,107.451,240,240s-107.452,240-240,240S16,388.548,16,256 C16.15,123.514,123.514,16.15,256,16 M256,0C114.615,0,0,114.615,0,256s114.615,256,256,256s256-114.615,256-256S397.385,0,256,0z"></path> <path style="fill:#FFFFFF;" d="M256,467.896c-117.027,0-211.896-94.869-211.896-211.896S138.973,44.104,256,44.104 S467.896,138.973,467.896,256l0,0C467.764,372.972,372.972,467.764,256,467.896z"></path> <path style="fill:#CCCCCC;" d="M256,48.104c114.818,0,207.896,93.078,207.896,207.896S370.818,463.897,256,463.897 S48.104,370.818,48.104,256C48.232,141.235,141.235,48.232,256,48.104 M256,40.104c-119.237,0-215.896,96.66-215.896,215.896 S136.764,471.897,256,471.897S471.897,375.237,471.897,256l0,0C471.896,136.764,375.236,40.104,256,40.104z"></path> <path d="M294.912,133.521c-67.647-26.686-144.119,6.519-170.806,74.166s6.519,144.119,74.166,170.806 c67.647,26.686,144.119-6.519,170.806-74.166c6.071-15.388,9.187-31.783,9.187-48.325H246.593L294.912,133.521z"></path> <path style="fill:#E21B1B;" d="M321.96,124.328l-43.56,110.384h118.68C397.075,185.985,367.286,142.213,321.96,124.328z"></path> </g></svg>
                     <h4 class="card-title" style="margin-left: 10px;">SALDOS</h4>
                 </div>               
 
@@ -55,17 +55,18 @@
                         <thead class="table-dark" style="font-size: 11px;">
                             <tr>                                
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">MANIFIESTO</th>
-                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0" /><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" /><g id="SVGRepo_iconCarrier"><path d="M3 9H21M7 3V5M17 3V5M6 13H8M6 17H8M11 13H13M11 17H13M16 13H18M16 17H18M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="#CAF4FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></g></svg> FECHA DE CARGUE</th>
+                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">FECHA CARGUE</th>
+                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">FECHA ENVIO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">FECHA TENTATIVA</th>
-                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CLIENTE</th>                                
-                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CENTRO DE COSTO</th>
-                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">ORIGEN</th>
-                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">DESTINO</th>
+                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">CLIENTE</th>                                
+                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">CENTRO DE COSTO</th>
+                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">ORIGEN</th>
+                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">DESTINO</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">PLACA</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">CONDUCTOR</th>                                
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">TIPO DE VEHICULO</th>
-                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">PAGAR SALDO A</th>
-                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">CEDULA SALDO</th>
+                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">PAGAR SALDO A</th>
+                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">CEDULA SALDO</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">EXTRA</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">RETEFUENTE</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">RETEICA</th>
@@ -81,7 +82,8 @@
                             @foreach ($diarias as $diario)
                                 <tr style="text-align: center">                                                                        
                                     <td class="celdas" style="color: #000; font-weight: bold; border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->razon }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_cargue }}</td>                                    
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_cargue }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_envio }}</td>                                    
                                     <td class="celdas fecha-tentativa" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;" data-fecha-envio="{{ $diario->fecha_envio }}">{{ $diario->fecha_tentativa }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->cliente }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->centro_costo }}</td>
@@ -89,7 +91,7 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->destino) }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @php
-                                            $claseBoton = $diario->placa ? 'btn btn-warning py-0 px-2' : '';
+                                            $claseBoton = $diario->placa ? 'btn btn-warning py-0 px-2 fw-bold f-6' : '';
                                         @endphp
                                         <a href="#" class="{{ $claseBoton }}">{{ $diario->placa }}</a>  
                                     </td>
@@ -103,9 +105,25 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->seguro, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->valor_a_pagar, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->valor_saldo, 0, ',', '.') }}</td>
+                                    @can('deducir')
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        <a href="#" class="editable-deducciones" data-type="text" data-name="deducciones" data-pk="{{$diario->id}}">
+                                            {{ number_format($diario->deducciones, 0, ',', '.') }}
+                                        </a>
+                                    </td>
+                                    @else
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->deducciones, 0, ',', '.') }}</td>
+                                    @endcan
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->saldo_total, 0, ',', '.') }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->notasded }}</td>
+                                    @can('deducir')
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        <a href="#" class="editable-notasded" data-type="text" data-name="notasded" data-pk="{{$diario->id}}">
+                                            {{ $diario->notasded }}
+                                        </a>
+                                    </td>
+                                    @else
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strtoupper($diario->notasded) }}</td>
+                                    @endcan
                                 </tr>
                             @endforeach
                         </tbody>
@@ -273,7 +291,57 @@ $(document).ready(function() {
             if (response.success) {
                 // Actualizar solo el valor del enlace editable
                 $(this).text(newValue);                
-            } }, } );
+            } 
+        } 
+    });
+
+    // Iniciar x-editable para notas de deducción
+    $('.editable-notasded').editable({
+        url:"/solicitud/update",
+        type: 'text',
+        emptytext: 'Sin notas',
+        success: function(response, newValue) {
+            if (response.success) {
+                $(this).text(newValue);
+            }
+        }
+    });
+
+    // Iniciar x-editable para valores de deducción con validación cruzada
+    $('.editable-deducciones').editable({
+        url:"/solicitud/update",
+        type: 'text',
+        emptytext: '0',
+        validate: function(value) {
+            // Leer el ID de la fila actual que estamos editando
+            var idFila = $(this).data('pk');
+            
+            // Buscar en el DOM el valor *actual* text() o value del elemento hermano 'notasded' con el mismo ID
+            var valorNotitas = $('.editable-notasded[data-pk="' + idFila + '"]').text().trim();
+            
+            // Requerir que las notas no estén vacías ni contengan el texto de predeterminado (placeholder)
+            if (!valorNotitas || valorNotitas === 'Sin notas' || valorNotitas.toLowerCase() === 'empty') {
+                return 'Debe ingresar primero la justificación en NOTAS DEDUCCIONES.';
+            }
+
+            // Normalizar valor numerico para forzar x-editable a que solo envíe digitos o puntos
+            var regexp = /^[0-9.,]+$/;
+            if(!regexp.test(value)) {
+                return 'Este campo sólo admite números y puntos/comas.';
+            }
+        },
+        success: function(response, newValue) {
+            if (response.success) {
+                // Agregar máscara de miles simple (opcional visualmente posterior al ajax)
+                var numerico = newValue.replace(/\./g, '');
+                $(this).text(new Intl.NumberFormat('es-CO').format(numerico));
+                
+                // Forzar recarga de página para recalcular SALDO TOTAL automáticamente mediante PHP
+                setTimeout(function(){ location.reload(); }, 500);
+            }
+        }
+    });
+
 </script>
 
 <script>
