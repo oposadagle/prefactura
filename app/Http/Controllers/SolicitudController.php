@@ -16,6 +16,7 @@ use App\Exports\MastotalesExport;
 use App\Exports\PaqtotalesExport;
 use App\Exports\TransitosExport;
 use App\Exports\ServiciosExport;
+use App\Exports\LogsExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -225,6 +226,7 @@ class SolicitudController extends Controller
         $diarias = DB::table('peticiones')
             ->where('enviado', 'SI')
             ->where('confirmado', 'SI')
+            ->where('pagado', false)
             ->where('valor_saldo', '>', 0)
             ->whereNotNull('razon')
             ->whereIn('paytype', $incluidos)
@@ -257,6 +259,37 @@ class SolicitudController extends Controller
             }
         }
         return $fecha->toDateString();
+    }
+
+    public function pagarSaldos(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se recibieron identificadores válidos.'
+            ]);
+        }
+
+        try {
+            DB::table('solicitudes')->whereIn('id', $ids)->update([
+                'pagado' => true,
+                'fechapago' => Carbon::now('America/Bogota'),
+                'userpago' => auth()->user()->name
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Registros actualizados correctamente.'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error en pago masivo de saldos: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Hubo un error al actualizar los registros.'
+            ], 500);
+        }
     }
 
     public function diario()
