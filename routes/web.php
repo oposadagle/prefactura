@@ -85,6 +85,7 @@ Route::get('/saldos', [SolicitudController::class, 'saldos'])->name('solicitud.s
 Route::get('/prefactura', [SolicitudController::class, 'prefactura'])->name('solicitud.prefactura');
 Route::get('/solicitud/show2/{id}', [SolicitudController::class, 'show2'])->name('solicitud.show2');
 Route::post('/solicitud/saldos/pagar', [SolicitudController::class, 'pagarSaldos'])->name('solicitud.pagarSaldos');
+Route::post('/solicitud/saldos/archivo-plano', [SolicitudController::class, 'archivoPlano'])->name('solicitud.archivoPlano');
 Route::resource('admin', AdminController::class);
 Route::get('vehiculo/pendientes-bancarios', [VehiculoController::class, 'pendientesBancarios'])->name('vehiculo.pendientesBancarios');
 Route::get('vehiculo/historial-bancario', [VehiculoController::class, 'historialBancario'])->name('vehiculo.historialBancario');
