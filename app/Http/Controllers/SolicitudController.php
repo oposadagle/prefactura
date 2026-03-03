@@ -224,7 +224,7 @@ class SolicitudController extends Controller
         $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth()->toDateString();
         $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString();
         $diarias = DB::table('peticiones')
-            ->where('enviado', 'SI')
+            ->where('fecha_envio', '!=', null)
             ->where('confirmado', 'SI')
             ->where('pagado', false)
             ->where('valor_saldo', '>', 0)
@@ -232,7 +232,7 @@ class SolicitudController extends Controller
             ->whereIn('paytype', $incluidos)
             ->whereNotIn('states', $excluidos)
             ->whereBetween('fecha_cargue', [$startOfLastMonth, $endOfCurrentMonth])
-            ->orderBy('fecha_cargue', 'desc')
+            ->orderBy('fecha_envio', 'asc')
             ->get();
 
         foreach ($diarias as $diario) {

@@ -102,7 +102,7 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->propietario }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->cedpro }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->telpro }}</td>                                    
-                                    <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->tenedor }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->nomten }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->cedten }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->telten }}</td>
                                 </tr>
