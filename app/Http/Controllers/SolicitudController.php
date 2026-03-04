@@ -1246,6 +1246,47 @@ class SolicitudController extends Controller
         }
     }
 
+    public function uploadSoporte(Request $request)
+    {
+        if ($request->ajax()) {
+            $request->validate([
+                'pk' => 'required|integer',
+                'soporte' => 'required|string',
+            ]);
+
+            DB::table('solicitudes')
+                ->where('id', $request->pk)
+                ->update(['soporte' => $request->soporte]);
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Solicitud no válida.'], 400);
+    }
+
+    public function showSoporte($id)
+    {
+        $solicitud = DB::table('solicitudes')->where('id', $id)->first();
+        if (!$solicitud || !$solicitud->soporte) abort(404);
+
+        $data = $solicitud->soporte;
+
+        if (strpos($data, 'data:') === 0) {
+            list($type, $dataStr) = explode(';', $data);
+            list(, $dataStr) = explode(',', $dataStr);
+            $mimeType = str_replace('data:', '', $type);
+            $fileData = base64_decode($dataStr);
+
+            $ext = strpos($mimeType, 'pdf') !== false ? 'pdf' : 'png';
+
+            return response($fileData)
+                ->header('Content-Type', $mimeType)
+                ->header('Content-Disposition', 'inline; filename="soporte_' . $id . '.' . $ext . '"');
+        }
+
+        abort(404);
+    }
+
     public function update2(Request $request, $id)
     {
         $restriccion = DB::table('solicitudes')->where('id', '=', $id)->value('placa');

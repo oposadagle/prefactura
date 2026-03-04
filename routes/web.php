@@ -37,6 +37,8 @@ Route::post('/libre/update', [LibreController::class, 'update']);
 Route::resource('libre', LibreController::class);
 Route::resource('cliente', ClienteController::class);
 Route::post('/solicitud/update', [SolicitudController::class, 'update']);
+Route::post('/solicitud/upload-soporte', [SolicitudController::class, 'uploadSoporte'])->name('solicitud.uploadSoporte');
+Route::get('/solicitud/soporte/{id}', [SolicitudController::class, 'showSoporte'])->name('solicitud.showSoporte');
 Route::resource('solicitud', SolicitudController::class);
 Route::post('solicitud/store2', [SolicitudController::class, 'store2'])->name('solicitud.store2');
 Route::get('/logs', [SolicitudController::class, 'logs'])->name('solicitud.logs');

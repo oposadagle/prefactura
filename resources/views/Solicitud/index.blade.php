@@ -242,8 +242,10 @@
                                 <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;">$ CARGA 2</th>
                                 <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;">$ STANDBY</th>
                                 <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;">$ DESPLAZAMIENTO</th>
-                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">APROBAR</th>
-                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">VALIDAR</th>
+                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;">SOPORTE</th>
+
+                                {{-- <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">APROBAR</th>
+                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">VALIDAR</th> --}}
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">TIPO 🚗</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">PLACA POR</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">COSTO POR</th>
@@ -622,7 +624,7 @@
                                     @endcan
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('originar')
-                                            @if(!$diario->avalado)
+                                            @if(!$diario->avalado && !$diario->cedula)
                                             <a href="#" class="editable" data-type="text" data-name="cedula" data-pk="{{$diario->id}}" style="color: #747b8e">
                                                 {{ $diario->cedula }}
                                             </a>
@@ -635,7 +637,7 @@
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('originar')
-                                            @if(!$diario->avalado)
+                                            @if(!$diario->avalado && !$diario->cargaone)
                                             <a href="#" class="editabler" data-type="text" data-name="cargaone" data-pk="{{$diario->id}}" style="color: #747b8e">
                                                 {{ number_format($diario->cargaone, 0, ',', '.') }}
                                             </a>
@@ -648,7 +650,7 @@
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('originar')
-                                            @if(!$diario->avalado)
+                                            @if(!$diario->avalado && !$diario->cargatwo)
                                             <a href="#" class="editabler" data-type="text" data-name="cargatwo" data-pk="{{$diario->id}}" style="color: #747b8e">
                                                 {{ number_format($diario->cargatwo, 0, ',', '.') }}
                                             </a>
@@ -661,7 +663,7 @@
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('originar')
-                                            @if(!$diario->avalado)
+                                            @if(!$diario->avalado && !$diario->standby)
                                             <a href="#" class="editabler" data-type="text" data-name="standby" data-pk="{{$diario->id}}" style="color: #747b8e">
                                                 {{ number_format($diario->standby, 0, ',', '.') }}
                                             </a>
@@ -674,7 +676,7 @@
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('originar')
-                                            @if(!$diario->avalado)
+                                            @if(!$diario->avalado && !$diario->costo_desplazamiento)
                                             <a href="#" class="editabler" data-type="text" data-name="costo_desplazamiento" data-pk="{{$diario->id}}" style="color: #747b8e">
                                                 {{ number_format($diario->costo_desplazamiento, 0, ',', '.') }}
                                             </a>
@@ -685,8 +687,28 @@
                                             {{ number_format($diario->costo_desplazamiento, 0, ',', '.') }}
                                         @endcan
                                     </td>
-
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        @if($diario->soporte)
+                                            @php
+                                                $esPdf = str_contains($diario->soporte, 'application/pdf');
+                                            @endphp
+                                            <a href="{{ route('solicitud.showSoporte', $diario->id) }}" target="_blank" title="Ver soporte">
+                                                @if($esPdf)
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 18H17V16H7V18ZM7 14H17V12H7V14ZM6 22C5.45 22 4.979 21.804 4.587 21.413C4.196 21.021 4 20.55 4 20V4C4 3.45 4.196 2.979 4.587 2.587C4.979 2.196 5.45 2 6 2H14L20 8V20C20 20.55 19.804 21.021 19.413 21.413C19.021 21.804 18.55 22 18 22H6ZM13 9V4H6V20H18V9H13Z" fill="#FF5722"/></svg>
+                                                @else
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 19V5C21 3.9 20.1 3 19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19ZM8.5 13.5L11 16.51L14.5 12L19 18H5L8.5 13.5Z" fill="#4CAF50"/></svg>
+                                                @endif
+                                            </a>
+                                        @else
+                                            @can('originar')
+                                                @if(!$diario->avalado)
+                                                    <input type="file" class="soporte-upload" data-pk="{{ $diario->id }}" accept=".jpg,.jpeg,.png,.pdf" style="width: 80px; font-size: 10px;">
+                                                @endif
+                                            @endcan
+                                        @endif
+                                    </td>
+                                    
+                                    {{-- <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @if($diario->avalado)
                                             <button type="button" class="btn btn-success btn-xs disabled" style="width: 100%; pointer-events: none;">
                                                 <i class="fas fa-check"></i>
@@ -723,7 +745,7 @@
                                                 </button>
                                             @endcan
                                         @endif
-                                    </td>
+                                    </td> --}}
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('placa')
                                         <a href="#" class="editable" data-type="select" data-name="tipo" data-pk="{{$diario->id}}" data-source='[{"value":"ANTIGUO","text":"ANTIGUO"},{"value":"NUEVO","text":"NUEVO"},{"value":"","text":""}]'>
@@ -1429,6 +1451,68 @@
                     });
                 }
             });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Subir soporte como base64
+        $(document).on('change', '.soporte-upload', function() {
+            var input = this;
+            var pk = $(this).data('pk');
+            var file = input.files[0];
+
+            if (!file) return;
+
+            // Validar tipo de archivo
+            var allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+            if (!allowedTypes.includes(file.type)) {
+                Swal.fire('Error', 'Solo se permiten archivos JPG, PNG o PDF.', 'error');
+                $(input).val('');
+                return;
+            }
+
+            // Validar tamaño (máx 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                Swal.fire('Error', 'El archivo no debe superar los 2MB.', 'error');
+                $(input).val('');
+                return;
+            }
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var base64 = e.target.result;
+
+                $.ajax({
+                    url: '/solicitud/upload-soporte',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        pk: pk,
+                        soporte: base64
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            var esPdf = file.type === 'application/pdf';
+                            var icono = esPdf
+                                ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 18H17V16H7V18ZM7 14H17V12H7V14ZM6 22C5.45 22 4.979 21.804 4.587 21.413C4.196 21.021 4 20.55 4 20V4C4 3.45 4.196 2.979 4.587 2.587C4.979 2.196 5.45 2 6 2H14L20 8V20C20 20.55 19.804 21.021 19.413 21.413C19.021 21.804 18.55 22 18 22H6ZM13 9V4H6V20H18V9H13Z" fill="#FF5722"/></svg>'
+                                : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 19V5C21 3.9 20.1 3 19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19ZM8.5 13.5L11 16.51L14.5 12L19 18H5L8.5 13.5Z" fill="#4CAF50"/></svg>';
+
+                            $(input).replaceWith(
+                                '<a href="/solicitud/soporte/' + pk + '" target="_blank" title="Ver soporte">' + icono + '</a>'
+                            );
+                            Swal.fire('¡Guardado!', 'El soporte ha sido cargado correctamente.', 'success');
+                        } else {
+                            Swal.fire('Error', 'No se pudo guardar el soporte.', 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Ocurrió un error en el servidor.', 'error');
+                    }
+                });
+            };
+            reader.readAsDataURL(file);
         });
     });
 </script>
