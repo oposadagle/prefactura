@@ -316,6 +316,7 @@ C<x-header />
                                         <option>Mariano Callejas / Medellin</option>
                                         <option>Deneider Jesus / Medellin / Coordinador</option>
                                         <option>Andres / Barranquilla</option>
+                                        <option>Paulina / Ejecutiva de cuenta</option>
                                     </select>
                                     <label for="ejecutivo">Quien solicita</label>
                                 </div>

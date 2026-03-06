@@ -272,6 +272,7 @@
                                         <option>Juan Medina</option>
                                         <option>Maicol Palomino</option>
                                         <option>Martha Duarte</option>
+                                        <option>Paulina Lucero</option>
                                     </select>
                                     <label for="ejecutivo">Ejecutivo de cuenta</label>
                                 </div>

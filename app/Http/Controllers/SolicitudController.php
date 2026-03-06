@@ -244,6 +244,33 @@ class SolicitudController extends Controller
         return view('Solicitud.saldos', compact('diarias', 'festivos', 'userName'));
     }
 
+    public function cuentas()
+    {
+        $userName = Auth::user()->name;
+        
+        $diarias = DB::table('peticiones')
+            ->whereNotNull('cedula')
+            ->whereNotNull('soporte')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        foreach ($diarias as $diario) {
+            if (!$diario->verificado) {
+                $diario->estado_cuenta = 'PENDIENTE POR APROBAR';
+            } elseif ($diario->verificado && !$diario->avalado) {
+                $diario->estado_cuenta = 'PENDIENTE POR VALIDAR';
+            } elseif ($diario->verificado && $diario->avalado && !$diario->pagada) {
+                $diario->estado_cuenta = 'PENDIENTE POR PAGAR';
+            } elseif ($diario->verificado && $diario->avalado && $diario->pagada) {
+                $diario->estado_cuenta = 'CUENTA PAGADA';
+            } else {
+                $diario->estado_cuenta = 'DESCONOCIDO';
+            }
+        }
+
+        return view('Solicitud.cuentas', compact('diarias', 'userName'));
+    }
+
     private function calcularFechaTentativa($fechaInicial, $diasHabiles, $festivos)
     {
         if (is_null($fechaInicial)) {
@@ -288,6 +315,37 @@ class SolicitudController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Hubo un error al actualizar los registros.'
+            ], 500);
+        }
+    }
+
+    public function pagarCuentas(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se recibieron identificadores válidos.'
+            ]);
+        }
+
+        try {
+            DB::table('solicitudes')->whereIn('id', $ids)->update([
+                'pagada' => true,
+                'fechapaga' => \Carbon\Carbon::now('America/Bogota'),
+                'userpaga' => auth()->user()->name
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cuentas pagadas correctamente.'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error en pago masivo de cuentas: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Hubo un error al actualizar las cuentas.'
             ], 500);
         }
     }

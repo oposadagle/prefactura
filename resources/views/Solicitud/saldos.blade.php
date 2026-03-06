@@ -6,39 +6,26 @@
     color: #656C82;    
     }
 
-    /* Freeze first and second columns */
+    /* Freeze first column */
     #example th:nth-child(1),
     #example td:nth-child(1) {
         position: sticky;
         left: 0;
         z-index: 10 !important;
         background-clip: padding-box;
-        min-width: 40px;
-        width: 40px;
-    }
-
-    #example th:nth-child(2),
-    #example td:nth-child(2) {
-        position: sticky;
-        left: 40px; /* Width of the first column */
-        z-index: 10 !important;
-        background-clip: padding-box;
     }
 
     /* Handle backgrounds for sticky header */
-    #example thead th:nth-child(1),
-    #example thead th:nth-child(2) {
+    #example thead th:nth-child(1) {
         background-color: #212529 !important; /* Table dark header */
         z-index: 11 !important; /* Higher than body cells */
     }
 
     /* Handle backgrounds for striped sticky body rows */
-    #example tbody tr:nth-of-type(odd) td:nth-child(1),
-    #example tbody tr:nth-of-type(odd) td:nth-child(2) {
+    #example tbody tr:nth-of-type(odd) td:nth-child(1) {
         background-color: #f2f2f2 !important; 
     }
-    #example tbody tr:nth-of-type(even) td:nth-child(1),
-    #example tbody tr:nth-of-type(even) td:nth-child(2) {
+    #example tbody tr:nth-of-type(even) td:nth-child(1) {
         background-color: #ffffff !important;
     }
 </style>
@@ -53,8 +40,8 @@
                 <div class="d-flex">
                     <svg height="28px" width="28px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512.001 512.001" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path style="fill:#FFFFFF;" d="M256,504C119.033,504,8,392.967,8,256S119.033,8,256,8s248,111.033,248,248 C503.846,392.902,392.902,503.846,256,504z"></path> <path style="fill:#E21B1B;" d="M256,16c132.549,0,240,107.451,240,240s-107.452,240-240,240S16,388.548,16,256 C16.15,123.514,123.514,16.15,256,16 M256,0C114.615,0,0,114.615,0,256s114.615,256,256,256s256-114.615,256-256S397.385,0,256,0z"></path> <path style="fill:#FFFFFF;" d="M256,467.896c-117.027,0-211.896-94.869-211.896-211.896S138.973,44.104,256,44.104 S467.896,138.973,467.896,256l0,0C467.764,372.972,372.972,467.764,256,467.896z"></path> <path style="fill:#CCCCCC;" d="M256,48.104c114.818,0,207.896,93.078,207.896,207.896S370.818,463.897,256,463.897 S48.104,370.818,48.104,256C48.232,141.235,141.235,48.232,256,48.104 M256,40.104c-119.237,0-215.896,96.66-215.896,215.896 S136.764,471.897,256,471.897S471.897,375.237,471.897,256l0,0C471.896,136.764,375.236,40.104,256,40.104z"></path> <path d="M294.912,133.521c-67.647-26.686-144.119,6.519-170.806,74.166s6.519,144.119,74.166,170.806 c67.647,26.686,144.119-6.519,170.806-74.166c6.071-15.388,9.187-31.783,9.187-48.325H246.593L294.912,133.521z"></path> <path style="fill:#E21B1B;" d="M321.96,124.328l-43.56,110.384h118.68C397.075,185.985,367.286,142.213,321.96,124.328z"></path> </g></svg>
                     <h4 class="card-title" style="margin-left: 10px;">SALDOS</h4>
-                </div>               
-
+                </div>         
+                @can('bancos') 
                 <div class="d-flex align-items-center">
                     <a class="btn btn-dark py-2 mr-2" id="btnPagarBulk" style="font-size: 12px;font-family: Titillium Web;font-weight: 700; margin-right:10px;" href="javascript:void(0);">
                         <svg class="me-2" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" width="16px" height="16px" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path style="fill:#E7E8E3;" d="M512,402.282c0,16.716-13.55,30.267-30.265,30.267H30.265C13.55,432.549,0,418.996,0,402.282V109.717 c0-16.716,13.55-30.266,30.265-30.266h451.469c16.716,0,30.265,13.551,30.265,30.266L512,402.282L512,402.282z"></path> <rect y="148.13" style="fill:#34495E;" width="512" height="72.01"></rect> <rect y="220.16" style="fill:#FFFFFF;" width="512" height="44.555"></rect> <path style="opacity:0.15;fill:#202121;enable-background:new ;" d="M21.517,402.282V109.717 c0-16.716,13.552-30.266,30.267-30.266h-21.52C13.55,79.451,0,93.003,0,109.717v292.565c0,16.716,13.55,30.267,30.265,30.267h21.52 C35.07,432.549,21.517,418.996,21.517,402.282z"></path> <path style="fill:#EA001B;" d="M374.957,348.191c0-15.018,6.92-28.418,17.742-37.193c-8.227-6.669-18.705-10.669-30.12-10.669 c-26.433,0-47.861,21.428-47.861,47.862s21.428,47.862,47.861,47.862c11.415,0,21.894-3.999,30.12-10.669 C381.876,376.609,374.957,363.209,374.957,348.191z"></path> <path style="fill:#F79F1A;" d="M422.817,300.329c-11.415,0-21.894,3.999-30.119,10.669c10.824,8.775,17.741,22.175,17.741,37.193 s-6.918,28.418-17.741,37.193c8.227,6.669,18.705,10.669,30.119,10.669c26.435,0,47.863-21.428,47.863-47.862 C470.68,321.757,449.252,300.329,422.817,300.329z"></path> <path style="fill:#FF5F01;" d="M410.439,348.191c0-15.018-6.918-28.418-17.741-37.193c-10.822,8.775-17.742,22.175-17.742,37.193 s6.92,28.418,17.742,37.193C403.522,376.609,410.439,363.209,410.439,348.191z"></path> <g> <path style="fill:#FFFFFF;" d="M160.063,322.723H55.437c-4.611,0-8.348-3.736-8.348-8.348c0-4.611,3.736-8.348,8.348-8.348h104.626 c4.611,0,8.348,3.736,8.348,8.348S164.674,322.723,160.063,322.723z"></path> <path style="fill:#FFFFFF;" d="M160.063,357.422H55.437c-4.611,0-8.348-3.736-8.348-8.348s3.736-8.348,8.348-8.348h104.626 c4.611,0,8.348,3.736,8.348,8.348S164.674,357.422,160.063,357.422z"></path> <path style="fill:#FFFFFF;" d="M160.063,392.121H55.437c-4.611,0-8.348-3.736-8.348-8.348c0-4.611,3.736-8.348,8.348-8.348h104.626 c4.611,0,8.348,3.736,8.348,8.348C168.411,388.383,164.674,392.121,160.063,392.121z"></path> </g> </g></svg>
@@ -65,16 +52,18 @@
                         ARCHIVO PLANO
                     </a>
                 </div>
-            </div>            
-
+                @endcan
+            </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="example" class="table table-striped mb-0">
                         <thead class="table-dark" style="font-size: 11px;">
                             <tr>
+                                @can('bancos')
                                 <th class="celdas text-center" style="border: 1px solid #0c213a;">
                                     <input class="form-check-input" type="checkbox" id="selectAll">
                                 </th>
+                                @endcan
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">MANIFIESTO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">FECHA CARGUE</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">FECHA ENVIO</th>
@@ -103,9 +92,11 @@
                         <tbody style="font-size: 12px;font-family: Titillium Web;">
                             @foreach ($diarias as $diario)
                                 <tr style="text-align: center">
+                                    @can('bancos')
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         <input class="form-check-input row-checkbox" type="checkbox" value="{{ $diario->id }}">
                                     </td>
+                                    @endcan
                                     <td class="celdas" style="color: #000; font-weight: bold; border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->razon }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_cargue }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_envio }}</td>                                    
