@@ -214,6 +214,35 @@ class SolicitudController extends Controller
         return view('Solicitud.anticipos', compact('diarias', 'festivos', 'userName'));
     }
 
+    public function confirmarAnticipos(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se recibieron identificadores válidos.'
+            ]);
+        }
+
+        try {
+            DB::table('solicitudes')->whereIn('id', $ids)->update([
+                'confirmado' => 'SI'
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Registros confirmados correctamente.'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error en confirmación masiva de anticipos: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Hubo un error al actualizar los registros.'
+            ], 500);
+        }
+    }
+
     public function saldos()
     {
         $userName = Auth::user()->name;
@@ -369,6 +398,7 @@ class SolicitudController extends Controller
                      ->where('datos_bancarios.estado', '=', 'ACTIVO');
             })
             ->select(
+                'peticiones.id',
                 'peticiones.cpagsal',
                 'peticiones.pagsal',
                 'peticiones.valor_saldo',
@@ -379,7 +409,8 @@ class SolicitudController extends Controller
                 'datos_bancarios.tipo_cuenta'
             )
             ->whereIn('peticiones.id', $ids)
-            ->get();
+            ->get()
+            ->unique('id');
 
         // Calculate saldo_total for each record
         foreach ($registros as $reg) {
@@ -426,6 +457,99 @@ class SolicitudController extends Controller
             $line .= 'S';                                                           // 1  - Fijo
             $line .= $tipoTransaccion;                                              // 2  - Tipo transacción
             $line .= str_pad(intval($reg->saldo_total), 15, '0', STR_PAD_LEFT);    // 15 - Valor transacción
+            $line .= '00';                                                          // 2  - Ceros fijos
+            $line .= $fecha;                                                        // 8  - Fecha YYYYMMDD
+            $line .= str_repeat(' ', 21);                                           // 21 - Espacios
+            $line .= '100000';                                                      // 6  - Valor fijo
+            $line = str_pad($line, $LINE_WIDTH);                                    // Pad to fixed width
+
+            $lines[] = $line;
+        }
+
+        $content = implode("\r\n", $lines);
+
+        return response($content, 200)
+            ->header('Content-Type', 'text/plain; charset=UTF-8')
+            ->header('Content-Disposition', 'attachment; filename="BANCO.txt"');
+    }
+
+    public function archivoPlanoAnticipos(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Debe seleccionar al menos un registro.'
+            ]);
+        }
+
+        $LINE_WIDTH = 320;
+
+        $registros = DB::table('peticiones')
+            ->leftJoin('datos_bancarios', function ($join) {
+                $join->on('peticiones.cpagant', '=', 'datos_bancarios.nit')
+                     ->where('datos_bancarios.estado', '=', 'ACTIVO');
+            })
+            ->select(
+                'peticiones.id',
+                'peticiones.cpagant',
+                'peticiones.pagant',
+                'peticiones.valor_a_pagar',
+                'datos_bancarios.tipo_documento',
+                'datos_bancarios.codigo_banco',
+                'datos_bancarios.numero_cuenta',
+                'datos_bancarios.tipo_cuenta'
+            )
+            ->whereIn('peticiones.id', $ids)
+            ->get()
+            ->unique('id');
+
+        // Calculate amount for each record
+        foreach ($registros as $reg) {
+            $reg->amount = intval(floatval($reg->valor_a_pagar));
+        }
+
+        $fecha = Carbon::now('America/Bogota')->format('Ymd'); // e.g. 20260303
+        $cantidadRegistros = $registros->count();
+        $sumaTotal = $registros->sum('amount');
+
+        // ========== HEADER LINE ==========
+        $header = '1';                                              // 1  - Tipo registro
+        $header .= '000000';                                        // 6  - Ceros fijos
+        $header .= '900614022';                                     // 9  - NIT Pagador
+        $header .= 'I';                                             // 1  - Aplicación
+        $header .= str_repeat(' ', 15);                             // 15 - Espacios
+        $header .= '225';                                           // 3  - Tipo de pago
+        $header .= str_repeat(' ', 10);                             // 10 - Espacios
+        $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
+        $header .= 'A1';                                            // 2  - Secuencia de envío
+        $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
+        $header .= str_pad($cantidadRegistros, 6, '0', STR_PAD_LEFT); // 6  - Cantidad registros
+        $header .= str_pad($sumaTotal, 32, '0', STR_PAD_LEFT);       // 32 - Suma total valores
+        $header .= '0018096953824';                                   // 13 - Cuenta a debitar
+        $header .= 'S';                                               // 1  - Tipo cuenta
+        $header = str_pad($header, $LINE_WIDTH);                      // Pad to fixed width
+
+        $lines = [$header];
+
+        // ========== DETAIL LINES ==========
+        foreach ($registros as $reg) {
+            // Derive tipo_transaccion from tipo_cuenta
+            $tipoTransaccion = '37'; // default: CUENTA DE AHORRO
+            if ($reg->tipo_cuenta === 'CUENTA CORRIENTE') {
+                $tipoTransaccion = '27';
+            }
+
+            $line = str_pad($reg->tipo_documento ?? '6', 1);                      // 1  - Tipo doc beneficiario
+            $line .= str_pad($reg->cpagant ?? '', 15);                             // 15 - NIT/Cédula (left-aligned, space-padded)
+            $line .= str_pad(mb_substr($reg->pagant ?? '', 0, 30), 30);            // 30 - Nombre beneficiario
+            $line .= '00000';                                                       // 5  - Ceros fijos
+            $line .= str_pad($reg->codigo_banco ?? '1007', 4, '0', STR_PAD_LEFT);  // 4  - Código banco
+            $line .= str_pad($reg->numero_cuenta ?? '', 17);                       // 17 - Número cuenta (left-aligned, space-padded)
+            $line .= 'S';                                                           // 1  - Fijo
+            $line .= $tipoTransaccion;                                              // 2  - Tipo transacción
+            $line .= str_pad(intval($reg->amount), 15, '0', STR_PAD_LEFT);         // 15 - Valor transacción
             $line .= '00';                                                          // 2  - Ceros fijos
             $line .= $fecha;                                                        // 8  - Fecha YYYYMMDD
             $line .= str_repeat(' ', 21);                                           // 21 - Espacios

@@ -5,8 +5,7 @@
     text-overflow: ellipsis;
     color: #656C82;    
     }
-
-    /* Freeze first two columns */
+    /* Freeze first column (Checkbox) */
     #example th:nth-child(1),
     #example td:nth-child(1) {
         position: sticky;
@@ -14,19 +13,20 @@
         z-index: 10 !important;
         background-clip: padding-box;
     }
-    
+
+    /* Freeze second column (MANIFIESTO) */
     #example th:nth-child(2),
     #example td:nth-child(2) {
         position: sticky;
-        left: 80px; 
+        left: 31px; /* Adjust this value if the checkbox column width is different */
         z-index: 10 !important;
         background-clip: padding-box;
     }
-
+    
     /* Set fixed width for the first column to make the second column's offset stable */
     #example th:nth-child(1), #example td:nth-child(1) {
-        min-width: 80px;
-        max-width: 80px;
+        min-width: 30px;
+        max-width: 30px;
     }
 
     /* Handle backgrounds for sticky header */
@@ -59,21 +59,38 @@
                     <h4 class="card-title" style="margin-left: 10px;">ANTICIPOS DIARIOS</h4>
                 </div>               
 
-                <a class="btn btn-outline-primary py-2" style="font-size: 12px;font-family: Titillium Web;font-weight: 700;" href="{{ route('solicitud.diario') }}">
-                    <svg width="16" height="16" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <defs> <linearGradient id="a" x1="4.494" y1="-2092.086" x2="13.832" y2="-2075.914" gradientTransform="translate(0 2100)" gradientUnits="userSpaceOnUse"> <stop offset="0" stop-color="#18884f" /> <stop offset="0.5" stop-color="#117e43" /> <stop offset="1" stop-color="#0b6631" /> </linearGradient> </defs> <title>file_type_excel</title> <path d="M19.581,15.35,8.512,13.4V27.809A1.192,1.192,0,0,0,9.705,29h19.1A1.192,1.192,0,0,0,30,27.809h0V22.5Z" style="fill:#185c37" /> <path d="M19.581,3H9.705A1.192,1.192,0,0,0,8.512,4.191h0V9.5L19.581,16l5.861,1.95L30,16V9.5Z" style="fill:#21a366" /> <path d="M8.512,9.5H19.581V16H8.512Z" style="fill:#107c41" /> <path d="M16.434,8.2H8.512V24.45h7.922a1.2,1.2,0,0,0,1.194-1.191V9.391A1.2,1.2,0,0,0,16.434,8.2Z" style="opacity:0.10000000149011612;isolation:isolate" /> <path d="M15.783,8.85H8.512V25.1h7.271a1.2,1.2,0,0,0,1.194-1.191V10.041A1.2,1.2,0,0,0,15.783,8.85Z" style="opacity:0.20000000298023224;isolation:isolate" /> <path d="M15.783,8.85H8.512V23.8h7.271a1.2,1.2,0,0,0,1.194-1.191V10.041A1.2,1.2,0,0,0,15.783,8.85Z" style="opacity:0.20000000298023224;isolation:isolate" /> <path d="M15.132,8.85H8.512V23.8h6.62a1.2,1.2,0,0,0,1.194-1.191V10.041A1.2,1.2,0,0,0,15.132,8.85Z" style="opacity:0.20000000298023224;isolation:isolate" /> <path d="M3.194,8.85H15.132a1.193,1.193,0,0,1,1.194,1.191V21.959a1.193,1.193,0,0,1-1.194,1.191H3.194A1.192,1.192,0,0,1,2,21.959V10.041A1.192,1.192,0,0,1,3.194,8.85Z" style="fill:url(#a)" /> <path d="M5.7,19.873l2.511-3.884-2.3-3.862H7.758L9.013,14.6c.116.234.2.408.238.524h.017c.082-.188.169-.369.26-.546l1.342-2.447h1.7l-2.359,3.84,2.419,3.905H10.821l-1.45-2.711A2.355,2.355,0,0,1,9.2,16.8H9.176a1.688,1.688,0,0,1-.168.351L7.515,19.873Z" style="fill:#fff" /> <path d="M28.806,3H19.581V9.5H30V4.191A1.192,1.192,0,0,0,28.806,3Z" style="fill:#33c481" /> <path d="M19.581,16H30v6.5H19.581Z" style="fill:#107c41" /> </svg>
-                    <i class="me-2"></i>
-                    DESCARGAR
-                </a>
-            </div>            
+                <div class="d-flex align-items-center">
+                    <a class="btn btn-dark py-2 mr-2" id="btnConfirmarBulk" style="font-size: 12px;font-family: Titillium Web;color:#FFAB00;font-weight: 700; margin-right:10px;" href="javascript:void(0);">
+                        <svg class="me-1" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px" height="16px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill="#FAFAFA" d="M20,20H4c-1.1,0-2-0.9-2-2V6c0-1.1,0.9-2,2-2h16c1.1,0,2,0.9,2,2v12C22,19.1,21.1,20,20,20z"></path> <path id="Bottom-Bar" fill="#303F9F" d="M2,16h20v2c0,1.1-0.9,2-2,2H4c-1.1,0-2-0.9-2-2V16z"></path> <path id="Top-Bar" fill="#FFAB00" d="M4,4h16c1.1,0,2,0.9,2,2v2H2V6C2,4.9,2.9,4,4,4z"></path> <path opacity="0.12" fill="#020202" d="M20,4H4C2.9,4,2,4.9,2,6v12c0,1.1,0.9,2,2,2h16c1.1,0,2-0.9,2-2V6C22,4.9,21.1,4,20,4z M21,18c0,0.6-0.4,1-1,1H4c-0.6,0-1-0.4-1-1V6c0-0.6,0.4-1,1-1h16c0.6,0,1,0.4,1,1V18z"></path> <path fill="#303F9F" d="M15,13H9c-0.6,0-1-0.4-1-1v0c0-0.6,0.4-1,1-1h6c0.6,0,1,0.4,1,1v0C16,12.6,15.6,13,15,13z"></path> </g></svg>
+                        CONFIRMAR
+                    </a>
+                    
+                    @can('bancos')
+                    <a class="btn btn-primary py-2 mr-2" id="btnArchivoPlano" style="font-size: 12px;font-family: Titillium Web;font-weight: 700; margin-right:10px;" href="javascript:void(0);">
+                        <svg class="me-2" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" width="16px" height="16px" fill="#000000" transform="rotate(180)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <polygon style="fill:#CFDCE5;" points="343.754,75.864 413.408,75.864 413.408,512 98.593,512 98.593,75.864 168.234,75.864 "></polygon> <polygon style="fill:#FF6F52;" points="255.999,0 180.391,94.832 218.755,94.832 218.755,175.93 293.241,175.93 293.241,94.832 331.606,94.832 "></polygon> <g> <rect x="157.018" y="206.045" style="fill:#314A5F;" width="28.793" height="17.998"></rect> <rect x="203.801" y="206.045" style="fill:#314A5F;" width="151.174" height="17.998"></rect> <rect x="157.018" y="253.201" style="fill:#314A5F;" width="102.579" height="17.998"></rect> <rect x="277.594" y="253.201" style="fill:#314A5F;" width="77.393" height="17.998"></rect> <rect x="157.018" y="300.344" style="fill:#314A5F;" width="197.97" height="17.998"></rect> <rect x="157.018" y="347.5" style="fill:#314A5F;" width="64.194" height="17.998"></rect> <rect x="239.198" y="347.5" style="fill:#314A5F;" width="115.777" height="17.998"></rect> <rect x="279.394" y="441.787" style="fill:#314A5F;" width="75.591" height="17.998"></rect> </g> </g></svg>
+                        ARCHIVO PLANO
+                    </a>
+                    @endcan
+
+                    <a class="btn btn-outline-primary py-2" style="font-size: 12px;font-family: Titillium Web;font-weight: 700;" href="{{ route('solicitud.diario') }}">
+                        <svg width="16" height="16" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <defs> <linearGradient id="a" x1="4.494" y1="-2092.086" x2="13.832" y2="-2075.914" gradientTransform="translate(0 2100)" gradientUnits="userSpaceOnUse"> <stop offset="0" stop-color="#18884f" /> <stop offset="0.5" stop-color="#117e43" /> <stop offset="1" stop-color="#0b6631" /> </linearGradient> </defs> <title>file_type_excel</title> <path d="M19.581,15.35,8.512,13.4V27.809A1.192,1.192,0,0,0,9.705,29h19.1A1.192,1.192,0,0,0,30,27.809h0V22.5Z" style="fill:#185c37" /> <path d="M19.581,3H9.705A1.192,1.192,0,0,0,8.512,4.191h0V9.5L19.581,16l5.861,1.95L30,16V9.5Z" style="fill:#21a366" /> <path d="M8.512,9.5H19.581V16H8.512Z" style="fill:#107c41" /> <path d="M16.434,8.2H8.512V24.45h7.922a1.2,1.2,0,0,0,1.194-1.191V9.391A1.2,1.2,0,0,0,16.434,8.2Z" style="opacity:0.10000000149011612;isolation:isolate" /> <path d="M15.783,8.85H8.512V25.1h7.271a1.2,1.2,0,0,0,1.194-1.191V10.041A1.2,1.2,0,0,0,15.783,8.85Z" style="opacity:0.20000000298023224;isolation:isolate" /> <path d="M15.783,8.85H8.512V23.8h7.271a1.2,1.2,0,0,0,1.194-1.191V10.041A1.2,1.2,0,0,0,15.783,8.85Z" style="opacity:0.20000000298023224;isolation:isolate" /> <path d="M15.132,8.85H8.512V23.8h6.62a1.2,1.2,0,0,0,1.194-1.191V10.041A1.2,1.2,0,0,0,15.132,8.85Z" style="opacity:0.20000000298023224;isolation:isolate" /> <path d="M3.194,8.85H15.132a1.193,1.193,0,0,1,1.194,1.191V21.959a1.193,1.193,0,0,1-1.194,1.191H3.194A1.192,1.192,0,0,1,2,21.959V10.041A1.192,1.192,0,0,1,3.194,8.85Z" style="fill:url(#a)" /> <path d="M5.7,19.873l2.511-3.884-2.3-3.862H7.758L9.013,14.6c.116.234.2.408.238.524h.017c.082-.188.169-.369.26-.546l1.342-2.447h1.7l-2.359,3.84,2.419,3.905H10.821l-1.45-2.711A2.355,2.355,0,0,1,9.2,16.8H9.176a1.688,1.688,0,0,1-.168.351L7.515,19.873Z" style="fill:#fff" /> <path d="M28.806,3H19.581V9.5H30V4.191A1.192,1.192,0,0,0,28.806,3Z" style="fill:#33c481" /> <path d="M19.581,16H30v6.5H19.581Z" style="fill:#107c41" /> </svg>
+                        <i class="me-2"></i>
+                        DESCARGAR
+                    </a>
+                </div>
+            </div>
 
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="example" class="table table-striped mb-0">
                         <thead class="table-dark" style="font-size: 11px;">
-                            <tr>                                
-                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0" /><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" /><g id="SVGRepo_iconCarrier"><path d="M3 9H21M7 3V5M17 3V5M6 13H8M6 17H8M11 13H13M11 17H13M16 13H18M16 17H18M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="#C3FF93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></g></svg> CARGUE</th>
-                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;">MANIFIESTO</th>
-                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;">CONDICION DE PAGO</th>
+                            <tr>
+                                <th class="celdas text-center" style="border: 1px solid #0c213a;">
+                                    <input class="form-check-input" type="checkbox" id="selectAll">
+                                </th>
+                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">MANIFIESTO</th>
+                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CARGUE</th>
+                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CONDICION DE PAGO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CLIENTE</th>                                
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">ORIGEN</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">DESTINO</th>
@@ -95,14 +112,17 @@
                                 <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">RETEFUENTE</th>
                                 <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">SEGURO</th>
                                 <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">VALOR A PAGAR</th>                               
-                                <th class="celdas" style="color: #E4FF30;border: 1px solid #0c213a;">CONFIRMAR</th>
+                                {{-- <th class="celdas" style="color: #E4FF30;border: 1px solid #0c213a;">CONFIRMAR</th> --}}
                             </tr>
                         </thead>
                         <tbody style="font-size: 12px;font-family: Titillium Web;">
                             @foreach ($diarias as $diario)
-                                <tr style="text-align: center">                                                                        
+                                <tr style="text-align: center">
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        <input class="form-check-input row-checkbox" type="checkbox" value="{{ $diario->id }}">
+                                    </td>
+                                    <td class="celdas" style="color: #000; font-weight: bold; border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->razon }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_cargue }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->razon }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                             @php
                                                 $estadoClase = '';
@@ -133,7 +153,7 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->destino) }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @php
-                                            $claseBoton = $diario->placa ? 'btn btn-warning py-0 px-2' : '';
+                                            $claseBoton = $diario->placa ? 'btn btn-warning py-0 px-2 fw-bold f-6' : '';
                                         @endphp
                                         <a href="#" class="{{ $claseBoton }}">{{ $diario->placa }}</a>  
                                     </td>
@@ -167,7 +187,7 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->seguro, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->valor_a_pagar, 0, ',', '.') }}</td>
 
-                                    <td class="celdas" style="border: 1px solid #9FAACC; padding-top: 10px; padding-bottom: 10px;">
+                                    {{-- <td class="celdas" style="border: 1px solid #9FAACC; padding-top: 10px; padding-bottom: 10px;">
                                         @php
                                             $estadoClase = '';
                                             if ($diario->confirmado == 'SI') {
@@ -179,15 +199,15 @@
                                         @endphp
                                     
                                     @if ($diario->confirmado == 'NO')                                            
-                                        <a href="#" class="editableg {{ $estadoClase }}" data-type="text" data-name="confirmado" data-pk="{{$diario->id}}">
+                                        <span class="{{ $estadoClase }}">
                                             <i class="dripicons-dots-3"></i>
-                                        </a>
+                                        </span>
                                     @else
                                         <span class="{{ $estadoClase }}">
                                             <i class="dripicons-checkmark"></i>
                                         </span>
                                     @endif
-                                    </td>
+                                    </td> --}}
                                 </tr>
                             @endforeach
                         </tbody>
@@ -422,35 +442,126 @@ $(document).ready(function() {
 </script>
 
 <script>
-    $('.editableg').on('click', function(e) {
-    e.preventDefault(); // Evita la acción predeterminada del enlace
+$(document).ready(function() {
+    // 1. Maestro checkbox synchronizer
+    $('#selectAll').change(function() {
+        var isChecked = $(this).prop('checked');
+        $('.row-checkbox').prop('checked', isChecked);
+    });
 
-    var pk = $(this).data('pk');  // Obtén el ID del registro
-    var url = '/solicitud/' + pk + '/update16';  // URL para la actualización
-
-    // Realiza la solicitud AJAX para cambiar el valor
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: {
-            enviado: 'SI',  // Enviar el valor "SI" directamente
-            _method: 'PUT',   // Método PUT para la actualización
-            _token: '{{ csrf_token() }}' // Asegurarse de enviar el token CSRF
-        },
-        success: function(response) {
-            if (response.success) {
-                // Actualiza el texto del enlace editable
-                $(e.target).text('SI').removeClass('bg-secondary').addClass('bg-info');
-                location.reload();
-            } else {
-                alert('Error al actualizar: ' + response.message);  // Mostrar el mensaje de error del servidor
+    // 2. If row checkbox unchecked, uncheck maestro
+    $('.row-checkbox').change(function() {
+        if (!$(this).prop('checked')) {
+            $('#selectAll').prop('checked', false);
+        } else {
+            if ($('.row-checkbox:checked').length === $('.row-checkbox').length) {
+                $('#selectAll').prop('checked', true);
             }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.error('Error:', textStatus, errorThrown);
-            console.log(jqXHR.responseText);  // Mostrar el detalle del error en la consola
-            alert('Ocurrió un error al intentar actualizar.');
         }
+    });
+
+    // 3. Confirmar bulk action
+    $('#btnConfirmarBulk').click(function(e) {
+        e.preventDefault();
+        
+        var selectedIds = [];
+        $('.row-checkbox:checked').each(function() {
+            selectedIds.push($(this).val());
+        });
+
+        if (selectedIds.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atención',
+                text: 'Debe seleccionar al menos un registro para confirmar.'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: '¿Está seguro de confirmar los registros seleccionados?',
+            text: "Se marcarán como confirmados " + selectedIds.length + " registro(s)",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, confirmar',
+            cancelButtonText: 'Cancelar',
+            customClass: {
+                confirmButton: 'btn btn-primary',
+                cancelButton: 'btn btn-secondary'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // disable button to prevent double clicks
+                $('#btnConfirmarBulk').addClass('disabled').html('<i class="ti ti-loader fa-spin me-2"></i> PROCESANDO...');
+                
+                $.ajax({
+                    url: '{{ route("solicitud.confirmarAnticipos") }}',
+                    type: 'POST',
+                    data: {
+                        ids: selectedIds,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire(
+                                '¡Confirmados!',
+                                'Los registros se han actualizado correctamente.',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            $('#btnConfirmarBulk').removeClass('disabled').html('<i class="ti ti-check me-2"></i> CONFIRMAR');
+                            Swal.fire('Error', response.message || 'Error desconocido', 'error');
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        $('#btnConfirmarBulk').removeClass('disabled').html('<i class="ti ti-check me-2"></i> CONFIRMAR');
+                        Swal.fire('Error', 'Hubo un problema de conexión al procesar los confirmados.', 'error');
+                    }
+                });
+            }
+        });
+    });
+
+    // Handle the ARCHIVO PLANO bulk download action
+    $('#btnArchivoPlano').on('click', function() {
+        var selectedIds = [];
+        $('.row-checkbox:checked').each(function() {
+            selectedIds.push($(this).val());
+        });
+
+        if (selectedIds.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atención',
+                text: 'Debe seleccionar al menos un registro para descargar.'
+            });
+            return;
+        }
+
+        var form = $('<form>', {
+            'method': 'POST',
+            'action': '{{ route("solicitud.archivoPlanoAnticipos") }}'
+        });
+
+        form.append($('<input>', {
+            'type': 'hidden',
+            'name': '_token',
+            'value': '{{ csrf_token() }}'
+        }));
+
+        selectedIds.forEach(function(id) {
+            form.append($('<input>', {
+                'type': 'hidden',
+                'name': 'ids[]',
+                'value': id
+            }));
+        });
+
+        $('body').append(form);
+        form.submit();
+        form.remove();
     });
 });
 </script>
