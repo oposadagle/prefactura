@@ -91,6 +91,7 @@
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">MANIFIESTO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CARGUE</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CONDICION DE PAGO</th>
+                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">NIT</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CLIENTE</th>                                
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">ORIGEN</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">DESTINO</th>
@@ -148,6 +149,7 @@
                                             @endphp
                                         <span class="{{ $estadoClase }}">{{ $diario->paytype }}</span>
                                     </td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->nit }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->cliente }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->origen) }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->destino) }}</td>
