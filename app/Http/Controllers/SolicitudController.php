@@ -19,6 +19,7 @@ use App\Exports\ServiciosExport;
 use App\Exports\LogsExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
@@ -229,6 +230,53 @@ class SolicitudController extends Controller
             DB::table('solicitudes')->whereIn('id', $ids)->update([
                 'confirmado' => 'SI'
             ]);
+
+            // Dispatch WhatsApp messages via Whapi
+            $peticiones = DB::table('peticiones')->whereIn('id', $ids)->get();
+            $whapiToken = env('WHAPI_TOKEN');
+            $whapiUrl = env('WHAPI_API_URL', 'https://gate.whapi.cloud/messages/text');
+
+            if ($whapiToken && $whapiUrl) {
+                foreach ($peticiones as $p) {
+                    if (empty($p->tpagant)) continue;
+
+                    // Limpiar el numero de telefono, asumiendo 57 (Colombia) si tiene 10 digitos sin indicativo
+                    $telefono = trim($p->tpagant);
+                    if (substr($telefono, 0, 1) !== '+' && strlen($telefono) == 10) {
+                        $telefono = '57' . $telefono;
+                    }
+                    // Quitar los '+' para que sea de solo digitos como exige la API
+                    $telefono = str_replace('+', '', $telefono);
+                    // Formatear valores monetarios de manera consistente
+                    $val_reteica = number_format(floatval($p->reteica), 0, ',', '.');
+                    $val_retefuente = number_format(floatval($p->retefuente), 0, ',', '.');
+                    $val_seguro = number_format(floatval($p->seguro), 0, ',', '.');
+                    $val_pagar = number_format(floatval($p->valor_a_pagar), 0, ',', '.');
+
+                    if ($p->pago_completo === 'SI') {
+                        $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realizó un pago por concepto del anticipo correspondiente al manifiesto: {$p->razon}\n\n" .
+                                   "RESUMEN\n" .
+                                   "reteica: {$val_reteica}\n" .
+                                   "retefuente: {$val_retefuente}\n" .
+                                   "seguro: {$val_seguro}\n" .
+                                   "valor pagado: {$val_pagar}\n\n" .
+                                   "...no responder este mensaje...";
+                    } else {
+                        $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realizó un pago por concepto del anticipo correspondiente al manifiesto: {$p->razon}\n\n" .
+                                   "RESUMEN\n" .
+                                   "valor pagado: {$val_pagar}\n\n" .
+                                   "...no responder este mensaje...";
+                    }
+
+                    // Enviar mensaje hacia WhatsApp (PAUSADO TEMPORALMENTE A PETICIÓN DEL USUARIO)
+                    // Http::withToken($whapiToken)
+                    //    ->post($whapiUrl, [
+                    //        'typing_time' => 0,
+                    //        'to' => $telefono,
+                    //        'body' => $mensaje
+                    //    ]);
+                }
+            }
 
             return response()->json([
                 'success' => true,

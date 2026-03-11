@@ -78,6 +78,8 @@ class PrefacturasExport implements FromCollection, WithHeadings
             ->whereYear('fecha_cargue', $this->year)
             ->whereMonth('fecha_cargue', $this->month)
             ->where('facturar', 'SI')
+            ->orderBy('fecha_cargue', 'asc')
+            ->orderBy('id', 'asc')
             ->get()
             ->map(function ($item) {
                 $item->valor_cobrar = round($item->valor_cobrar ?? 0);
