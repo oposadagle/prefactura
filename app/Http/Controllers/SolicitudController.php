@@ -234,7 +234,10 @@ class SolicitudController extends Controller
             // Dispatch WhatsApp messages via Whapi
             $peticiones = DB::table('peticiones')->whereIn('id', $ids)->get();
             $whapiToken = env('WHAPI_TOKEN');
-            $whapiUrl = env('WHAPI_API_URL', 'https://gate.whapi.cloud/messages/text');
+            $whapiUrl = rtrim(env('WHAPI_API_URL', 'https://gate.whapi.cloud/messages/text'), '/');
+            if (!str_ends_with($whapiUrl, '/messages/text')) {
+                $whapiUrl .= '/messages/text';
+            }
 
             if ($whapiToken && $whapiUrl) {
                 foreach ($peticiones as $p) {
@@ -268,13 +271,13 @@ class SolicitudController extends Controller
                                    "...no responder este mensaje...";
                     }
 
-                    // Enviar mensaje hacia WhatsApp (PAUSADO TEMPORALMENTE A PETICIÓN DEL USUARIO)
-                    // Http::withToken($whapiToken)
-                    //    ->post($whapiUrl, [
-                    //        'typing_time' => 0,
-                    //        'to' => $telefono,
-                    //        'body' => $mensaje
-                    //    ]);
+                    // Enviar mensaje hacia WhatsApp
+                    /* Http::withToken($whapiToken)
+                        ->post($whapiUrl, [
+                            'typing_time' => 0,
+                            'to' => $telefono,
+                            'body' => $mensaje
+                        ]); */
                 }
             }
 

@@ -133,7 +133,7 @@
                                                     $estadoClase = 'badge bg-danger';
                                                 }
                                             @endphp
-                                                <a href="#" class="editable {{ $estadoClase }}" data-type="select" data-name="ESTADO_COTIZACION" data-pk="{{$diario->id}}" data-source='[{"value":"APROBADO","text":"APROBADO"},{"value":"COMERCIAL","text":"COMERCIAL"},{"value":"COTIZACION","text":"COTIZACION"},{"value":"NO APROBADO","text":"NO APROBADO"}]'>
+                                                <a href="#" class="editable {{ $estadoClase }}" data-type="select" data-name="estado_cotizacion" data-pk="{{$diario->id}}" data-source='[{"value":"APROBADO","text":"APROBADO"},{"value":"COMERCIAL","text":"COMERCIAL"},{"value":"COTIZACION","text":"COTIZACION"},{"value":"NO APROBADO","text":"NO APROBADO"}]'>
                                                     {{$diario->estado_cotizacion}}
                                                 </a>    
                                             </td>
