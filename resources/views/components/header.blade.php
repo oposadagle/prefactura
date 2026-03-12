@@ -202,7 +202,12 @@
                                             @can('vehiculo.index')
                                             <li class="nav-item"><a class="nav-link" href="{{ route('vehiculo.index') }}">Lista
                                                     de vehículos</a></li>
-                                            @endcan
+                                            @endcan                                            
+                                        </ul>
+                                    </li>                                    
+                                    <li>
+                                        <a href="javascript: void(0);"><i class="ti-control-record"></i>Cotizaciones<span class="menu-arrow left-has-menu"><i class="mdi mdi-chevron-right"></i></span></a>
+                                        <ul class="nav-second-level" aria-expanded="false">                                            
                                             @can('edita.cotizacion')
                                                 <li class="nav-item"><a class="nav-link" href="{{ route('price.create') }}">Ingresar cotización</a></li>
                                             @endcan

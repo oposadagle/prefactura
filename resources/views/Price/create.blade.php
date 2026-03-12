@@ -281,42 +281,41 @@ C<x-header />
                                     <select class="form-select" id="QUIEN_SOLICITA" name="quien_solicita" autocomplete="off"
                                         aria-label="Floating label select example">
                                         <option selected disabled>Seleccionar</option>
-                                        <option>Eryka Lopez / medellin</option>
-                                        <option>Hernan  Humberto/ cali</option>
-                                        <option>Javier Hernandez / Bogota</option>
-                                        <option>Judith  Palacin/ Barranquilla</option>
-                                        <option>Leidy Yasmin / Bogota</option>
-                                        <option>Liliana Sanchez / Bogota</option>
-                                        <option>Mayra Molina / cali</option>
-                                        <option>Oscar Pardo / Bogota</option>
-                                        <option>Roger Rodriguez / Barranquilla</option>
-                                        <option>Sandra Gutierrez / Bogota</option>
-                                        <option>Stefania Jaramillo / medellin</option>
-                                        <option>Vivian Celis / Bogota</option>
-                                        <option>Yonathan Reyes / Cali</option>
-                                        <option>Yenifer Sánchez / Medellin</option>
-                                        <option>Masivos - Despachos</option>
-                                        <option>Operaciones</option>
-                                        <option>Marco / Barranquilla</option>
-                                        <option>Cristian  Tique / Medellin</option>
-                                        <option>Martha Duarte / Bogotá</option>
-                                        <option>Cristian vargas / Bogotá</option>
-                                        <option>Daniel / Bogotá</option>
-                                        <option>Magaly / Bogotá</option>
-                                        <option>Jessica Motta / Bogotá</option>
-                                        <option>Sebastian / Bogotá</option>
-                                        <option>Lina Giraldo / Bogotá</option>
-                                        <option>David Molina / Bogotá</option>
-                                        <option>Rolando / Bogota / Operaciones</option>
-                                        <option>Santiago / Bogota</option>
-                                        <option>Fabian Posada / Bogota</option>
-                                        <option>Milena  Patricia / Barranquilla</option>
-                                        <option>Carolina / Bogota / despachos</option>
-                                        <option>Zuly Moreno / Bogota / despachos</option>
-                                        <option>Mariano Callejas / Medellin</option>
-                                        <option>Deneider Jesus / Medellin / Coordinador</option>
-                                        <option>Andres / Barranquilla</option>
-                                        <option>Paulina / Ejecutiva de cuenta</option>
+                                        <option>ANTONIO GARCIA / BOGOTA / MASIVOS</option>
+                                        <option>ARTURO CAMPOS / BARRANQUILLA / MASIVOS</option>
+                                        <option>CRISTIAN VARGAS / BOGOTA / OPERACIONES</option>
+                                        <option>DANIEL DIMATE / BOGOTA / OPERACIONES</option>
+                                        <option>DAVID MOLINA / BOGOTA / DIRECTOR</option>
+                                        <option>DERNEY SANTANA / MEDELLIN / MASIVOS</option>
+                                        <option>DIANA QUINTERO / BOGOTA / OPERACIONES</option>
+                                        <option>ELIZABETH ARBOLEDA / BOGOTA / COMERCIAL</option>
+                                        <option>ERYKA LOPEZ / MEDELLIN / DIRECCIONAMIENTO ESTRATEGICO</option>
+                                        <option>FABIAN POSADA / BOGOTA / OPERACIONES</option>
+                                        <option>HERNAN JURI / CALI / COMERCIAL</option>
+                                        <option>JAVIER HERNANDEZ / BOGOTA / COMERCIAL</option>
+                                        <option>JESSICA MOTTA / BOGOTA / MASIVOS</option>
+                                        <option>LEIDY BAICUE / BOGOTA / COMERCIAL</option>
+                                        <option>LILIANA SANCHEZ / BOGOTA / COMERCIAL</option>
+                                        <option>LINA GIRALDO / BOGOTA / OPERACIONES</option>
+                                        <option>MAGALY GIL / BOGOTA / MASIVOS</option>
+                                        <option>MAICOL PALOMINO / BARRANQUILLA / MASIVOS</option>
+                                        <option>MARTHA DUARTE / BOGOTA / MASIVOS</option>
+                                        <option>MASIVOS / BOGOTA / MASIVOS</option>
+                                        <option>MAYRA MOLINA / CALI / COMERCIAL</option>
+                                        <option>MILENA BERARDINELLI / BARRANQUILLA / DIRECCIONAMIENTO ESTRATEGICO</option>
+                                        <option>OPERACIONES / BOGOTA / OPERACIONES</option>
+                                        <option>OSCAR PARDO / BOGOTA / COMERCIAL</option>
+                                        <option>PAULINA LUCERO / BOGOTA / MASIVOS</option>
+                                        <option>ROGER RODRIGUEZ / BARRANQUILLA / COMERCIAL</option>
+                                        <option>ROLANDO CRUZ / BOGOTA / OPERACIONES</option>
+                                        <option>SANDRA GUTIERREZ / BOGOTA / COMERCIAL</option>
+                                        <option>SEBASTIAN MEDINA / BOGOTA / MASIVOS</option>
+                                        <option>STEFANIA JARAMILLO / MEDELLIN / COMERCIAL</option>
+                                        <option>VIVIAN CELIS / BOGOTA / COMERCIAL</option>
+                                        <option>WILSON BERMUDEZ / CALI / COMERCIAL</option>
+                                        <option>YENIFER SÁNCHEZ / MEDELLIN / COMERCIAL</option>
+                                        <option>YONATHAN REYES / CALI / DIRECCIONAMIENTO ESTRATEGICO</option>
+                                        <option>ZULY MORENO / BOGOTA / DESPACHOS</option>
                                     </select>
                                     <label for="ejecutivo">Quien solicita</label>
                                 </div>
