@@ -272,12 +272,12 @@ class SolicitudController extends Controller
                     }
 
                     // Enviar mensaje hacia WhatsApp
-                    /* Http::withToken($whapiToken)
+                    Http::withToken($whapiToken)
                         ->post($whapiUrl, [
                             'typing_time' => 0,
                             'to' => $telefono,
                             'body' => $mensaje
-                        ]); */
+                        ]);
                 }
             }
 
@@ -385,6 +385,60 @@ class SolicitudController extends Controller
                 'fechapago' => Carbon::now('America/Bogota'),
                 'userpago' => auth()->user()->name
             ]);
+
+            // Dispatch WhatsApp messages via Whapi
+            $peticiones = DB::table('peticiones')->whereIn('id', $ids)->get();
+            $whapiToken = env('WHAPI_TOKEN');
+            $whapiUrl = rtrim(env('WHAPI_API_URL', 'https://gate.whapi.cloud/messages/text'), '/');
+            if (!str_ends_with($whapiUrl, '/messages/text')) {
+                $whapiUrl .= '/messages/text';
+            }
+
+            if ($whapiToken && $whapiUrl) {
+                foreach ($peticiones as $p) {
+                    if (empty($p->tpagsal)) continue;
+
+                    // Limpiar el numero de telefono, asumiendo 57 (Colombia) si tiene 10 digitos sin indicativo
+                    $telefono = trim($p->tpagsal);
+                    if (substr($telefono, 0, 1) !== '+' && strlen($telefono) == 10) {
+                        $telefono = '57' . $telefono;
+                    }
+                    $telefono = str_replace('+', '', $telefono);
+
+                    // Calculo de saldo_total basado en la vista saldos()
+                    $saldo_total = floatval($p->valor_saldo) - floatval($p->deducciones);
+
+                    // Formatear valores monetarios de manera consistente
+                    $val_costo = number_format(floatval($p->costo), 0, ',', '.');
+                    $val_anticipo = number_format(floatval($p->valor_a_pagar), 0, ',', '.');
+                    $val_extra = number_format(floatval($p->costo_tiposerv), 0, ',', '.');
+                    $val_retefuente = number_format(floatval($p->retefuente), 0, ',', '.');
+                    $val_reteica = number_format(floatval($p->reteica), 0, ',', '.');
+                    $val_seguro = number_format(floatval($p->seguro), 0, ',', '.');
+                    $val_deducciones = number_format(floatval($p->deducciones), 0, ',', '.');
+                    $val_saldototal = number_format($saldo_total, 0, ',', '.');
+
+                    $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realizó un pago por concepto del saldo correspondiente al manifiesto: {$p->razon}\n\n" .
+                               "RESUMEN:\n" .
+                               "COSTO: {$val_costo}\n" .
+                               "ANTICIPO: {$val_anticipo}\n" .
+                               "EXTRA: {$val_extra}\n" .
+                               "RETEFUENTE: {$val_retefuente}\n" .
+                               "RETEICA: {$val_reteica}\n" .
+                               "SEGURO: {$val_seguro}\n" .
+                               "OTRAS DEDUCCIONES: {$val_deducciones}\n" .
+                               "VALOR_SALDO: {$val_saldototal}\n\n" .
+                               "...no responder este mensaje...";
+
+                    // Enviar mensaje hacia WhatsApp
+                    Http::withToken($whapiToken)
+                        ->post($whapiUrl, [
+                            'typing_time' => 0,
+                            'to' => $telefono,
+                            'body' => $mensaje
+                        ]);
+                }
+            }
 
             return response()->json([
                 'success' => true,

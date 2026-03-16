@@ -1,0 +1,14 @@
+TYPE:
+Array
+(
+    [0] => stdClass Object
+        (
+            [table_type] => VIEW
+        )
+
+)
+
+COLUMNS:
+Error: SQLSTATE[42601]: Syntax error: 7 ERROR:  error de sintaxis en o cerca de «FROM»
+LINE 1: SHOW COLUMNS FROM peticiones
+                     ^ (Connection: pgsql, SQL: SHOW COLUMNS FROM peticiones)

@@ -553,11 +553,13 @@ $(document).ready(function() {
                     },
                     success: function(response) {
                         if (response.success) {
-                            Swal.fire(
-                                '¡Pagados!',
-                                'Los registros se han actualizado correctamente.',
-                                'success'
-                            ).then(() => {
+                            Swal.fire({
+                                title: '¡Pagados!',
+                                text: 'Los registros se han actualizado correctamente.',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: true
+                            }).then(() => {
                                 location.reload();
                             });
                         } else {
