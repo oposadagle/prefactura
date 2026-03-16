@@ -232,6 +232,9 @@
                                             @can('anticipo')
                                                 <li><a href="{{ route('solicitud.anticipo') }}">Contable y tesorería</a></li>                                                                     
                                             @endcan
+                                            @can('servicio')
+                                                <li><a href="{{ route('solicitud.anticipo') }}">Contable y tesorería</a></li>                                                                     
+                                            @endcan
                                             @can('anticipos')
                                                 <li><a href="{{ route('solicitud.anticipos') }}">Anticipos diarios</a></li>                                                                                                                              
                                             @endcan
