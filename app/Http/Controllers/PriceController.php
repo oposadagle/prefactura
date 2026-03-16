@@ -51,7 +51,10 @@ class PriceController extends Controller
             'responsable' => 'required',
             'costo_adicional' => 'required|numeric',
             'quien_solicita' => 'required',
+            'canal' => 'required',
+            'tipo' => 'required',
             'observaciones' => 'required'
+
         ];
         $message = [];
         

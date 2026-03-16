@@ -67,7 +67,12 @@
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">CLIENTE</th>
                                 <th class="      " style="color: #EE66A6;border: 1px solid #0C213A;">FECHA SOLICITUD</th>
                                 {{-- <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">CODIGO SEGUIMIENTO</th> --}}
+                                <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">CANAL</th>
+                                <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">TIPO</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">ESTADO COTIZACION</th>
+                                <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">RESPUESTA</th>
+
+
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">QUIEN SOLICITA</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">TRAYECTO</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">ORIGEN</th>
@@ -108,8 +113,27 @@
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         {{ $diario->fecha_solicitud }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        @can('edita.cotizacion')
+                                            <a href="#" class="editable" data-type="select" data-name="canal" data-pk="{{$diario->id}}" data-source='[{"value":"CORREO","text":"CORREO"},{"value":"WHATSAPP","text":"WHATSAPP"}]'>
+                                                {{ $diario->canal }}
+                                            </a>
+                                        @else
+                                            {{ $diario->canal }}
+                                        @endcan
+                                    </td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        @can('edita.cotizacion')
+                                            <a href="#" class="editable" data-type="select" data-name="tipo" data-pk="{{$diario->id}}" data-source='[{"value":"ARCHIVO CONSOLIDADO","text":"ARCHIVO CONSOLIDADO"},{"value":"RUTA LOGICA","text":"RUTA LOGICA"},{"value":"UNO A UNO","text":"UNO A UNO"}]'>
+                                                {{ $diario->tipo }}
+                                            </a>
+                                        @else
+                                            {{ $diario->tipo }}
+                                        @endcan
+                                    </td>
                                         
                                         @can('edita.cotizacion')
+
                                             {{-- <td class="celdas"
                                                 style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                                 <a href="#" class="editable" data-type="text"
@@ -144,7 +168,23 @@
                                             <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                                 {{ $diario->estado_cotizacion }}
                                             </td>
+                                        @endcan                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        @can('edita.cotizacion')
+                                            <a href="#" class="editable" data-type="text" data-name="respuesta" data-pk="{{$diario->id}}" data-value="{{ $diario->respuesta }}">
+                                                {{ Str::limit($diario->respuesta, 15, '...') }}
+                                            </a>
+                                            @if(strlen($diario->respuesta) > 15)
+                                                <button class="btn btn-sm btn-link p-0 toggle-btn" onclick="toggleRespuesta(this)" data-full="{{ $diario->respuesta }}">+</button>
+                                            @endif
+                                        @else
+                                            <span>{{ Str::limit($diario->respuesta, 15, '...') }}</span>
+                                            @if(strlen($diario->respuesta) > 15)
+                                                <button class="btn btn-sm btn-link p-0 toggle-btn" onclick="toggleRespuesta(this)" data-full="{{ $diario->respuesta }}">+</button>
+                                            @endif
                                         @endcan
+                                    </td>
+
+
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         {{ strToUpper($diario->quien_solicita) }}</td>
@@ -330,9 +370,26 @@
         },
         success: function(response, newValue) {
             if (response.success) {
-                $(this).text(newValue);
-                
+                if ($(this).data('name') === 'respuesta') {
+                    const btn = $(this).siblings('.toggle-btn');
+                    btn.attr('data-full', newValue);
+                    const isExpanded = btn.attr('data-expanded') === 'true';
+                    if (!isExpanded) {
+                        $(this).text(newValue.substring(0, 15) + (newValue.length > 15 ? '...' : ''));
+                    } else {
+                        $(this).text(newValue);
+                    }
+
+                    if (newValue.length <= 15) {
+                        btn.hide();
+                    } else {
+                        btn.show();
+                    }
+                } else {
+                    $(this).text(newValue);
+                }
             } else {
+
                 alert(response.message);
             }
         }
@@ -343,7 +400,28 @@
     function confirmDelete() {
         return confirm('¿Estás seguro de que deseas eliminar este registro?');
     }
+
+    window.toggleRespuesta = function(btn) {
+        const container = btn.parentElement;
+        const txtNode = container.children[0]; // anchor o span
+        const fullText = btn.getAttribute('data-full');
+        const isExpanded = btn.getAttribute('data-expanded') === 'true';
+        
+        if (isExpanded) {
+            // Contraer
+            txtNode.innerText = fullText.substring(0, 15) + (fullText.length > 15 ? '...' : '');
+            btn.innerText = '+';
+            btn.setAttribute('data-expanded', 'false');
+        } else {
+            // Expandir
+            txtNode.innerText = fullText;
+            btn.innerText = ' -';
+            btn.setAttribute('data-expanded', 'true');
+        }
+
+    }
 </script>
+
 
 @if (session('success'))
     <script>

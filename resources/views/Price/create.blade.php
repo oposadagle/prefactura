@@ -321,12 +321,36 @@ C<x-header />
                                 </div>
                             </div> 
                             
-                            <div class="col-lg-12 col-md-6 mt-4">
+                            <div class="col-lg-3 col-md-6 mt-4">
                                 <div class="form-floating mb-3 mx-3">
-                                    <input type="text" min="0" class="form-control" id="OBSERVACIONES" name="observaciones" autocomplete="off">
-                                    <label for="cliente">Observaciones</label>                                    
+                                    <select class="form-select" id="CANAL" name="canal" autocomplete="off">
+                                        <option selected disabled>Seleccionar</option>
+                                        <option value="CORREO">CORREO</option>
+                                        <option value="WHATSAPP">WHATSAPP</option>
+                                    </select>
+                                    <label for="CANAL">Canal</label>
                                 </div>
                             </div>
+
+                            <div class="col-lg-3 col-md-6 mt-4">
+                                <div class="form-floating mb-3 mx-3">
+                                    <select class="form-select" id="TIPO_COT" name="tipo" autocomplete="off">
+                                        <option selected disabled>Seleccionar</option>
+                                        <option value="ARCHIVO CONSOLIDADO">ARCHIVO CONSOLIDADO</option>
+                                        <option value="RUTA LOGICA">RUTA LOGICA</option>
+                                        <option value="UNO A UNO">UNO A UNO</option>
+                                    </select>
+                                    <label for="TIPO_COT">Tipo de cotización</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-12 mt-4">
+                                <div class="form-floating mb-3 mx-3">
+                                    <input type="text" class="form-control" id="OBSERVACIONES" name="observaciones" autocomplete="off">
+                                    <label for="OBSERVACIONES">Observaciones</label>                                    
+                                </div>
+                            </div>
+
 
                         </div>
                     </div>
