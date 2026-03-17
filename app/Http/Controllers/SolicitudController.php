@@ -815,6 +815,25 @@ class SolicitudController extends Controller
             ->header('Content-Disposition', 'attachment; filename="BANCO.txt"');
     }
 
+    public function descargarPdf(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Debe seleccionar al menos un registro.'
+            ]);
+        }
+
+        $registros = DB::table('peticiones')
+            ->whereIn('id', $ids)
+            ->get();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('Solicitud.formato-pdf', compact('registros'));
+        return $pdf->download('cartacuenta.pdf');
+    }
+
     public function diario()
     {
         return Excel::download(new DiariosExport, 'diario.xlsx');
