@@ -2577,45 +2577,47 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v3.2.1",
+            "version": "v3.7.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "95083c0b61c1910ad28c4628e0dfa9c227eb1c41"
+                "reference": "addd6e8e9234df75f29e6a327ee2a745a7d67bb6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/95083c0b61c1910ad28c4628e0dfa9c227eb1c41",
-                "reference": "95083c0b61c1910ad28c4628e0dfa9c227eb1c41",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/addd6e8e9234df75f29e6a327ee2a745a7d67bb6",
+                "reference": "addd6e8e9234df75f29e6a327ee2a745a7d67bb6",
                 "shasum": ""
             },
             "require": {
-                "illuminate/database": "^10.0",
-                "illuminate/support": "^10.0",
-                "illuminate/validation": "^10.0",
+                "illuminate/database": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/routing": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/validation": "^10.0|^11.0|^12.0|^13.0",
+                "laravel/prompts": "^0.1.24|^0.2|^0.3",
                 "league/mime-type-detection": "^1.9",
                 "php": "^8.1",
-                "symfony/http-kernel": "^6.2"
+                "symfony/console": "^6.0|^7.0|^8.0",
+                "symfony/http-kernel": "^6.2|^7.0|^8.0"
             },
             "require-dev": {
                 "calebporzio/sushi": "^2.1",
-                "laravel/framework": "^10.0",
-                "laravel/prompts": "^0.1.6",
+                "laravel/framework": "^10.15.0|^11.0|^12.0|^13.0",
                 "mockery/mockery": "^1.3.1",
-                "orchestra/testbench": "^8.0",
-                "orchestra/testbench-dusk": "^8.0",
-                "phpunit/phpunit": "^9.0",
-                "psy/psysh": "@stable"
+                "orchestra/testbench": "^8.21.0|^9.0|^10.0|^11.0",
+                "orchestra/testbench-dusk": "^8.24|^9.1|^10.0|^11.0",
+                "phpunit/phpunit": "^10.4|^11.5|^12.5",
+                "psy/psysh": "^0.11.22|^0.12"
             },
             "type": "library",
             "extra": {
                 "laravel": {
-                    "providers": [
-                        "Livewire\\LivewireServiceProvider"
-                    ],
                     "aliases": {
                         "Livewire": "Livewire\\Livewire"
-                    }
+                    },
+                    "providers": [
+                        "Livewire\\LivewireServiceProvider"
+                    ]
                 }
             },
             "autoload": {
@@ -2639,7 +2641,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v3.2.1"
+                "source": "https://github.com/livewire/livewire/tree/v3.7.11"
             },
             "funding": [
                 {
@@ -2647,7 +2649,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-11-20T17:05:06+00:00"
+            "time": "2026-02-26T00:58:19+00:00"
         },
         {
             "name": "maatwebsite/excel",
