@@ -80,7 +80,8 @@
                                 <th class="celdas" style="color: #FCF5CE;border: 1px solid #0C213A;">TECNOMECANICA</th>
                                 <th class="celdas" style="color: #FCF5CE;border: 1px solid #0C213A;">SIMUR</th>
                                 <th class="celdas" style="color: #FCF5CE;border: 1px solid #0C213A;">SIMIT</th>
-                                <th class="celdas" style="color: #FCF5CE;border: 1px solid #0C213A;">INFRACCIONES</th>                                
+                                <th class="celdas" style="color: #FCF5CE;border: 1px solid #0C213A;">INFRACCIONES</th>
+                                <th class="celdas" style="color: #FCF5CE;border: 1px solid #0C213A;">RETEICA</th>
                                 <th class="celdas" style="color: #FCF5CE;border: 1px solid #0C213A;">OBSERVACIONES</th>
                                 <th class="celdas" style="color: #E49BA6;border: 1px solid #0C213A;">CREA</th>
                                 <th class="celdas" style="color: #E49BA6;border: 1px solid #0C213A;">FECHA CREA</th>
@@ -174,6 +175,7 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->simur }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->simit }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->infracciones }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->ica }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->observacion }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->create_user }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->created_at }}</td>

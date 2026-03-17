@@ -238,8 +238,8 @@
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">COSTO FLETE</th>
                                 @endcan
                                 <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">CEDULA</th>
-                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ CARGA 1</th>
-                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ CARGA 2</th>
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ CARGUE</th>
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ DESCARGUE</th>
                                 <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ STANDBY</th>
                                 <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ DESPLAZAMIENTO</th>
                                 <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">SOPORTE</th>
