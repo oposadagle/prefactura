@@ -47,12 +47,10 @@
                         <svg class="me-2" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" width="16px" height="16px" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path style="fill:#E7E8E3;" d="M512,402.282c0,16.716-13.55,30.267-30.265,30.267H30.265C13.55,432.549,0,418.996,0,402.282V109.717 c0-16.716,13.55-30.266,30.265-30.266h451.469c16.716,0,30.265,13.551,30.265,30.266L512,402.282L512,402.282z"></path> <rect y="148.13" style="fill:#34495E;" width="512" height="72.01"></rect> <rect y="220.16" style="fill:#FFFFFF;" width="512" height="44.555"></rect> <path style="opacity:0.15;fill:#202121;enable-background:new ;" d="M21.517,402.282V109.717 c0-16.716,13.552-30.266,30.267-30.266h-21.52C13.55,79.451,0,93.003,0,109.717v292.565c0,16.716,13.55,30.267,30.265,30.267h21.52 C35.07,432.549,21.517,418.996,21.517,402.282z"></path> <path style="fill:#EA001B;" d="M374.957,348.191c0-15.018,6.92-28.418,17.742-37.193c-8.227-6.669-18.705-10.669-30.12-10.669 c-26.433,0-47.861,21.428-47.861,47.862s21.428,47.862,47.861,47.862c11.415,0,21.894-3.999,30.12-10.669 C381.876,376.609,374.957,363.209,374.957,348.191z"></path> <path style="fill:#F79F1A;" d="M422.817,300.329c-11.415,0-21.894,3.999-30.119,10.669c10.824,8.775,17.741,22.175,17.741,37.193 s-6.918,28.418-17.741,37.193c8.227,6.669,18.705,10.669,30.119,10.669c26.435,0,47.863-21.428,47.863-47.862 C470.68,321.757,449.252,300.329,422.817,300.329z"></path> <path style="fill:#FF5F01;" d="M410.439,348.191c0-15.018-6.918-28.418-17.741-37.193c-10.822,8.775-17.742,22.175-17.742,37.193 s6.92,28.418,17.742,37.193C403.522,376.609,410.439,363.209,410.439,348.191z"></path> <g> <path style="fill:#FFFFFF;" d="M160.063,322.723H55.437c-4.611,0-8.348-3.736-8.348-8.348c0-4.611,3.736-8.348,8.348-8.348h104.626 c4.611,0,8.348,3.736,8.348,8.348S164.674,322.723,160.063,322.723z"></path> <path style="fill:#FFFFFF;" d="M160.063,357.422H55.437c-4.611,0-8.348-3.736-8.348-8.348s3.736-8.348,8.348-8.348h104.626 c4.611,0,8.348,3.736,8.348,8.348S164.674,357.422,160.063,357.422z"></path> <path style="fill:#FFFFFF;" d="M160.063,392.121H55.437c-4.611,0-8.348-3.736-8.348-8.348c0-4.611,3.736-8.348,8.348-8.348h104.626 c4.611,0,8.348,3.736,8.348,8.348C168.411,388.383,164.674,392.121,160.063,392.121z"></path> </g> </g></svg>
                         PAGAR
                     </a>
-                    {{-- Oculto temporalmente: Archivo Plano
                     <a class="btn btn-primary py-2" id="btnArchivoPlano" style="font-size: 12px;font-family: Titillium Web;font-weight: 700;" href="javascript:void(0);">
                         <svg class="me-2" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" width="16px" height="16px" fill="#000000" transform="rotate(180)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <polygon style="fill:#CFDCE5;" points="343.754,75.864 413.408,75.864 413.408,512 98.593,512 98.593,75.864 168.234,75.864 "></polygon> <polygon style="fill:#FF6F52;" points="255.999,0 180.391,94.832 218.755,94.832 218.755,175.93 293.241,175.93 293.241,94.832 331.606,94.832 "></polygon> <g> <rect x="157.018" y="206.045" style="fill:#314A5F;" width="28.793" height="17.998"></rect> <rect x="203.801" y="206.045" style="fill:#314A5F;" width="151.174" height="17.998"></rect> <rect x="157.018" y="253.201" style="fill:#314A5F;" width="102.579" height="17.998"></rect> <rect x="277.594" y="253.201" style="fill:#314A5F;" width="77.393" height="17.998"></rect> <rect x="157.018" y="300.344" style="fill:#314A5F;" width="197.97" height="17.998"></rect> <rect x="157.018" y="347.5" style="fill:#314A5F;" width="64.194" height="17.998"></rect> <rect x="239.198" y="347.5" style="fill:#314A5F;" width="115.777" height="17.998"></rect> <rect x="279.394" y="441.787" style="fill:#314A5F;" width="75.591" height="17.998"></rect> </g> </g></svg>
                         ARCHIVO PLANO
                     </a>
-                    --}}
                 </div>
                 @endcan
             </div>
@@ -67,17 +65,18 @@
                                 </th>
                                 @endcan
                                 <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">MANIFIESTO</th>
-                                <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">ID</th>                                
-                                <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">APROBAR</th>
-                                <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">VALIDAR</th>
+                                <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">ID</th>
+                                <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">FECHA ENVIO</th>
                                 <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">ESTADO</th>                               
-                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">PLACA</th>
-                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">CARGA 1</th>
-                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">CARGA 2</th>                                
-                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">STANDBY</th>
-                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">COSTO DESPLAZAMIENTO</th>
-                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">CÉDULA</th>
-                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">PROPIETARIO</th>
+                                <th class="celdas" style="color: #FFDE42;border: 1px solid #0c213a;">PLACA</th>
+                                <th class="celdas" style="color: #FFDE42;border: 1px solid #0c213a;">$ CARGUE 1</th>
+                                <th class="celdas" style="color: #FFDE42;border: 1px solid #0c213a;">$ CARGUE 2</th>                                
+                                <th class="celdas" style="color: #FFDE42;border: 1px solid #0c213a;">$ STANDBY</th>
+                                <th class="celdas" style="color: #FFDE42;border: 1px solid #0c213a;">$ DESPLAZAMIENTO</th>
+                                <th class="celdas" style="color: #FFDE42;border: 1px solid #0c213a;">$ TOTAL</th>
+                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">PAGAR CUENTA A</th>
+                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">CEDULA CUENTA</th>
+                                <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">TELEFONO CUENTA</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">CLIENTE</th>                                
                             </tr>
                         </thead>
@@ -91,44 +90,7 @@
                                     @endcan
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-weight: bold;">{{ $diario->razon }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->id }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        @if($diario->avalado)
-                                            <button type="button" class="btn btn-success btn-xs disabled" style="width: 100%; pointer-events: none;">
-                                                <i class="fas fa-check"></i>
-                                            </button>
-                                        @else
-                                            @can('originar')
-                                                <button type="button" class="btn btn-warning btn-xs btn-aprobar" data-id="{{$diario->id}}" style="width: 100%;">
-                                                    <i class="fas fa-minus"></i>
-                                                </button>
-                                            @else
-                                                <button type="button" class="btn btn-warning btn-xs disabled" style="width: 100%; pointer-events: none;">
-                                                    <i class="fas fa-minus"></i>
-                                                </button>
-                                            @endcan
-                                        @endif
-                                    </td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        @if($diario->verificado)
-                                            <button type="button" class="btn btn-success btn-xs disabled" style="width: 100%; pointer-events: none;">
-                                                <i class="fas fa-check"></i>
-                                            </button>
-                                        @elseif($diario->avalado && $diario->cedula == 0 && $diario->cargaone == 0 && $diario->cargatwo == 0 && $diario->standby == 0 && $diario->costo_desplazamiento == 0)
-                                            <button type="button" class="btn btn-secondary btn-xs disabled" style="width: 100%; pointer-events: none;">
-                                                <i class="fas fa-minus"></i>
-                                            </button>
-                                        @else
-                                            @can('verificar')
-                                                <button type="button" class="btn btn-info btn-xs btn-verificar" data-id="{{$diario->id}}" style="width: 100%;">
-                                                    <i class="fas fa-minus"></i>
-                                                </button>
-                                            @else
-                                                <button type="button" class="btn btn-info btn-xs disabled" style="width: 100%; pointer-events: none;">
-                                                    <i class="fas fa-minus"></i>
-                                                </button>
-                                            @endcan
-                                        @endif
-                                    </td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_envio }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC; padding-top:10px; padding-bottom:10px;">
                                         @php
                                             $estadoClass = 'bg-secondary';
@@ -151,8 +113,10 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->cargatwo, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->standby, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo_desplazamiento, 0, ',', '.') }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->cedula }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->asociado) }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-weight: bold;">{{ number_format($diario->cargaone + $diario->cargatwo + $diario->standby + $diario->costo_desplazamiento, 0, ',', '.') }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->pagcon }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->cpagcon }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->tpagcon }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->cliente }}</td>                                                                        
                                 </tr>
                             @endforeach
@@ -292,7 +256,7 @@ $(document).ready(function() {
         // Create a hidden form to POST and trigger the file download
         var form = $('<form>', {
             method: 'POST',
-            action: '{{ route("solicitud.archivoPlano") }}'
+            action: '{{ route("solicitud.archivoPlanoCuentas") }}'
         });
 
         form.append($('<input>', { type: 'hidden', name: '_token', value: '{{ csrf_token() }}' }));

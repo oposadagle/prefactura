@@ -331,6 +331,8 @@ class SolicitudController extends Controller
         $diarias = DB::table('peticiones')
             ->whereNotNull('cedula')
             ->whereNotNull('soporte')
+            ->where('verificado', true)
+            ->where('pagada', false)
             ->orderBy('id', 'desc')
             ->get();
 
@@ -339,9 +341,9 @@ class SolicitudController extends Controller
                 $diario->estado_cuenta = 'PENDIENTE POR APROBAR';
             } elseif ($diario->verificado && !$diario->avalado) {
                 $diario->estado_cuenta = 'PENDIENTE POR VALIDAR';
-            } elseif ($diario->verificado && $diario->avalado && !$diario->pagada) {
+            } elseif ($diario->verificado && $diario->avalado && !$diario->pagado) {
                 $diario->estado_cuenta = 'PENDIENTE POR PAGAR';
-            } elseif ($diario->verificado && $diario->avalado && $diario->pagada) {
+            } elseif ($diario->verificado && $diario->avalado && $diario->pagado) {
                 $diario->estado_cuenta = 'CUENTA PAGADA';
             } else {
                 $diario->estado_cuenta = 'DESCONOCIDO';
@@ -470,6 +472,53 @@ class SolicitudController extends Controller
                 'fechapaga' => \Carbon\Carbon::now('America/Bogota'),
                 'userpaga' => auth()->user()->name
             ]);
+
+            // Dispatch WhatsApp messages via Whapi
+            $peticiones = DB::table('peticiones')->whereIn('id', $ids)->get();
+            $whapiToken = env('WHAPI_TOKEN');
+            $whapiUrl = rtrim(env('WHAPI_API_URL', 'https://gate.whapi.cloud/messages/text'), '/');
+            if (!str_ends_with($whapiUrl, '/messages/text')) {
+                $whapiUrl .= '/messages/text';
+            }
+
+            if ($whapiToken && $whapiUrl) {
+                foreach ($peticiones as $p) {
+                    if (empty($p->tpagcon)) continue;
+
+                    // Limpiar el numero de telefono
+                    $telefono = trim($p->tpagcon);
+                    if (substr($telefono, 0, 1) !== '+' && strlen($telefono) == 10) {
+                        $telefono = '57' . $telefono;
+                    }
+                    $telefono = str_replace('+', '', $telefono);
+
+                    // Formatear valores
+                    $val_cargaone = number_format(floatval($p->cargaone), 0, ',', '.');
+                    $val_cargatwo = number_format(floatval($p->cargatwo), 0, ',', '.');
+                    $val_standby = number_format(floatval($p->standby), 0, ',', '.');
+                    $val_desplazamiento = number_format(floatval($p->costo_desplazamiento), 0, ',', '.');
+                    
+                    $total = floatval($p->cargaone) + floatval($p->cargatwo) + floatval($p->standby) + floatval($p->costo_desplazamiento);
+                    $val_total = number_format($total, 0, ',', '.');
+
+                    $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realizó un pago por concepto de la cuenta de cobro relacionado al manifiesto: {$p->razon}\n\n" .
+                               "RESUMEN\n" .
+                               "CARGUE 1: {$val_cargaone}\n" .
+                               "CARGUE 2: {$val_cargatwo}\n" .
+                               "STANDBY: {$val_standby}\n" .
+                               "COSTO DESPLAZAMIENTO: {$val_desplazamiento}\n" .
+                               "VALOR TOTAL: {$val_total}\n\n" .
+                               "...no responder este mensaje...";
+
+                    // Enviar mensaje hacia WhatsApp
+                    \Illuminate\Support\Facades\Http::withToken($whapiToken)
+                        ->post($whapiUrl, [
+                            'typing_time' => 0,
+                            'to' => $telefono,
+                            'body' => $mensaje
+                        ]);
+                }
+            }
 
             return response()->json([
                 'success' => true,
@@ -652,6 +701,101 @@ class SolicitudController extends Controller
             $line .= '00000';                                                       // 5  - Ceros fijos
             $line .= str_pad($reg->codigo_banco ?? '1007', 4, '0', STR_PAD_LEFT);  // 4  - Código banco
             $line .= str_pad($reg->numero_cuenta ?? '', 17);                       // 17 - Número cuenta (left-aligned, space-padded)
+            $line .= 'S';                                                           // 1  - Fijo
+            $line .= $tipoTransaccion;                                              // 2  - Tipo transacción
+            $line .= str_pad(intval($reg->amount), 15, '0', STR_PAD_LEFT);         // 15 - Valor transacción
+            $line .= '00';                                                          // 2  - Ceros fijos
+            $line .= $fecha;                                                        // 8  - Fecha YYYYMMDD
+            $line .= str_repeat(' ', 21);                                           // 21 - Espacios
+            $line .= '100000';                                                      // 6  - Valor fijo
+            $line = str_pad($line, $LINE_WIDTH);                                    // Pad to fixed width
+
+            $lines[] = $line;
+        }
+
+        $content = implode("\r\n", $lines);
+
+        return response($content, 200)
+            ->header('Content-Type', 'text/plain; charset=UTF-8')
+            ->header('Content-Disposition', 'attachment; filename="BANCO.txt"');
+    }
+
+    public function archivoPlanoCuentas(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Debe seleccionar al menos un registro.'
+            ]);
+        }
+
+        $LINE_WIDTH = 320;
+
+        $registros = DB::table('peticiones')
+            ->leftJoin('datos_bancarios', function ($join) {
+                $join->on('peticiones.cpagcon', '=', 'datos_bancarios.nit')
+                     ->where('datos_bancarios.estado', '=', 'ACTIVO');
+            })
+            ->select(
+                'peticiones.id',
+                'peticiones.cpagcon',
+                'peticiones.pagcon',
+                'peticiones.cargaone',
+                'peticiones.cargatwo',
+                'peticiones.standby',
+                'peticiones.costo_desplazamiento',
+                'datos_bancarios.tipo_documento',
+                'datos_bancarios.codigo_banco',
+                'datos_bancarios.numero_cuenta',
+                'datos_bancarios.tipo_cuenta'
+            )
+            ->whereIn('peticiones.id', $ids)
+            ->get()
+            ->unique('id');
+
+        // Calculate amount for each record
+        foreach ($registros as $reg) {
+            $reg->amount = intval(floatval($reg->cargaone) + floatval($reg->cargatwo) + floatval($reg->standby) + floatval($reg->costo_desplazamiento));
+        }
+
+        $fecha = \Carbon\Carbon::now('America/Bogota')->format('Ymd');
+        $cantidadRegistros = $registros->count();
+        $sumaTotal = $registros->sum('amount');
+
+        // ========== HEADER LINE ==========
+        $header = '1';                                              // 1  - Tipo registro
+        $header .= '000000';                                        // 6  - Ceros fijos
+        $header .= '900614022';                                     // 9  - NIT Pagador
+        $header .= 'I';                                             // 1  - Aplicación
+        $header .= str_repeat(' ', 15);                             // 15 - Espacios
+        $header .= '225';                                           // 3  - Tipo de pago
+        $header .= str_repeat(' ', 10);                             // 10 - Espacios
+        $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
+        $header .= 'A1';                                            // 2  - Secuencia de envío
+        $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
+        $header .= str_pad($cantidadRegistros, 6, '0', STR_PAD_LEFT); // 6  - Cantidad registros
+        $header .= str_pad($sumaTotal, 32, '0', STR_PAD_LEFT);       // 32 - Suma total valores
+        $header .= '0018096953824';                                   // 13 - Cuenta a debitar
+        $header .= 'S';                                               // 1  - Tipo cuenta
+        $header = str_pad($header, $LINE_WIDTH);                      // Pad to fixed width
+
+        $lines = [$header];
+
+        // ========== DETAIL LINES ==========
+        foreach ($registros as $reg) {
+            $tipoTransaccion = '37'; // default: CUENTA DE AHORRO
+            if ($reg->tipo_cuenta === 'CUENTA CORRIENTE') {
+                $tipoTransaccion = '27';
+            }
+
+            $line = str_pad($reg->tipo_documento ?? '6', 1);                      // 1  - Tipo doc beneficiario
+            $line .= str_pad($reg->cpagcon ?? '', 15);                             // 15 - NIT/Cédula
+            $line .= str_pad(mb_substr($reg->pagcon ?? '', 0, 30), 30);            // 30 - Nombre beneficiario
+            $line .= '00000';                                                       // 5  - Ceros fijos
+            $line .= str_pad($reg->codigo_banco ?? '1007', 4, '0', STR_PAD_LEFT);  // 4  - Código banco
+            $line .= str_pad($reg->numero_cuenta ?? '', 17);                       // 17 - Número cuenta
             $line .= 'S';                                                           // 1  - Fijo
             $line .= $tipoTransaccion;                                              // 2  - Tipo transacción
             $line .= str_pad(intval($reg->amount), 15, '0', STR_PAD_LEFT);         // 15 - Valor transacción
@@ -1971,7 +2115,8 @@ class SolicitudController extends Controller
                     DB::table('solicitudes')
                         ->where('id', $id)
                         ->update([
-                            'verificado' => true
+                            'verificado' => true,
+                            'fecha_envio' => \Carbon\Carbon::now()
                         ]);
                     return response()->json(['success' => true]);
                 }

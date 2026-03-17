@@ -237,15 +237,14 @@
                                 @can('solicitud.despacho')
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">COSTO FLETE</th>
                                 @endcan
-                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;">CEDULA</th>
-                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;">$ CARGA 1</th>
-                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;">$ CARGA 2</th>
-                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;">$ STANDBY</th>
-                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;">$ DESPLAZAMIENTO</th>
-                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;">SOPORTE</th>
-
-                                {{-- <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">APROBAR</th>
-                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">VALIDAR</th> --}}
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">CEDULA</th>
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ CARGA 1</th>
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ CARGA 2</th>
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ STANDBY</th>
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ DESPLAZAMIENTO</th>
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">SOPORTE</th>
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">APROBADO</th>
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">VERIFICADO</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">TIPO 🚗</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">PLACA POR</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">COSTO POR</th>
@@ -708,13 +707,13 @@
                                         @endif
                                     </td>
                                     
-                                    {{-- <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @if($diario->avalado)
                                             <button type="button" class="btn btn-success btn-xs disabled" style="width: 100%; pointer-events: none;">
                                                 <i class="fas fa-check"></i>
                                             </button>
                                         @else
-                                            @can('originar')
+                                            @can('verificar')
                                                 <button type="button" class="btn btn-warning btn-xs btn-aprobar" data-id="{{$diario->id}}" style="width: 100%;">
                                                     <i class="fas fa-minus"></i>
                                                 </button>
@@ -730,22 +729,22 @@
                                             <button type="button" class="btn btn-success btn-xs disabled" style="width: 100%; pointer-events: none;">
                                                 <i class="fas fa-check"></i>
                                             </button>
-                                        @elseif($diario->avalado && $diario->cedula == 0 && $diario->cargaone == 0 && $diario->cargatwo == 0 && $diario->standby == 0 && $diario->costo_desplazamiento == 0)
+                                        @elseif(!$diario->avalado)
                                             <button type="button" class="btn btn-secondary btn-xs disabled" style="width: 100%; pointer-events: none;">
                                                 <i class="fas fa-minus"></i>
                                             </button>
                                         @else
-                                            @can('verificar')
-                                                <button type="button" class="btn btn-info btn-xs btn-verificar" data-id="{{$diario->id}}" style="width: 100%;">
+                                            @can('originar')
+                                                <button type="button" class="btn btn-warning btn-xs btn-verificar" data-id="{{$diario->id}}" style="width: 100%;">
                                                     <i class="fas fa-minus"></i>
                                                 </button>
                                             @else
-                                                <button type="button" class="btn btn-info btn-xs disabled" style="width: 100%; pointer-events: none;">
+                                                <button type="button" class="btn btn-warning btn-xs disabled" style="width: 100%; pointer-events: none;">
                                                     <i class="fas fa-minus"></i>
                                                 </button>
                                             @endcan
                                         @endif
-                                    </td> --}}
+                                    </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('placa')
                                         <a href="#" class="editable" data-type="select" data-name="tipo" data-pk="{{$diario->id}}" data-source='[{"value":"ANTIGUO","text":"ANTIGUO"},{"value":"NUEVO","text":"NUEVO"},{"value":"","text":""}]'>
@@ -1425,8 +1424,8 @@
                         },
                         success: function(response) {
                             if (response.success) {
-                                button.removeClass('btn-danger').addClass('btn-success disabled').css('pointer-events', 'none');
-                                button.find('i').removeClass('fa-times').addClass('fa-check');
+                                button.removeClass('btn-warning').addClass('btn-success disabled').css('pointer-events', 'none');
+                                button.find('i').removeClass('fa-minus').addClass('fa-check');
                                 button.off('click'); // Disable click
                                 Swal.fire(
                                     'Aprobado!',
@@ -1437,6 +1436,59 @@
                                 Swal.fire(
                                     'Error!',
                                     response.message || 'No se pudo aprobar la solicitud.',
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function() {
+                            Swal.fire(
+                                'Error!',
+                                'Ocurrió un error en el servidor.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+
+        $('.btn-verificar').on('click', function(e) {
+            e.preventDefault();
+            var button = $(this);
+            var id = button.data('id');
+            var token = "{{ csrf_token() }}";
+
+            Swal.fire({
+                title: '¿Verificar solicitud?',
+                text: "Esta acción no se puede deshacer.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, verificar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/solicitud/' + id + '/verificar',
+                        type: 'PUT',
+                        data: {
+                            _token: token
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                button.removeClass('btn-warning').addClass('btn-success disabled').css('pointer-events', 'none');
+                                button.find('i').removeClass('fa-minus').addClass('fa-check');
+                                button.off('click'); // Disable click
+                                Swal.fire(
+                                    'Verificado!',
+                                    'La solicitud ha sido verificada.',
+                                    'success'
+                                );
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    response.message || 'No se pudo verificar la solicitud.',
                                     'error'
                                 );
                             }

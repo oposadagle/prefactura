@@ -92,6 +92,7 @@ Route::get('/solicitud/show2/{id}', [SolicitudController::class, 'show2'])->name
 Route::post('/solicitud/saldos/pagar', [SolicitudController::class, 'pagarSaldos'])->name('solicitud.pagarSaldos');
 Route::post('/solicitud/cuentas/pagar', [SolicitudController::class, 'pagarCuentas'])->name('solicitud.pagarCuentas');
 Route::post('/solicitud/saldos/archivo-plano', [SolicitudController::class, 'archivoPlano'])->name('solicitud.archivoPlano');
+Route::post('/solicitud/cuentas/archivo-plano', [SolicitudController::class, 'archivoPlanoCuentas'])->name('solicitud.archivoPlanoCuentas');
 Route::resource('admin', AdminController::class);
 Route::get('vehiculo/pendientes-bancarios', [VehiculoController::class, 'pendientesBancarios'])->name('vehiculo.pendientesBancarios');
 Route::get('vehiculo/historial-bancario', [VehiculoController::class, 'historialBancario'])->name('vehiculo.historialBancario');
