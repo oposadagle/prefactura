@@ -1708,6 +1708,29 @@ class SolicitudController extends Controller
                 ->where('id', $request->pk)
                 ->update(['soporte' => $request->soporte]);
 
+            // Dispatch WhatsApp notification
+            $whapiToken = env('WHAPI_TOKEN');
+            $whapiUrl = rtrim(env('WHAPI_API_URL', 'https://gate.whapi.cloud/messages/text'), '/');
+            if (!str_ends_with($whapiUrl, '/messages/text')) {
+                $whapiUrl .= '/messages/text';
+            }
+
+            if ($whapiToken && $whapiUrl) {
+                $mensaje = "Hola Magaly,\n" .
+                           "Se acaba de cargar información correspondiente a una cuenta de cobro para el id {$request->pk}.\n" .
+                           "Queda pendiente de tu aprobación.\n\n" .
+                           "Atentamente,\n" .
+                           "Sistema de notificaciones GLE";
+
+                // Enviar mensaje hacia WhatsApp
+                \Illuminate\Support\Facades\Http::withToken($whapiToken)
+                    ->post($whapiUrl, [
+                        'typing_time' => 0,
+                        'to' => '573174428909',
+                        'body' => $mensaje
+                    ]);
+            }
+
             return response()->json(['success' => true]);
         }
 

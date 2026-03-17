@@ -622,7 +622,15 @@
                                             </td>
                                     @endcan
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        @can('originar')
+                                        @can('validar')
+                                            @if(!$diario->verificado)
+                                            <a href="#" class="editable" data-type="text" data-name="cedula" data-pk="{{$diario->id}}" style="color: #747b8e">
+                                                {{ $diario->cedula }}
+                                            </a>
+                                            @else
+                                                {{ $diario->cedula }}
+                                            @endif
+                                        @elsecan('originar')
                                             @if(!$diario->avalado && !$diario->cedula)
                                             <a href="#" class="editable" data-type="text" data-name="cedula" data-pk="{{$diario->id}}" style="color: #747b8e">
                                                 {{ $diario->cedula }}
@@ -636,7 +644,7 @@
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('originar')
-                                            @if(!$diario->avalado && !$diario->cargaone)
+                                            @if(!$diario->avalado)
                                             <a href="#" class="editabler" data-type="text" data-name="cargaone" data-pk="{{$diario->id}}" style="color: #747b8e">
                                                 {{ number_format($diario->cargaone, 0, ',', '.') }}
                                             </a>
@@ -649,7 +657,7 @@
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('originar')
-                                            @if(!$diario->avalado && !$diario->cargatwo)
+                                            @if(!$diario->avalado)
                                             <a href="#" class="editabler" data-type="text" data-name="cargatwo" data-pk="{{$diario->id}}" style="color: #747b8e">
                                                 {{ number_format($diario->cargatwo, 0, ',', '.') }}
                                             </a>
@@ -662,7 +670,7 @@
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('originar')
-                                            @if(!$diario->avalado && !$diario->standby)
+                                            @if(!$diario->avalado)
                                             <a href="#" class="editabler" data-type="text" data-name="standby" data-pk="{{$diario->id}}" style="color: #747b8e">
                                                 {{ number_format($diario->standby, 0, ',', '.') }}
                                             </a>
@@ -675,7 +683,7 @@
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('originar')
-                                            @if(!$diario->avalado && !$diario->costo_desplazamiento)
+                                            @if(!$diario->avalado)
                                             <a href="#" class="editabler" data-type="text" data-name="costo_desplazamiento" data-pk="{{$diario->id}}" style="color: #747b8e">
                                                 {{ number_format($diario->costo_desplazamiento, 0, ',', '.') }}
                                             </a>
@@ -698,6 +706,11 @@
                                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 19V5C21 3.9 20.1 3 19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19ZM8.5 13.5L11 16.51L14.5 12L19 18H5L8.5 13.5Z" fill="#4CAF50"/></svg>
                                                 @endif
                                             </a>
+                                            @can('originar')
+                                                @if(!$diario->avalado)
+                                                    <input type="file" class="soporte-upload" data-pk="{{ $diario->id }}" accept=".jpg,.jpeg,.png,.pdf" style="width: 80px; font-size: 10px; display:block; margin-top:5px;">
+                                                @endif
+                                            @endcan
                                         @else
                                             @can('originar')
                                                 @if(!$diario->avalado)
@@ -734,7 +747,7 @@
                                                 <i class="fas fa-minus"></i>
                                             </button>
                                         @else
-                                            @can('originar')
+                                            @can('validar')
                                                 <button type="button" class="btn btn-warning btn-xs btn-verificar" data-id="{{$diario->id}}" style="width: 100%;">
                                                     <i class="fas fa-minus"></i>
                                                 </button>
