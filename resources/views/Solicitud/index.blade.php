@@ -1246,11 +1246,12 @@
         emptytext: 'Sin asignar',
         //inputclass: 'form-control',
         success: function(response, newValue) {
-            if (response.success) {
-                // Actualizar solo el valor del enlace editable
-                $(this).text(newValue);
-                //location.reload();
-            } }, } );
+            if (!response.success) {
+                return response.message || 'Error al actualizar';
+            }
+            $(this).text(newValue);
+        }
+    });
             
 </script>
 

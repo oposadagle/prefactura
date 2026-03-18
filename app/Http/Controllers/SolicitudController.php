@@ -1687,6 +1687,31 @@ class SolicitudController extends Controller
                 return response()->json(['success' => true]);
             }
 
+            if ($request->name === 'razon') {
+                $raw = trim($request->value);
+                if (strlen($raw) !== 15 || !is_numeric($raw)) {
+                    return response()->json(['success' => false, 'message' => 'El manifiesto debe tener exactamente 15 números.']);
+                }
+
+                $exists = DB::table('solicitudes')
+                    ->where('razon', $raw)
+                    ->where('id', '!=', $request->pk)
+                    ->exists();
+
+                if ($exists) {
+                    return response()->json(['success' => false, 'message' => 'El manifiesto ya se encuentra registrado.']);
+                }
+
+                DB::table('solicitudes')
+                    ->where('id', $request->pk)
+                    ->update([
+                        'razon' => $raw,
+                        'registrado' => $usuarioSesion
+                    ]);
+
+                return response()->json(['success' => true]);
+            }
+
             // Para otros campos, simplemente actualizar el campo correspondiente
             DB::table('solicitudes')
                 ->where('id', $request->pk)
