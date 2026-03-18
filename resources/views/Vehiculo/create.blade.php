@@ -476,7 +476,7 @@
                                         <option value="SI" {{ old('compraventa') == 'SI' ? 'selected' : '' }}>SI</option>
                                         <option value="NO" {{ old('compraventa') == 'NO' || is_null(old('compraventa')) ? 'selected' : '' }}>NO</option>
                                     </select>
-                                    <label style="font-size: 11px;">Compraventa</label>
+                                    <label style="font-size: 11px;">Contrato Compraventa</label>
                                 </div>
                             </div>
 

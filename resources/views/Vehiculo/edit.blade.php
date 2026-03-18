@@ -491,7 +491,7 @@
                                         <option value="SI" {{ old('compraventa', $datos->compraventa) == 'SI' ? 'selected' : '' }}>SI</option>
                                         <option value="NO" {{ old('compraventa', $datos->compraventa) == 'NO' || is_null(old('compraventa', $datos->compraventa)) ? 'selected' : '' }}>NO</option>
                                     </select>
-                                    <label style="font-size: 11px;">Compraventa</label>
+                                    <label style="font-size: 11px;">Contrato Compraventa</label>
                                 </div>
                             </div>
 
