@@ -830,8 +830,41 @@ class SolicitudController extends Controller
             ->whereIn('id', $ids)
             ->get();
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('Solicitud.formato-pdf', compact('registros'));
-        return $pdf->download('cartacuenta.pdf');
+        if (count($registros) === 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontraron registros.'
+            ]);
+        }
+
+        if (count($registros) === 1) {
+            // Caso 1: Un solo registro, descargar PDF con nombre de guia - asociado
+            $r = $registros[0];
+            $filename = "{$r->guia}-{$r->asociado}.pdf";
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('Solicitud.formato-pdf', ['registros' => [$r]]);
+            return $pdf->download($filename);
+        } else {
+            // Caso 2: Múltiples registros, empaquetar en un archivo .zip al vuelo
+            $zip = new \ZipArchive();
+            $zipName = \Carbon\Carbon::now('America/Bogota')->format('ymdHi') . '.zip';
+            $zipPath = storage_path('app/' . $zipName);
+
+            if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
+                foreach ($registros as $r) {
+                    $filename = "{$r->guia}-{$r->asociado}.pdf";
+                    $pdfContent = \Barryvdh\DomPDF\Facade\Pdf::loadView('Solicitud.formato-pdf', ['registros' => [$r]])->output();
+                    $zip->addFromString($filename, $pdfContent);
+                }
+                $zip->close();
+
+                return response()->download($zipPath)->deleteFileAfterSend(true);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se pudo generar el archivo ZIP.'
+                ]);
+            }
+        }
     }
 
     public function diario()
