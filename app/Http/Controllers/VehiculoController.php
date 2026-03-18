@@ -97,6 +97,8 @@ class VehiculoController extends Controller
             'simur' => 'required',
             'simit' => 'required',
             'ica' => 'required|in:SI,NO',
+            'compraventa' => 'required|in:SI,NO',
+            'fechacventa' => 'nullable|date',
             'certia' => 'required|file|mimes:pdf,png,jpg,jpeg|max:2048',
             'certib' => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:2048',
         ];
@@ -219,6 +221,8 @@ class VehiculoController extends Controller
             'cedpro' => 'numeric',
             'cedten' => 'numeric',
             'ica' => 'required|in:SI,NO',
+            'compraventa' => 'required|in:SI,NO',
+            'fechacventa' => 'nullable|date',
             'certia' => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:2048',
             'certib' => 'nullable|file|mimes:pdf,png,jpg,jpeg|max:2048',
         ];

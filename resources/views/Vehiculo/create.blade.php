@@ -471,6 +471,27 @@
                             </div>
 
                             <div class="col-lg-2 col-md-6">
+                                <div class="form-floating mb-3">
+                                    <select class="form-select @error('compraventa') is-invalid @enderror" id="compraventa" name="compraventa" autocomplete="off">
+                                        <option value="SI" {{ old('compraventa') == 'SI' ? 'selected' : '' }}>SI</option>
+                                        <option value="NO" {{ old('compraventa') == 'NO' || is_null(old('compraventa')) ? 'selected' : '' }}>NO</option>
+                                    </select>
+                                    <label style="font-size: 11px;">Compraventa</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="date" class="form-control @error('fechacventa') is-invalid @enderror" id="fechacventa" name="fechacventa" value="{{ old('fechacventa') }}" readonly>
+                                    <label style="font-size: 11px;">Fecha compraventa</label>
+                                </div>
+                            </div>
+
+                        </div><!--end row-->
+
+                        {{-- linea 8 --}}
+                        <div class="row">
+                            <div class="col-lg-2 col-md-6">
                                 <div class="mb-3">
                                     <label for="certia" class="form-label mb-0" style="font-size: 11px; margin-left: 10px; color: #656C82;">Certificación bancaria 1</label>
                                     <input type="file" class="form-control @error('certia') is-invalid @enderror" id="certia" name="certia" accept=".pdf,.png,.jpg,.jpeg">
@@ -484,17 +505,14 @@
                                 </div>
                             </div>
 
-                        </div><!--end row-->
-
-                        {{-- linea 8 --}}
-                        <div class="row">
-                            <div class="col-lg-12 col-md-12">
+                            <div class="col-lg-8 col-md-12">
                                 <div class="form-floating mb-3">
                                     <textarea name="observacion" id="textarea" class="form-control" maxlength="255" rows="4" autocomplete="off"
                                         placeholder="This textarea has a limit of 225 chars.">{{ old('observacion') }}</textarea>
                                     <label for="observacion">Observaciones: </label>
                                 </div>
                             </div>
+                            
                             <div class="col-lg-12 col-md-12 pt-4">
                                 <div class="button-items" style="text-align: right">
                                     <button type="submit" class="btn btn-outline-primary py-2"><i
@@ -526,6 +544,25 @@
     document.addEventListener('DOMContentLoaded', function() {
         const tenedorSelect = document.getElementById('tenedor');
         const camposTenedor = ['nomten', 'cedten', 'corten', 'dirten', 'telten'];
+
+        // Lógica para Compraventa y Fecha Compraventa
+        const compraventaSelect = document.getElementById('compraventa');
+        const fechacventaInput = document.getElementById('fechacventa');
+
+        function toggleFechaCompraventa() {
+            if (compraventaSelect.value === 'SI') {
+                const today = new Date().toISOString().split('T')[0];
+                fechacventaInput.value = today;
+            } else {
+                fechacventaInput.value = '';
+            }
+        }
+
+        if (compraventaSelect) {
+            compraventaSelect.addEventListener('change', toggleFechaCompraventa);
+            // Ejecutar al cargar
+            toggleFechaCompraventa();
+        }
 
         // Función para habilitar/deshabilitar campos
         function toggleCamposTenedor() {
