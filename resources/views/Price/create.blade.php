@@ -337,7 +337,7 @@ C<x-header />
                                     <select class="form-select" id="TIPO_COT" name="tipo" autocomplete="off">
                                         <option selected disabled>Seleccionar</option>
                                         <option value="ARCHIVO CONSOLIDADO">ARCHIVO CONSOLIDADO</option>
-                                        <option value="ARCHIVO CONSOLIDADO">MULTIPARADA</option>
+                                        <option value="MULTIPARADA">MULTIPARADA</option>
                                         <option value="RUTA LOGICA">RUTA LOGICA</option>
                                         <option value="UNO A UNO">UNO A UNO</option>
                                     </select>

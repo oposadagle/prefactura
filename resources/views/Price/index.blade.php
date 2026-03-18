@@ -124,7 +124,7 @@
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('edita.cotizacion')
-                                            <a href="#" class="editable" data-type="select" data-name="tipo" data-pk="{{$diario->id}}" data-source='[{"value":"ARCHIVO CONSOLIDADO","text":"ARCHIVO CONSOLIDADO"},{"value":"RUTA LOGICA","text":"RUTA LOGICA"},{"value":"UNO A UNO","text":"UNO A UNO"}]'>
+                                            <a href="#" class="editable" data-type="select" data-name="tipo" data-pk="{{$diario->id}}" data-source='[{"value":"ARCHIVO CONSOLIDADO","text":"ARCHIVO CONSOLIDADO"},{"value":"RUTA LOGICA","text":"RUTA LOGICA"},{"value":"UNO A UNO","text":"UNO A UNO"},{"value":"MULTIPARADA","text":"MULTIPARADA"}]'>
                                                 {{ $diario->tipo }}
                                             </a>
                                         @else
