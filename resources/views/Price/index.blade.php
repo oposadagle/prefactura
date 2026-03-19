@@ -65,14 +65,11 @@
                             <tr>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">ID</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">CLIENTE</th>
-                                <th class="      " style="color: #EE66A6;border: 1px solid #0C213A;">FECHA SOLICITUD</th>
-                                {{-- <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">CODIGO SEGUIMIENTO</th> --}}
+                                <th class="      " style="color: #EE66A6;border: 1px solid #0C213A;">FECHA SOLICITUD</th>                                
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">CANAL</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">TIPO</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">ESTADO COTIZACION</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">RESPUESTA</th>
-
-
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">QUIEN SOLICITA</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">TRAYECTO</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">ORIGEN</th>
@@ -130,17 +127,8 @@
                                         @else
                                             {{ $diario->tipo }}
                                         @endcan
-                                    </td>
-                                        
+                                    </td>                                        
                                         @can('edita.cotizacion')
-
-                                            {{-- <td class="celdas"
-                                                style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                                <a href="#" class="editable" data-type="text"
-                                                    data-name="codigo_seguimiento" data-pk="{{ $diario->id }}">
-                                                    {{ $diario->codigo_seguimiento }}
-                                                </a>
-                                            </td> --}}
                                             <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">                             
                                             @php
                                                 $estadoClase = '';
@@ -168,7 +156,8 @@
                                             <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                                 {{ $diario->estado_cotizacion }}
                                             </td>
-                                        @endcan                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        @endcan                                    
+                                        <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('edita.cotizacion')
                                             <a href="#" class="editable" data-type="text" data-name="respuesta" data-pk="{{$diario->id}}" data-value="{{ $diario->respuesta }}">
                                                 {{ Str::limit($diario->respuesta, 15, '...') }}
@@ -183,8 +172,6 @@
                                             @endif
                                         @endcan
                                     </td>
-
-
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         {{ strToUpper($diario->quien_solicita) }}</td>
@@ -285,7 +272,7 @@
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         <a href="#" class="editable" data-type="text"
-                                            data-name="COSTO_ADICIONAL" data-pk="{{ $diario->id }}">
+                                            data-name="costo_adicional" data-pk="{{ $diario->id }}">
                                             {{ number_format($diario->costo_adicional, 0, ',', '.') }}
                                         </a>
                                     </td>
