@@ -1726,12 +1726,17 @@ class SolicitudController extends Controller
                     return response()->json(['success' => false, 'message' => 'El manifiesto debe tener exactamente 15 números.']);
                 }
 
+                $solicitud = DB::table('solicitudes')->where('id', $request->pk)->first();
+                if (!$solicitud) {
+                    return response()->json(['success' => false, 'message' => 'Registro no encontrado.']);
+                }
+
                 $exists = DB::table('solicitudes')
                     ->where('razon', $raw)
                     ->where('id', '!=', $request->pk)
                     ->exists();
 
-                if ($exists) {
+                if ($exists && $solicitud->paytype !== 'CREDITO') {
                     return response()->json(['success' => false, 'message' => 'El manifiesto ya se encuentra registrado.']);
                 }
 
