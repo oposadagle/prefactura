@@ -70,7 +70,22 @@ class SolicitudController extends Controller
         // Filtrar por ID si se recibe en la solicitud
         $id = request('id');
         if ($id) {
-            $query->where('id', $id);
+            $query->where(function ($q) use ($id) {
+                $q->where('cliente', 'LIKE', "%$id%")
+                  ->orWhere('placa', 'LIKE', "%$id%")
+                  ->orWhere('razon', 'LIKE', "%$id%")
+                  ->orWhere('origen', 'LIKE', "%$id%")
+                  ->orWhere('destino', 'LIKE', "%$id%")
+                  ->orWhere('conductor', 'LIKE', "%$id%")
+                  ->orWhere('remesa', 'LIKE', "%$id%")
+                  ->orWhere('radicado', 'LIKE', "%$id%")
+                  ->orWhere('states', 'LIKE', "%$id%")
+                  ->orWhere('sucursal', 'LIKE', "%$id%");
+                
+                if (is_numeric($id)) {
+                    $q->orWhere('id', $id);
+                }
+            });
         }
 
         if ($request != null) {

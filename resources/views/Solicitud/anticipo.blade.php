@@ -1,48 +1,35 @@
 <x-header />
-<style>.celdas {    
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: #656C82;    
+<style>    .celdas {    
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #656C82;    
     }
 
-    /* Freeze first two columns */
+    /* Freeze first column (MANIFIESTO) */
     #example th:nth-child(1),
     #example td:nth-child(1) {
         position: sticky;
         left: 0;
         z-index: 10 !important;
         background-clip: padding-box;
-    }
-    
-    #example th:nth-child(2),
-    #example td:nth-child(2) {
-        position: sticky;
-        left: 80px; 
-        z-index: 10 !important;
-        background-clip: padding-box;
-    }
-
-    /* Set fixed width for the first column to make the second column's offset stable */
-    #example th:nth-child(1), #example td:nth-child(1) {
-        min-width: 80px;
-        max-width: 80px;
+        overflow: visible; /* Allow content to be seen complete */
+        text-overflow: clip;
+        max-width: none;
+        width: auto;
     }
 
     /* Handle backgrounds for sticky header */
-    #example thead th:nth-child(1),
-    #example thead th:nth-child(2) {
+    #example thead th:nth-child(1) {
         background-color: #212529 !important; /* Table dark header */
         z-index: 11 !important; /* Higher than body cells */
     }
 
     /* Handle backgrounds for striped sticky body rows */
-    #example tbody tr:nth-of-type(odd) td:nth-child(1),
-    #example tbody tr:nth-of-type(odd) td:nth-child(2) {
+    #example tbody tr:nth-of-type(odd) td:nth-child(1) {
         background-color: #f2f2f2 !important; 
     }
-    #example tbody tr:nth-of-type(even) td:nth-child(1),
-    #example tbody tr:nth-of-type(even) td:nth-child(2) {
+    #example tbody tr:nth-of-type(even) td:nth-child(1) {
         background-color: #ffffff !important;
     }
 </style>
@@ -81,11 +68,11 @@
                     <table id="example" class="table table-striped mb-0">
                         <thead class="table-dark" style="font-size: 11px;">
                             <tr>                                
-                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0" /><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" /><g id="SVGRepo_iconCarrier"><path d="M3 9H21M7 3V5M17 3V5M6 13H8M6 17H8M11 13H13M11 17H13M16 13H18M16 17H18M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="#C3FF93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></g></svg> CARGUE</th>
-                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;">MANIFIESTO</th>
-                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;">CONDICION DE PAGO</th>
-                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;">ESTADO</th>
-                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">NOTAS</th>
+                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">MANIFIESTO</th>
+                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">FECHA CARGUE</th>                                
+                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CONDICION DE PAGO</th>
+                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">ESTADO</th>
+                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">NOTAS</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CLIENTE</th>                                
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">ORIGEN</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">DESTINO</th>
@@ -128,8 +115,8 @@
                         <tbody style="font-size: 12px;font-family: Titillium Web;">
                             @foreach ($diarias as $diario)
                                 <tr style="text-align: center">                                                                        
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_cargue }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->razon }}</td>
+                                    <td class="celdas fw-bold" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;color: #021526;">{{ $diario->razon }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_cargue }}</td>                                    
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                             @php
                                                 $estadoClase = '';
@@ -174,12 +161,7 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->cliente }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->origen) }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->destino) }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        @php
-                                            $claseBoton = $diario->placa ? 'btn btn-warning py-0 px-2 fw-bold f-6' : '';
-                                        @endphp
-                                        <a href="#" class="{{ $claseBoton }}">{{ $diario->placa }}</a>  
-                                    </td>
+                                    <td class="celdas fw-bold" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;color: #021526;">{{ $diario->placa }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->conductor) }}</td>
                                     
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->pagant }}</td>

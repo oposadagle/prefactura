@@ -37,8 +37,7 @@
                     <input 
                         type="text" 
                         name="id" 
-                        class="form-control" 
-                        placeholder="Buscar por ID" 
+                        class="form-control"                        
                         value="{{ request('id') }}" 
                         style="width: 150px;"
                     />
