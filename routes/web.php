@@ -116,6 +116,8 @@ Route::match(['get', 'post'], 'reporte', [UtilidadController::class, 'reporte'])
 Route::get('/informe/{anio}/{mes}', [UtilidadController::class, 'obtenerDatosPorAnioMes']);
 //Route::get('/informe/dias-clientes/{mes}', [UtilidadController::class, 'obtenerDiasClientes']);
 Route::get('/informe/dias-clientes/{anio}/{mes}', [UtilidadController::class, 'obtenerDiasClientes']);
+Route::get('/price/cotizar', [PriceController::class, 'cotizar'])->name('price.cotizar');
+Route::post('/price/cotizar', [PriceController::class, 'storeCotizar'])->name('price.storeCotizar');
 Route::resource('price', PriceController::class);Route::put('/price/update', [PriceController::class, 'update'])->name('price.update');
 Route::get('/prices', [PriceController::class, 'prices'])->name('price.prices');
 Route::post('/generar/prefacturas', [SolicitudController::class, 'generarPrefacturas'])->name('generar.prefacturas');

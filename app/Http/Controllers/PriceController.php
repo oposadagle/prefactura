@@ -148,4 +148,71 @@ class PriceController extends Controller
        return redirect()->route('price.index');
     }
 
+    public function cotizar()
+    {
+        $clientes = \Illuminate\Support\Facades\DB::table('clientesa')->select('nombre')->orderBy('nombre')->get();
+        $municipios = \Illuminate\Support\Facades\DB::table('municipios')->select('municipio')->get();
+        $tipos_vehiculos = \Illuminate\Support\Facades\DB::table('tipos_vehiculos')->orderBy('tipo')->get();
+        return view('Price.cotizar', compact('clientes', 'municipios', 'tipos_vehiculos'));
+    }
+
+    public function storeCotizar(\Illuminate\Http\Request $request)
+    {
+        $fields = [
+            'cliente' => 'required',
+            'fecha_solicitud' => 'required',
+            'origen' => 'required',
+            'destino' => 'required',
+            'trayecto' => 'required',            
+            'tipo_vehiculo' => 'required',
+            'tipo_carroceria' => 'required',
+        ];
+
+        $validator = validator($request->all(), $fields);
+        
+        if ($validator->fails()) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Error de validación',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+            return back()->withErrors($validator)->withInput();
+        }
+
+        try {
+            $data = $request->except(['_token']);
+            $data['created_at'] = \Carbon\Carbon::now();
+            $data['updated_at'] = \Carbon\Carbon::now();
+            
+            // Set defaults for missing fields to satisfy NOT NULL constraints
+            if (!isset($data['capacidad'])) $data['capacidad'] = 0;
+            if (!isset($data['costo'])) $data['costo'] = 0;
+            if (!isset($data['sisetac'])) $data['sisetac'] = 0;
+            if (!isset($data['puntos'])) $data['puntos'] = 0;
+            if (!isset($data['costo_negocio'])) $data['costo_negocio'] = 0;
+            if (!isset($data['costo_adicional'])) $data['costo_adicional'] = 0;
+            if (!isset($data['estado_cotizacion'])) $data['estado_cotizacion'] = 'COTIZACION';
+
+            \Illuminate\Support\Facades\DB::table('prices')->insert($data);
+
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Cotización ingresada correctamente'
+                ], 201);
+            }
+
+            return back()->with('success', 'Cotización ingresada correctamente');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Error al crear cotización (Cotizar): ' . $e->getMessage());
+            
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Error al guardar la cotización: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return back()->with('error', 'Error al guardar la cotización: ' . $e->getMessage())->withInput();
+        }
+    }
 }
