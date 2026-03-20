@@ -174,6 +174,7 @@ class SolicitudController extends Controller
         $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString(); // Fin del mes actual
         $diarias = DB::table('peticiones')
             ->whereNotNull('razon')
+            ->where('costo', '>', 0)
             ->whereIn('paytype', $incluidos)
             ->whereNotIn('states', $excluidos)
             ->whereBetween('fecha_cargue', [$startOfLastMonth, $endOfCurrentMonth])
