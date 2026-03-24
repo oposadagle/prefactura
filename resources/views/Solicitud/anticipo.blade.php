@@ -259,7 +259,13 @@
                                                 }
                                             @endphp                                        
                                             @if ($diario->enviado == 'NO')                                            
-                                                <a href="#" class="editablef {{ $estadoClase }}" data-type="text" data-name="enviado" data-pk="{{$diario->id}}">
+                                                <a href="#" class="editablef {{ $estadoClase }}" 
+                                                   data-type="text" 
+                                                   data-name="enviado" 
+                                                   data-pk="{{$diario->id}}"
+                                                   data-pagant="{{ $diario->pagant ?? '' }}"
+                                                   data-cpagant="{{ $diario->cpagant ?? '' }}"
+                                                   data-tpagant="{{ $diario->tpagant ?? '' }}">
                                                     <i class="dripicons-dots-3"></i>
                                                 </a>
                                             @else
@@ -552,11 +558,24 @@ $(document).ready(function() {
     });
 </script>
 
-<script>
-    $('.editablef').on('click', function(e) {
-    e.preventDefault(); // Evita la acci��n predeterminada del enlace
+<script>    $('.editablef').on('click', function(e) {
+        e.preventDefault(); 
 
-    var pk = $(this).data('pk');  // Obt��n el ID del registro
+        var pk = $(this).data('pk'); 
+        var pagant = $(this).data('pagant');
+        var cpagant = $(this).data('cpagant');
+        var tpagant = $(this).data('tpagant');
+
+        // Validacion de datos del receptor
+        if (!pagant || !cpagant || !tpagant) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atención',
+                text: 'datos incompletos del receptor del anticipo'
+            });
+            return;
+        }
+  // Obt��n el ID del registro
     var url = '/solicitud/' + pk + '/update14';  // URL para la actualizaci��n
 
     // Realiza la solicitud AJAX para cambiar el valor

@@ -2078,11 +2078,16 @@ class SolicitudController extends Controller
     public function update14(Request $request, $id)
     {
         try {
-            // Obtén el registro original antes de la actualización
-            $diario = DB::table('solicitudes')->where('id', $id)->first();
+            // Obtén el registro original antes de la actualización            $diario = DB::table('solicitudes')->where('id', $id)->first();
             if (!$diario) {
                 return response()->json(['success' => false, 'message' => 'Registro no encontrado'], 404);
             }
+
+            // Validar que los campos de anticipo estén completos
+            if (empty($diario->pagant) || empty($diario->cpagant) || empty($diario->tpagant)) {
+                return response()->json(['success' => false, 'message' => 'datos incompletos del receptor del anticipo'], 400);
+            }
+
 
             // Actualiza el campo "enviado"
             DB::table('solicitudes')
@@ -2122,11 +2127,16 @@ class SolicitudController extends Controller
     public function update16(Request $request, $id)
     {
         try {
-            // Obtén el registro original antes de la actualización
-            $diario = DB::table('solicitudes')->where('id', $id)->first();
+            // Obtén el registro original antes de la actualización            $diario = DB::table('solicitudes')->where('id', $id)->first();
             if (!$diario) {
                 return response()->json(['success' => false, 'message' => 'Registro no encontrado'], 404);
             }
+
+            // Validar que los campos de anticipo estén completos
+            if (empty($diario->pagant) || empty($diario->cpagant) || empty($diario->tpagant)) {
+                return response()->json(['success' => false, 'message' => 'datos incompletos del receptor del anticipo'], 400);
+            }
+
 
             // Actualizar el campo confirmado
             $nuevoValor = $request->input('confirmado', 'SI');
