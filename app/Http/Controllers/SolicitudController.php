@@ -369,6 +369,25 @@ class SolicitudController extends Controller
         return view('Solicitud.cuentas', compact('diarias', 'userName'));
     }
 
+    public function historicoCuentas()
+    {
+        $userName = Auth::user()->name;
+        
+        $diarias = DB::table('peticiones')
+            ->whereNotNull('cedula')
+            ->whereNotNull('soporte')
+            ->where('verificado', true)
+            ->where('pagada', true)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        foreach ($diarias as $diario) {
+            $diario->estado_cuenta = 'CUENTA PAGADA';
+        }
+
+        return view('Solicitud.historico_cuentas', compact('diarias', 'userName'));
+    }
+
     private function calcularFechaTentativa($fechaInicial, $diasHabiles, $festivos)
     {
         if (is_null($fechaInicial)) {
@@ -505,7 +524,7 @@ class SolicitudController extends Controller
                     $telefono = trim($p->tpagcon);
                     if (substr($telefono, 0, 1) !== '+' && strlen($telefono) == 10) {
                         $telefono = '57' . $telefono;
-                    }
+                    }   
                     $telefono = str_replace('+', '', $telefono);
 
                     // Formatear valores
@@ -514,7 +533,13 @@ class SolicitudController extends Controller
                     $val_standby = number_format(floatval($p->standby), 0, ',', '.');
                     $val_desplazamiento = number_format(floatval($p->costo_desplazamiento), 0, ',', '.');
                     
-                    $total = floatval($p->cargaone) + floatval($p->cargatwo) + floatval($p->standby) + floatval($p->costo_desplazamiento);
+                    $base = floatval($p->cargaone ?? 0) + floatval($p->cargatwo ?? 0) + floatval($p->standby ?? 0) + floatval($p->costo_desplazamiento ?? 0);
+                    $reteica = ($p->ica == 'SI') ? ($base * 0.00414) : 0;
+                    $retefuente = $base * 0.01;
+                    $total = $base - ($reteica + $retefuente);
+
+                    $val_reteica = number_format($reteica, 0, ',', '.');
+                    $val_retefuente = number_format($retefuente, 0, ',', '.');
                     $val_total = number_format($total, 0, ',', '.');
 
                     $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realizó un pago por concepto de la cuenta de cobro relacionado al manifiesto: {$p->razon}\n\n" .
@@ -523,6 +548,8 @@ class SolicitudController extends Controller
                                "CARGUE 2: {$val_cargatwo}\n" .
                                "STANDBY: {$val_standby}\n" .
                                "COSTO DESPLAZAMIENTO: {$val_desplazamiento}\n" .
+                               "RETEICA: {$val_reteica}\n" .
+                               "RETEFUENTE: {$val_retefuente}\n" .
                                "VALOR TOTAL: {$val_total}\n\n" .
                                "...no responder este mensaje...";
 
@@ -762,6 +789,7 @@ class SolicitudController extends Controller
                 'peticiones.cargatwo',
                 'peticiones.standby',
                 'peticiones.costo_desplazamiento',
+                'peticiones.ica',
                 'datos_bancarios.tipo_documento',
                 'datos_bancarios.codigo_banco',
                 'datos_bancarios.numero_cuenta',
@@ -773,7 +801,10 @@ class SolicitudController extends Controller
 
         // Calculate amount for each record
         foreach ($registros as $reg) {
-            $reg->amount = intval(floatval($reg->cargaone) + floatval($reg->cargatwo) + floatval($reg->standby) + floatval($reg->costo_desplazamiento));
+            $base = floatval($reg->cargaone ?? 0) + floatval($reg->cargatwo ?? 0) + floatval($reg->standby ?? 0) + floatval($reg->costo_desplazamiento ?? 0);
+            $reteica = ($reg->ica == 'SI') ? ($base * 0.00414) : 0;
+            $retefuente = $base * 0.01;
+            $reg->amount = intval($base - ($reteica + $retefuente));
         }
 
         $fecha = \Carbon\Carbon::now('America/Bogota')->format('Ymd');

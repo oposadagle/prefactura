@@ -87,7 +87,10 @@
             </div>
 
             @php
-                $total = floatval($r->cargaone) + floatval($r->cargatwo) + floatval($r->standby) + floatval($r->costo_desplazamiento);
+                $base = floatval($r->cargaone ?? 0) + floatval($r->cargatwo ?? 0) + floatval($r->standby ?? 0) + floatval($r->costo_desplazamiento ?? 0);
+                $reteica = ($r->ica == 'SI') ? ($base * 0.00414) : 0;
+                $retefuente = $base * 0.01;
+                $total = $base - ($reteica + $retefuente);
             @endphp
             <table>
                 <tr>
@@ -97,6 +100,18 @@
                 <tr>
                     <th>PLACA</th>
                     <td>{{ $r->placa }}</td>
+                </tr>
+                <tr>
+                    <th>VALOR BRUTO $</th>
+                    <td>${{ number_format($base, 0, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <th>RETEICA $</th>
+                    <td>-${{ number_format($reteica, 0, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <th>RETEFUENTE $</th>
+                    <td>-${{ number_format($retefuente, 0, ',', '.') }}</td>
                 </tr>
                 <tr>
                     <th>VALOR PARA PAGAR $</th>

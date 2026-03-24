@@ -241,9 +241,11 @@
                                             @can('anticipo')                                               
                                                 <li><a href="{{ route('solicitud.saldos') }}">Saldos</a></li>
                                                 <li><a href="{{ route('solicitud.cuentas') }}">Cuentas de cobro</a></li>
+                                                <li><a href="{{ route('solicitud.historicoCuentas') }}">Histórico cuentas</a></li>
                                             @endcan
                                             @can('verificar')
                                                 <li><a href="{{ route('solicitud.cuentas') }}">Cuentas de cobro</a></li>
+                                                <li><a href="{{ route('solicitud.historicoCuentas') }}">Histórico cuentas</a></li>
                                             @endcan
                                             @can('prefactura.masivos')
                                             <li><a href="{{ route('solicitud.prefactura') }}">Estatus masivos</a></li>                                                                           

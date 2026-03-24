@@ -87,6 +87,7 @@ Route::post('/solicitud/anticipos/confirmar', [SolicitudController::class, 'conf
 Route::post('/solicitud/anticipos/archivo-plano', [SolicitudController::class, 'archivoPlanoAnticipos'])->name('solicitud.archivoPlanoAnticipos');
 Route::get('/saldos', [SolicitudController::class, 'saldos'])->name('solicitud.saldos');
 Route::get('/cuentas', [SolicitudController::class, 'cuentas'])->name('solicitud.cuentas');
+Route::get('/historico-cuentas', [SolicitudController::class, 'historicoCuentas'])->name('solicitud.historicoCuentas');
 Route::get('/prefactura', [SolicitudController::class, 'prefactura'])->name('solicitud.prefactura');
 Route::get('/solicitud/show2/{id}', [SolicitudController::class, 'show2'])->name('solicitud.show2');
 Route::post('/solicitud/saldos/pagar', [SolicitudController::class, 'pagarSaldos'])->name('solicitud.pagarSaldos');
