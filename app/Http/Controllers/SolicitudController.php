@@ -2080,7 +2080,7 @@ class SolicitudController extends Controller
     {
         try {
             // Obt├®n el registro original antes de la actualizaci├│n           
-            $diario = DB::table('solicitudes')->where('id', $id)->first();
+            $diario = DB::table('peticiones')->where('id', $id)->first();
             if (!$diario) {
                 return response()->json(['success' => false, 'message' => 'Registro no encontrado'], 404);
             }
@@ -2130,7 +2130,7 @@ class SolicitudController extends Controller
     {
         try {
             // Obt├®n el registro original antes de la actualizaci├│n           
-            $diario = DB::table('solicitudes')->where('id', $id)->first();
+            $diario = DB::table('peticiones')->where('id', $id)->first();
             if (!$diario) {
                 return response()->json(['success' => false, 'message' => 'Registro no encontrado'], 404);
             }
