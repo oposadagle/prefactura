@@ -598,8 +598,14 @@ $(document).ready(function() {
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.error('Error:', textStatus, errorThrown);
-            console.log(jqXHR.responseText);  // Mostrar el detalle del error en la consola
-            alert('Ocurrió un error al intentar actualizar.');
+            var mensajeError = 'Ocurrió un error al intentar actualizar.';
+            if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
+                mensajeError += '\n\nDetalle: ' + jqXHR.responseJSON.message;
+            } else if (jqXHR.responseText) {
+                // Truncar para no saturar si es un HTML de error de Laravel
+                mensajeError += '\n\nDetalle: ' + jqXHR.responseText.substring(0, 100);
+            }
+            alert(mensajeError);
         }
     });
 });
