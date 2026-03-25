@@ -345,7 +345,7 @@ class SolicitudController extends Controller
         $userName = Auth::user()->name;
         
         $diarias = DB::table('peticiones')
-            ->whereNotNull('cedula')
+
             ->whereNotNull('soporte')
             ->where('verificado', true)
             ->where('pagada', false)
@@ -374,7 +374,7 @@ class SolicitudController extends Controller
         $userName = Auth::user()->name;
         
         $diarias = DB::table('peticiones')
-            ->whereNotNull('cedula')
+
             ->whereNotNull('soporte')
             ->where('verificado', true)
             ->where('pagada', true)

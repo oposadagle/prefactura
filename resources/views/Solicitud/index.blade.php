@@ -236,7 +236,6 @@
                                 @can('solicitud.despacho')
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">COSTO FLETE</th>
                                 @endcan
-                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">CEDULA</th>
                                 <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ CARGUE</th>
                                 <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ DESCARGUE</th>
                                 <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ STANDBY</th>
@@ -331,12 +330,22 @@
                                                     case 'SEMANAL':
                                                         $estadoClase = 'badge badge-outline-danger';
                                                         break;
+                                                    case 'ANTICIPO NOCHE':
+                                                        $estadoClase = 'badge badge-outline-dark';
+                                                        break;
                                                     default:
                                                         $estadoClase = 'badge badge-outline-light';
                                                 }
+
+                                                // Lógica para dinamizar paytype de acuerdo a la hora y trayecto
+                                                $fuentePago = $medios;
+                                                // $actual viene del controlador as Carbon::now('America/Bogota')
+                                                if ($actual->hour >= 17 && $diario->tipo_trayecto == 'NACIONAL') {
+                                                    $fuentePago = [['value' => 'ANTICIPO NOCHE', 'text' => 'ANTICIPO NOCHE']];
+                                                }
                                             @endphp
                                             @if ($diario->enviado == 'NO')
-                                                <a href="#" class="editable {{ $estadoClase }}" data-type="select" data-name="paytype" data-pk="{{$diario->id}}" data-source='@json($medios)' style="font-weight:500;font-size:10px;">
+                                                <a href="#" class="editable {{ $estadoClase }}" data-type="select" data-name="paytype" data-pk="{{$diario->id}}" data-source='@json($fuentePago)' style="font-weight:500;font-size:10px;">
                                                     {{$diario->paytype}}
                                                 </a>
                                             @else
@@ -360,6 +369,9 @@
                                                         break;
                                                     case 'SEMANAL':
                                                         $estadoClase = 'badge badge-outline-danger';
+                                                        break;
+                                                    case 'ANTICIPO NOCHE':
+                                                        $estadoClase = 'badge badge-outline-dark';
                                                         break;
                                                     default:
                                                         $estadoClase = 'badge badge-outline-light';
@@ -620,27 +632,6 @@
                                                 {{ number_format($diario->costo, 0, ',', '.') }}
                                             </td>
                                     @endcan
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        @can('validar')
-                                            @if(!$diario->verificado)
-                                            <a href="#" class="editable" data-type="text" data-name="cedula" data-pk="{{$diario->id}}" style="color: #747b8e">
-                                                {{ $diario->cedula }}
-                                            </a>
-                                            @else
-                                                {{ $diario->cedula }}
-                                            @endif
-                                        @elsecan('originar')
-                                            @if(!$diario->avalado && !$diario->cedula)
-                                            <a href="#" class="editable" data-type="text" data-name="cedula" data-pk="{{$diario->id}}" style="color: #747b8e">
-                                                {{ $diario->cedula }}
-                                            </a>
-                                            @else
-                                                {{ $diario->cedula }}
-                                            @endif
-                                        @else
-                                            {{ $diario->cedula }}
-                                        @endcan
-                                    </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('originar')
                                             @if(!$diario->avalado)
