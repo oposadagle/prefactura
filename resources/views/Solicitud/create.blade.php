@@ -266,6 +266,7 @@
                                     <select class="form-select" id="ejecutivo" name="ejecutivo" autocomplete="off"
                                         aria-label="Floating label select example">
                                         <option selected disabled>Seleccionar</option>
+                                        <option>Daniela Prieto</option>
                                         <option>Derney Santana</option>
                                         <option>GLE</option>
                                         <option>Jessica Motta</option>
