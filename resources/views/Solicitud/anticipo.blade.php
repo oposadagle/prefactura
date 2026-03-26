@@ -127,6 +127,9 @@
                                                     case 'PM. ANTICIPAR':
                                                         $estadoClase = 'badge badge-outline-primary';
                                                         break;                                                    
+                                                    case 'ANTICIPO NOCHE':
+                                                        $estadoClase = 'badge badge-dark';
+                                                        break;                                                    
                                                     case 'CONTADO':
                                                         $estadoClase = 'badge badge-outline-success';
                                                         break;
