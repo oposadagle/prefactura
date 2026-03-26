@@ -181,7 +181,7 @@ class SolicitudController extends Controller
     {
         $userName = Auth::user()->name;
         $festivos = DB::table('festivos')->pluck('festivo')->toArray();
-        $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.']);
+        $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.','ANTICIPO NOCHE']);
         $excluidos = (['Servicio cancelado']);
 
         $startOfLastMonth = Carbon::now()->subMonth(2)->startOfMonth()->toDateString(); // Inicio del mes anterior
@@ -208,7 +208,7 @@ class SolicitudController extends Controller
     {
         $userName = Auth::user()->name;
         $festivos = DB::table('festivos')->pluck('festivo')->toArray();
-        $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.']);
+        $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.','ANTICIPO NOCHE']);
         $excluidos = (['Servicio finalizado', 'Servicio cancelado']);
 
         $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth()->toDateString(); // Inicio del mes anterior
