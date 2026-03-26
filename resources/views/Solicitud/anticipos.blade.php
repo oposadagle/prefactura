@@ -136,7 +136,7 @@
                                                         $estadoClase = 'badge badge-outline-primary';
                                                         break; 
                                                     case 'ANTICIPO NOCHE':
-                                                        $estadoClase = 'badge badge-dark';
+                                                        $estadoClase = 'badge badge-outline-dark';
                                                         break;                                                                                                       
                                                     case 'CONTADO':
                                                         $estadoClase = 'badge badge-outline-success';
