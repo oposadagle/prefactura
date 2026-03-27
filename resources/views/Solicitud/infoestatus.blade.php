@@ -17,6 +17,36 @@
 
 <div class="row">
     <div class="col-sm-12"> 
+        @if (session('success'))
+            <div class="alert alert-outline-success alert-dismissible fade show" role="alert">
+                <strong>¡Éxito!</strong> {{ session('success') }}
+                @if (session('ids_exitosos') && count(session('ids_exitosos')) > 0)
+                    <br>
+                    <small>IDs insertados: {{ implode(', ', session('ids_exitosos')) }}</small>
+                @endif
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if (session('warning'))
+            <div class="alert alert-outline-warning alert-dismissible fade show" role="alert">
+                <strong>¡Atención!</strong> {{ session('warning') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if (session('errores') && count(session('errores')) > 0)
+            <div class="alert alert-outline-danger alert-dismissible fade show" role="alert">
+                <strong>Se encontraron los siguientes errores:</strong>
+                <ul class="mb-0 mt-2">
+                    @foreach (session('errores') as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center m-2">
                 <div class="d-flex">  
