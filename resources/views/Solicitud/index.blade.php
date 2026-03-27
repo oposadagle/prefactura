@@ -261,7 +261,7 @@
                             @foreach ($diarias as $diario)
                                 <tr style="text-align: center">
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->id }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ \Carbon\Carbon::parse($diario->fecha_solicitud)->format('Y-m-d') }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_solicitud }}</td>
 
                                     
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
