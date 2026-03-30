@@ -12,6 +12,7 @@ class PrefacturasExport implements FromCollection, WithHeadings
      * @return \Illuminate\Support\Collection
      */
 
+    protected $year;
     protected $month;
 
     public function __construct($year, $month)
@@ -69,9 +70,7 @@ class PrefacturasExport implements FromCollection, WithHeadings
                 'valor_manejo',
                 'valor_servicios',
                 'valor_cobrar',
-                'utilidad',
                 'facturar',
-                'plfpli',
                 'factura_siigo',
                 'fecha_siigo'
             )
@@ -135,11 +134,8 @@ class PrefacturasExport implements FromCollection, WithHeadings
             'VALOR SOBRE COSTOS',
             'VALOR COSTO MANEJO',
             'VALOR SERVICIOS COMP.',
-            'VALOR POR COBRAR',
-            'UTILIDAD',
-            'RENTABILIDAD',
+            'VALOR POR COBRAR',            
             'CONGELADO',
-            'PLFPLI',
             'FACTURA SIIGO',
             'FECHA SIIGO'
         ];

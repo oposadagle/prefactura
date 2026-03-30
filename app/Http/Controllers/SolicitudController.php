@@ -2,27 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Solicitud;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use App\Exports\DiariosExport;
-use App\Exports\DiariasExport;
 use App\Exports\AnticiposExport;
+use App\Exports\DiariasExport;
+use App\Exports\DiariosExport;
 use App\Exports\EstatusExport;
-use App\Exports\PrefacturasExport;
 use App\Exports\HistoricosExport;
+use App\Exports\LogsExport;
 use App\Exports\MastotalesExport;
 use App\Exports\PaqtotalesExport;
-use App\Exports\TransitosExport;
+use App\Exports\PrefacturasExport;
 use App\Exports\ServiciosExport;
-use App\Exports\LogsExport;
-use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
+use App\Exports\TransitosExport;
+use App\Models\Solicitud;
 use Carbon\Carbon;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SolicitudController extends Controller
 {
@@ -72,16 +70,16 @@ class SolicitudController extends Controller
         if ($id) {
             $query->where(function ($q) use ($id) {
                 $q->where('cliente', 'LIKE', "%$id%")
-                  ->orWhere('placa', 'LIKE', "%$id%")
-                  ->orWhere('razon', 'LIKE', "%$id%")
-                  ->orWhere('origen', 'LIKE', "%$id%")
-                  ->orWhere('destino', 'LIKE', "%$id%")
-                  ->orWhere('conductor', 'LIKE', "%$id%")
-                  ->orWhere('remesa', 'LIKE', "%$id%")
-                  ->orWhere('radicado', 'LIKE', "%$id%")
-                  ->orWhere('states', 'LIKE', "%$id%")
-                  ->orWhere('sucursal', 'LIKE', "%$id%");
-                
+                    ->orWhere('placa', 'LIKE', "%$id%")
+                    ->orWhere('razon', 'LIKE', "%$id%")
+                    ->orWhere('origen', 'LIKE', "%$id%")
+                    ->orWhere('destino', 'LIKE', "%$id%")
+                    ->orWhere('conductor', 'LIKE', "%$id%")
+                    ->orWhere('remesa', 'LIKE', "%$id%")
+                    ->orWhere('radicado', 'LIKE', "%$id%")
+                    ->orWhere('states', 'LIKE', "%$id%")
+                    ->orWhere('sucursal', 'LIKE', "%$id%");
+
                 if (is_numeric($id)) {
                     $q->orWhere('id', $id);
                 }
@@ -124,6 +122,7 @@ class SolicitudController extends Controller
         $diarias = DB::table('peticiones')->where('trafico', 1)->get();
         $userName = Auth::user()->name;
         $actual = Carbon::now('America/Bogota');
+
         return view('Solicitud.trafico', compact('vehiculos', 'placas', 'medios', 'diarias', 'userName', 'actual'));
     }
 
@@ -131,38 +130,38 @@ class SolicitudController extends Controller
     {
         // ├Ültimo a├▒o/mes disponibles en infoestatus (PostgreSQL)
         $ultimoRegistro = DB::table('infoestatus')
-            ->selectRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year, EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month")
+            ->selectRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year, EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month')
             ->orderBy('fecha_cargue', 'desc')
             ->first();
 
-        $defaultYear  = isset($ultimoRegistro->year) ? (int) $ultimoRegistro->year : Carbon::now()->year;
+        $defaultYear = isset($ultimoRegistro->year) ? (int) $ultimoRegistro->year : Carbon::now()->year;
         $defaultMonth = isset($ultimoRegistro->month) ? (int) $ultimoRegistro->month : Carbon::now()->month;
 
-        $year  = (int) $request->input('year', $defaultYear);
+        $year = (int) $request->input('year', $defaultYear);
         $month = (int) $request->input('month', $defaultMonth);
 
         $diarias = DB::table('peticiones')
-            ->whereRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?", [$year])
-            ->whereRaw("EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?", [$month])
+            ->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year])
+            ->whereRaw('EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?', [$month])
             ->orderBy('fecha_cargue', 'desc')
             ->get();
 
         $years = DB::table('peticiones')
-            ->selectRaw("DISTINCT EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year")
+            ->selectRaw('DISTINCT EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year')
             ->orderBy('year', 'desc')
             ->pluck('year')
-            ->map(fn($y) => (int) $y);
+            ->map(fn ($y) => (int) $y);
 
         $months = DB::table('peticiones')
-            ->selectRaw("DISTINCT EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month")
-            ->whereRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?", [$year])
+            ->selectRaw('DISTINCT EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month')
+            ->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year])
             ->orderBy('month', 'asc')
             ->pluck('month')
-            ->map(fn($m) => (int) $m);
+            ->map(fn ($m) => (int) $m);
 
         // Obtener a├▒os y meses disponibles para el selector de descarga
         $availableDatesRaw = DB::table('peticiones')
-            ->selectRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) as year, EXTRACT(MONTH FROM fecha_cargue::timestamp) as month")
+            ->selectRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) as year, EXTRACT(MONTH FROM fecha_cargue::timestamp) as month')
             ->whereNotNull('fecha_cargue')
             ->distinct()
             ->orderBy('year', 'desc')
@@ -171,7 +170,7 @@ class SolicitudController extends Controller
 
         $availableDates = [];
         foreach ($availableDatesRaw as $date) {
-            $availableDates[(int)$date->year][] = (int)$date->month;
+            $availableDates[(int) $date->year][] = (int) $date->month;
         }
 
         return view('Solicitud.sac', compact('diarias', 'years', 'months', 'year', 'month', 'availableDates'));
@@ -181,7 +180,7 @@ class SolicitudController extends Controller
     {
         $userName = Auth::user()->name;
         $festivos = DB::table('festivos')->pluck('festivo')->toArray();
-        $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.','ANTICIPO NOCHE']);
+        $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE']);
         $excluidos = (['Servicio cancelado']);
 
         $startOfLastMonth = Carbon::now()->subMonth(2)->startOfMonth()->toDateString(); // Inicio del mes anterior
@@ -208,7 +207,7 @@ class SolicitudController extends Controller
     {
         $userName = Auth::user()->name;
         $festivos = DB::table('festivos')->pluck('festivo')->toArray();
-        $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.','ANTICIPO NOCHE']);
+        $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE']);
         $excluidos = (['Servicio finalizado', 'Servicio cancelado']);
 
         $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth()->toDateString(); // Inicio del mes anterior
@@ -235,34 +234,36 @@ class SolicitudController extends Controller
     {
         $ids = $request->input('ids');
 
-        if (empty($ids) || !is_array($ids)) {
+        if (empty($ids) || ! is_array($ids)) {
             return response()->json([
                 'success' => false,
-                'message' => 'No se recibieron identificadores v├ílidos.'
+                'message' => 'No se recibieron identificadores v├ílidos.',
             ]);
         }
 
         try {
             DB::table('solicitudes')->whereIn('id', $ids)->update([
-                'confirmado' => 'SI'
+                'confirmado' => 'SI',
             ]);
 
             // Dispatch WhatsApp messages via Whapi
             $peticiones = DB::table('peticiones')->whereIn('id', $ids)->get();
             $whapiToken = env('WHAPI_TOKEN');
             $whapiUrl = rtrim(env('WHAPI_API_URL', 'https://gate.whapi.cloud/messages/text'), '/');
-            if (!str_ends_with($whapiUrl, '/messages/text')) {
+            if (! str_ends_with($whapiUrl, '/messages/text')) {
                 $whapiUrl .= '/messages/text';
             }
 
             if ($whapiToken && $whapiUrl) {
                 foreach ($peticiones as $p) {
-                    if (empty($p->tpagant)) continue;
+                    if (empty($p->tpagant)) {
+                        continue;
+                    }
 
                     // Limpiar el numero de telefono, asumiendo 57 (Colombia) si tiene 10 digitos sin indicativo
                     $telefono = trim($p->tpagant);
                     if (substr($telefono, 0, 1) !== '+' && strlen($telefono) == 10) {
-                        $telefono = '57' . $telefono;
+                        $telefono = '57'.$telefono;
                     }
                     // Quitar los '+' para que sea de solo digitos como exige la API
                     $telefono = str_replace('+', '', $telefono);
@@ -273,18 +274,18 @@ class SolicitudController extends Controller
                     $val_pagar = number_format(floatval($p->valor_a_pagar), 0, ',', '.');
 
                     if ($p->pago_completo === 'SI') {
-                        $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realiz├│ un pago por concepto del anticipo correspondiente al manifiesto: {$p->razon}\n\n" .
-                                   "RESUMEN\n" .
-                                   "reteica: {$val_reteica}\n" .
-                                   "retefuente: {$val_retefuente}\n" .
-                                   "seguro: {$val_seguro}\n" .
-                                   "valor pagado: {$val_pagar}\n\n" .
-                                   "...no responder este mensaje...";
+                        $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realiz├│ un pago por concepto del anticipo correspondiente al manifiesto: {$p->razon}\n\n".
+                                   "RESUMEN\n".
+                                   "reteica: {$val_reteica}\n".
+                                   "retefuente: {$val_retefuente}\n".
+                                   "seguro: {$val_seguro}\n".
+                                   "valor pagado: {$val_pagar}\n\n".
+                                   '...no responder este mensaje...';
                     } else {
-                        $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realiz├│ un pago por concepto del anticipo correspondiente al manifiesto: {$p->razon}\n\n" .
-                                   "RESUMEN\n" .
-                                   "valor pagado: {$val_pagar}\n\n" .
-                                   "...no responder este mensaje...";
+                        $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realiz├│ un pago por concepto del anticipo correspondiente al manifiesto: {$p->razon}\n\n".
+                                   "RESUMEN\n".
+                                   "valor pagado: {$val_pagar}\n\n".
+                                   '...no responder este mensaje...';
                     }
 
                     // Enviar mensaje hacia WhatsApp
@@ -292,20 +293,21 @@ class SolicitudController extends Controller
                         ->post($whapiUrl, [
                             'typing_time' => 0,
                             'to' => $telefono,
-                            'body' => $mensaje
+                            'body' => $mensaje,
                         ]);
                 }
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Registros confirmados correctamente.'
+                'message' => 'Registros confirmados correctamente.',
             ]);
         } catch (\Exception $e) {
-            Log::error('Error en confirmaci├│n masiva de anticipos: ' . $e->getMessage());
+            Log::error('Error en confirmaci├│n masiva de anticipos: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Hubo un error al actualizar los registros.'
+                'message' => 'Hubo un error al actualizar los registros.',
             ], 500);
         }
     }
@@ -343,7 +345,7 @@ class SolicitudController extends Controller
     public function cuentas()
     {
         $userName = Auth::user()->name;
-        
+
         $diarias = DB::table('peticiones')
 
             ->whereNotNull('soporte')
@@ -353,11 +355,11 @@ class SolicitudController extends Controller
             ->get();
 
         foreach ($diarias as $diario) {
-            if (!$diario->verificado) {
+            if (! $diario->verificado) {
                 $diario->estado_cuenta = 'PENDIENTE POR APROBAR';
-            } elseif ($diario->verificado && !$diario->avalado) {
+            } elseif ($diario->verificado && ! $diario->avalado) {
                 $diario->estado_cuenta = 'PENDIENTE POR VALIDAR';
-            } elseif ($diario->verificado && $diario->avalado && !$diario->pagado) {
+            } elseif ($diario->verificado && $diario->avalado && ! $diario->pagado) {
                 $diario->estado_cuenta = 'PENDIENTE POR PAGAR';
             } elseif ($diario->verificado && $diario->avalado && $diario->pagado) {
                 $diario->estado_cuenta = 'CUENTA PAGADA';
@@ -372,7 +374,7 @@ class SolicitudController extends Controller
     public function historicoCuentas()
     {
         $userName = Auth::user()->name;
-        
+
         $diarias = DB::table('peticiones')
 
             ->whereNotNull('soporte')
@@ -398,10 +400,11 @@ class SolicitudController extends Controller
 
         while ($contador < $diasHabiles) {
             $fecha->addDay();
-            if (!in_array($fecha->toDateString(), $festivos)) {
+            if (! in_array($fecha->toDateString(), $festivos)) {
                 $contador++;
             }
         }
+
         return $fecha->toDateString();
     }
 
@@ -409,10 +412,10 @@ class SolicitudController extends Controller
     {
         $ids = $request->input('ids');
 
-        if (empty($ids) || !is_array($ids)) {
+        if (empty($ids) || ! is_array($ids)) {
             return response()->json([
                 'success' => false,
-                'message' => 'No se recibieron identificadores v├ílidos.'
+                'message' => 'No se recibieron identificadores v├ílidos.',
             ]);
         }
 
@@ -420,25 +423,27 @@ class SolicitudController extends Controller
             DB::table('solicitudes')->whereIn('id', $ids)->update([
                 'pagado' => true,
                 'fechapago' => Carbon::now('America/Bogota'),
-                'userpago' => auth()->user()->name
+                'userpago' => auth()->user()->name,
             ]);
 
             // Dispatch WhatsApp messages via Whapi
             $peticiones = DB::table('peticiones')->whereIn('id', $ids)->get();
             $whapiToken = env('WHAPI_TOKEN');
             $whapiUrl = rtrim(env('WHAPI_API_URL', 'https://gate.whapi.cloud/messages/text'), '/');
-            if (!str_ends_with($whapiUrl, '/messages/text')) {
+            if (! str_ends_with($whapiUrl, '/messages/text')) {
                 $whapiUrl .= '/messages/text';
             }
 
             if ($whapiToken && $whapiUrl) {
                 foreach ($peticiones as $p) {
-                    if (empty($p->tpagsal)) continue;
+                    if (empty($p->tpagsal)) {
+                        continue;
+                    }
 
                     // Limpiar el numero de telefono, asumiendo 57 (Colombia) si tiene 10 digitos sin indicativo
                     $telefono = trim($p->tpagsal);
                     if (substr($telefono, 0, 1) !== '+' && strlen($telefono) == 10) {
-                        $telefono = '57' . $telefono;
+                        $telefono = '57'.$telefono;
                     }
                     $telefono = str_replace('+', '', $telefono);
 
@@ -455,37 +460,38 @@ class SolicitudController extends Controller
                     $val_deducciones = number_format(floatval($p->deducciones), 0, ',', '.');
                     $val_saldototal = number_format($saldo_total, 0, ',', '.');
 
-                    $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realiz├│ un pago por concepto del saldo correspondiente al manifiesto: {$p->razon}\n\n" .
-                               "RESUMEN:\n" .
-                               "COSTO: {$val_costo}\n" .
-                               "ANTICIPO: {$val_anticipo}\n" .
-                               "EXTRA: {$val_extra}\n" .
-                               "RETEFUENTE: {$val_retefuente}\n" .
-                               "RETEICA: {$val_reteica}\n" .
-                               "SEGURO: {$val_seguro}\n" .
-                               "OTRAS DEDUCCIONES: {$val_deducciones}\n" .
-                               "VALOR_SALDO: {$val_saldototal}\n\n" .
-                               "...no responder este mensaje...";
+                    $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realiz├│ un pago por concepto del saldo correspondiente al manifiesto: {$p->razon}\n\n".
+                               "RESUMEN:\n".
+                               "COSTO: {$val_costo}\n".
+                               "ANTICIPO: {$val_anticipo}\n".
+                               "EXTRA: {$val_extra}\n".
+                               "RETEFUENTE: {$val_retefuente}\n".
+                               "RETEICA: {$val_reteica}\n".
+                               "SEGURO: {$val_seguro}\n".
+                               "OTRAS DEDUCCIONES: {$val_deducciones}\n".
+                               "VALOR_SALDO: {$val_saldototal}\n\n".
+                               '...no responder este mensaje...';
 
                     // Enviar mensaje hacia WhatsApp
                     Http::withToken($whapiToken)
                         ->post($whapiUrl, [
                             'typing_time' => 0,
                             'to' => $telefono,
-                            'body' => $mensaje
+                            'body' => $mensaje,
                         ]);
                 }
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Registros actualizados correctamente.'
+                'message' => 'Registros actualizados correctamente.',
             ]);
         } catch (\Exception $e) {
-            Log::error('Error en pago masivo de saldos: ' . $e->getMessage());
+            Log::error('Error en pago masivo de saldos: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Hubo un error al actualizar los registros.'
+                'message' => 'Hubo un error al actualizar los registros.',
             ], 500);
         }
     }
@@ -494,10 +500,10 @@ class SolicitudController extends Controller
     {
         $ids = $request->input('ids');
 
-        if (empty($ids) || !is_array($ids)) {
+        if (empty($ids) || ! is_array($ids)) {
             return response()->json([
                 'success' => false,
-                'message' => 'No se recibieron identificadores v├ílidos.'
+                'message' => 'No se recibieron identificadores v├ílidos.',
             ]);
         }
 
@@ -505,25 +511,27 @@ class SolicitudController extends Controller
             DB::table('solicitudes')->whereIn('id', $ids)->update([
                 'pagada' => true,
                 'fechapaga' => \Carbon\Carbon::now('America/Bogota'),
-                'userpaga' => auth()->user()->name
+                'userpaga' => auth()->user()->name,
             ]);
 
             // Dispatch WhatsApp messages via Whapi
             $peticiones = DB::table('peticiones')->whereIn('id', $ids)->get();
             $whapiToken = env('WHAPI_TOKEN');
             $whapiUrl = rtrim(env('WHAPI_API_URL', 'https://gate.whapi.cloud/messages/text'), '/');
-            if (!str_ends_with($whapiUrl, '/messages/text')) {
+            if (! str_ends_with($whapiUrl, '/messages/text')) {
                 $whapiUrl .= '/messages/text';
             }
 
             if ($whapiToken && $whapiUrl) {
                 foreach ($peticiones as $p) {
-                    if (empty($p->tpagcon)) continue;
+                    if (empty($p->tpagcon)) {
+                        continue;
+                    }
 
                     // Limpiar el numero de telefono
                     $telefono = trim($p->tpagcon);
                     if (substr($telefono, 0, 1) !== '+' && strlen($telefono) == 10) {
-                        $telefono = '57' . $telefono;
+                        $telefono = '57'.$telefono;
                     }
                     $telefono = str_replace('+', '', $telefono);
 
@@ -532,46 +540,47 @@ class SolicitudController extends Controller
                     $val_cargatwo = number_format(floatval($p->cargatwo ?? 0), 0, ',', '.');
                     $val_standby = number_format(floatval($p->standby ?? 0), 0, ',', '.');
                     $val_desplazamiento = number_format(floatval($p->costo_desplazamiento ?? 0), 0, ',', '.');
-                    
+
                     $base = floatval($p->cargaone ?? 0) + floatval($p->cargatwo ?? 0) + floatval($p->standby ?? 0) + floatval($p->costo_desplazamiento ?? 0);
                     $reteica = ($p->ica == 'SI') ? ($base * 0.00414) : 0;
                     $retefuente = $base * 0.01;
                     $total = $base - ($reteica + $retefuente);
-                    
+
                     $val_reteica = number_format($reteica, 0, ',', '.');
                     $val_retefuente = number_format($retefuente, 0, ',', '.');
                     $val_total = number_format($total, 0, ',', '.');
 
-                    $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realizó un pago por concepto de la cuenta de cobro relacionado al manifiesto: {$p->razon}\n\n" .
-                               "RESUMEN\n" .
-                               "CARGUE 1: {$val_cargaone}\n" .
-                               "CARGUE 2: {$val_cargatwo}\n" .
-                               "STANDBY: {$val_standby}\n" .
-                               "COSTO DESPLAZAMIENTO: {$val_desplazamiento}\n" .
-                               "RETEICA: {$val_reteica}\n" .
-                               "RETEFUENTE: {$val_retefuente}\n" .
-                               "VALOR TOTAL: {$val_total}\n\n" .
-                               "...no responder este mensaje...";
+                    $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realizó un pago por concepto de la cuenta de cobro relacionado al manifiesto: {$p->razon}\n\n".
+                               "RESUMEN\n".
+                               "CARGUE 1: {$val_cargaone}\n".
+                               "CARGUE 2: {$val_cargatwo}\n".
+                               "STANDBY: {$val_standby}\n".
+                               "COSTO DESPLAZAMIENTO: {$val_desplazamiento}\n".
+                               "RETEICA: {$val_reteica}\n".
+                               "RETEFUENTE: {$val_retefuente}\n".
+                               "VALOR TOTAL: {$val_total}\n\n".
+                               '...no responder este mensaje...';
 
                     // Enviar mensaje hacia WhatsApp
                     \Illuminate\Support\Facades\Http::withToken($whapiToken)
                         ->post($whapiUrl, [
                             'typing_time' => 0,
                             'to' => $telefono,
-                            'body' => $mensaje
+                            'body' => $mensaje,
                         ]);
                 }
             }
 
             return response()->json([
                 'success' => true,
-                'message' => 'Cuentas pagadas correctamente.'
+                'message' => 'Cuentas pagadas correctamente.',
             ]);
         } catch (\Exception $e) {
-            Log::error('Error en pago masivo de cuentas: ' . $e->getMessage());
+            Log::error('Error en pago masivo de cuentas: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Hubo un error al actualizar las cuentas.'
+                'message' => 'Hubo un error al actualizar las cuentas.',
             ], 500);
         }
     }
@@ -580,10 +589,10 @@ class SolicitudController extends Controller
     {
         $ids = $request->input('ids');
 
-        if (empty($ids) || !is_array($ids)) {
+        if (empty($ids) || ! is_array($ids)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Debe seleccionar al menos un registro.'
+                'message' => 'Debe seleccionar al menos un registro.',
             ]);
         }
 
@@ -592,7 +601,7 @@ class SolicitudController extends Controller
         $registros = DB::table('peticiones')
             ->leftJoin('datos_bancarios', function ($join) {
                 $join->on('peticiones.cpagsal', '=', 'datos_bancarios.nit')
-                     ->where('datos_bancarios.estado', '=', 'ACTIVO');
+                    ->where('datos_bancarios.estado', '=', 'ACTIVO');
             })
             ->select(
                 'peticiones.id',
@@ -674,10 +683,10 @@ class SolicitudController extends Controller
     {
         $ids = $request->input('ids');
 
-        if (empty($ids) || !is_array($ids)) {
+        if (empty($ids) || ! is_array($ids)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Debe seleccionar al menos un registro.'
+                'message' => 'Debe seleccionar al menos un registro.',
             ]);
         }
 
@@ -686,7 +695,7 @@ class SolicitudController extends Controller
         $registros = DB::table('peticiones')
             ->leftJoin('datos_bancarios', function ($join) {
                 $join->on('peticiones.cpagant', '=', 'datos_bancarios.nit')
-                     ->where('datos_bancarios.estado', '=', 'ACTIVO');
+                    ->where('datos_bancarios.estado', '=', 'ACTIVO');
             })
             ->select(
                 'peticiones.id',
@@ -767,10 +776,10 @@ class SolicitudController extends Controller
     {
         $ids = $request->input('ids');
 
-        if (empty($ids) || !is_array($ids)) {
+        if (empty($ids) || ! is_array($ids)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Debe seleccionar al menos un registro.'
+                'message' => 'Debe seleccionar al menos un registro.',
             ]);
         }
 
@@ -779,7 +788,7 @@ class SolicitudController extends Controller
         $registros = DB::table('peticiones')
             ->leftJoin('datos_bancarios', function ($join) {
                 $join->on('peticiones.cpagcon', '=', 'datos_bancarios.nit')
-                     ->where('datos_bancarios.estado', '=', 'ACTIVO');
+                    ->where('datos_bancarios.estado', '=', 'ACTIVO');
             })
             ->select(
                 'peticiones.id',
@@ -867,10 +876,10 @@ class SolicitudController extends Controller
     {
         $ids = $request->input('ids');
 
-        if (empty($ids) || !is_array($ids)) {
+        if (empty($ids) || ! is_array($ids)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Debe seleccionar al menos un registro.'
+                'message' => 'Debe seleccionar al menos un registro.',
             ]);
         }
 
@@ -881,7 +890,7 @@ class SolicitudController extends Controller
         if (count($registros) === 0) {
             return response()->json([
                 'success' => false,
-                'message' => 'No se encontraron registros.'
+                'message' => 'No se encontraron registros.',
             ]);
         }
 
@@ -890,14 +899,15 @@ class SolicitudController extends Controller
             $r = $registros[0];
             $filename = "{$r->guia}-{$r->asociado}.pdf";
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('Solicitud.formato-pdf', ['registros' => [$r]]);
+
             return $pdf->download($filename);
         } else {
             // Caso 2: M├║ltiples registros, empaquetar en un archivo .zip al vuelo
             $zip = new \ZipArchive();
-            $zipName = \Carbon\Carbon::now('America/Bogota')->format('ymdHi') . '.zip';
-            $zipPath = storage_path('app/' . $zipName);
+            $zipName = \Carbon\Carbon::now('America/Bogota')->format('ymdHi').'.zip';
+            $zipPath = storage_path('app/'.$zipName);
 
-            if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
+            if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
                 foreach ($registros as $r) {
                     $filename = "{$r->guia}-{$r->asociado}.pdf";
                     $pdfContent = \Barryvdh\DomPDF\Facade\Pdf::loadView('Solicitud.formato-pdf', ['registros' => [$r]])->output();
@@ -909,7 +919,7 @@ class SolicitudController extends Controller
             } else {
                 return response()->json([
                     'success' => false,
-                    'message' => 'No se pudo generar el archivo ZIP.'
+                    'message' => 'No se pudo generar el archivo ZIP.',
                 ]);
             }
         }
@@ -935,21 +945,21 @@ class SolicitudController extends Controller
         $year = $request->input('year');
         $month = $request->input('month');
 
-        // Validar a├▒o
-        if (!$year || !is_numeric($year)) {
+        // Validar año
+        if (! $year || ! is_numeric($year)) {
             return redirect()->back()->withErrors(['year' => 'A├▒o inv├ílido']);
         }
 
         // Validar mes (puede ser n├║mero o "todos")
-        if ($month !== 'todos' && (!is_numeric($month) || $month < 1 || $month > 12)) {
+        if ($month !== 'todos' && (! is_numeric($month) || $month < 1 || $month > 12)) {
             return redirect()->back()->withErrors(['month' => 'Mes inv├ílido']);
         }
 
         // Generar nombre de archivo
         if ($month === 'todos') {
-            $filename = 'estatus_' . $year . '_completo.xlsx';
+            $filename = 'estatus_'.$year.'_completo.xlsx';
         } else {
-            $filename = 'estatus_' . $year . '_' . str_pad($month, 2, '0', STR_PAD_LEFT) . '.xlsx';
+            $filename = 'estatus_'.$year.'_'.str_pad($month, 2, '0', STR_PAD_LEFT).'.xlsx';
         }
 
         // Descargar usando el Export modificado
@@ -958,23 +968,21 @@ class SolicitudController extends Controller
 
     public function prefacturas(Request $request)
     {
-        $monthYear = $request->input('month_year'); // Formato esperado: YYYY-MM
+        $year = $request->input('year');
+        $month = $request->input('month');
 
         // Validar que el formato sea correcto
-        if (!preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $monthYear)) {
-            return redirect()->back()->withErrors(['month_year' => 'Formato de mes y a├▒o inv├ílido']);
+        if (! $year || ! $month || ! is_numeric($year) || ! is_numeric($month)) {
+            return redirect()->back()->withErrors(['year' => 'Año o mes inválido']);
         }
 
-        // Separar a├▒o y mes
-        [$year, $month] = explode('-', $monthYear);
-
-        // Verificar que los valores sean v├ílidos
-        if (!checkdate($month, 1, $year)) {
-            return redirect()->back()->withErrors(['month_year' => 'Fecha inv├ílida']);
+        // Verificar que los valores sean válidos
+        if (! checkdate((int) $month, 1, (int) $year)) {
+            return redirect()->back()->withErrors(['month' => 'Fecha inválida']);
         }
 
         // Generar el nombre del archivo din├ímicamente
-        $filename = 'prefactura_' . $year . '_' . str_pad($month, 2, '0', STR_PAD_LEFT) . '.xlsx';
+        $filename = 'prefactura_'.$year.'_'.str_pad($month, 2, '0', STR_PAD_LEFT).'.xlsx';
 
         // Descargar el archivo usando los par├ímetros
         return Excel::download(new PrefacturasExport($year, $month), $filename);
@@ -984,37 +992,37 @@ class SolicitudController extends Controller
     {
         // ├Ültimo a├▒o/mes disponibles en infoestatus (PostgreSQL)
         $ultimoRegistro = DB::table('infoestatus')
-            ->selectRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year, EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month")
+            ->selectRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year, EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month')
             ->orderBy('fecha_cargue', 'desc')
             ->first();
 
-        $defaultYear  = isset($ultimoRegistro->year) ? (int) $ultimoRegistro->year : Carbon::now()->year;
+        $defaultYear = isset($ultimoRegistro->year) ? (int) $ultimoRegistro->year : Carbon::now()->year;
         $defaultMonth = isset($ultimoRegistro->month) ? (int) $ultimoRegistro->month : Carbon::now()->month;
 
-        $year  = (int) $request->input('year', $defaultYear);
+        $year = (int) $request->input('year', $defaultYear);
         $month = (int) $request->input('month', $defaultMonth);
 
         $incluidos = ['Servicio finalizado', 'Servicio cancelado'];
 
         $diarias = DB::table('peticiones')
             ->whereIn('states', $incluidos)
-            ->whereRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?", [$year])
-            ->whereRaw("EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?", [$month])
+            ->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year])
+            ->whereRaw('EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?', [$month])
             ->orderBy('fecha_cargue', 'desc')
             ->get();
 
         $years = DB::table('peticiones')
-            ->selectRaw("DISTINCT EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year")
+            ->selectRaw('DISTINCT EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year')
             ->orderBy('year', 'desc')
             ->pluck('year')
-            ->map(fn($y) => (int) $y);
+            ->map(fn ($y) => (int) $y);
 
         $months = DB::table('peticiones')
-            ->selectRaw("DISTINCT EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month")
-            ->whereRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?", [$year])
+            ->selectRaw('DISTINCT EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month')
+            ->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year])
             ->orderBy('month', 'asc')
             ->pluck('month')
-            ->map(fn($m) => (int) $m);
+            ->map(fn ($m) => (int) $m);
 
         return view('Solicitud.historico', compact('diarias', 'years', 'months', 'year', 'month'));
     }
@@ -1023,37 +1031,55 @@ class SolicitudController extends Controller
     {
         // ├Ültimo a├▒o/mes disponibles (PostgreSQL)
         $ultimoRegistro = DB::table('infoestatus')
-            ->selectRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year, EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month")
+            ->selectRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year, EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month')
             ->orderBy('fecha_cargue', 'desc')
             ->first();
 
-        $defaultYear  = isset($ultimoRegistro->year) ? (int) $ultimoRegistro->year : Carbon::now()->year;
+        $defaultYear = isset($ultimoRegistro->year) ? (int) $ultimoRegistro->year : Carbon::now()->year;
         $defaultMonth = isset($ultimoRegistro->month) ? (int) $ultimoRegistro->month : Carbon::now()->month;
 
-        $year  = (int) $request->input('year', $defaultYear);
+        $year = (int) $request->input('year', $defaultYear);
         $month = (int) $request->input('month', $defaultMonth);
 
         $diarias = DB::table('infoestatus')
             ->where('facturar', 'SI')
-            ->whereRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?", [$year])
-            ->whereRaw("EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?", [$month])
+            ->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year])
+            ->whereRaw('EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?', [$month])
             ->orderBy('fecha_cargue', 'desc')
             ->get();
 
         $years = DB::table('infoestatus')
-            ->selectRaw("DISTINCT EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year")
+            ->selectRaw('DISTINCT EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year')
             ->orderBy('year', 'desc')
             ->pluck('year')
-            ->map(fn($y) => (int) $y);
+            ->map(fn ($y) => (int) $y);
 
         $months = DB::table('infoestatus')
-            ->selectRaw("DISTINCT EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month")
-            ->whereRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?", [$year])
+            ->selectRaw('DISTINCT EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month')
+            ->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year])
             ->orderBy('month', 'asc')
             ->pluck('month')
-            ->map(fn($m) => (int) $m);
+            ->map(fn ($m) => (int) $m);
 
-        return view('Solicitud.prefactura', compact('diarias', 'years', 'months', 'year', 'month'));
+        // Obtener todas las combinaciones disponibles para el selector de descarga
+        $fechasDisponibles = DB::table('infoestatus')
+            ->selectRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) as year, EXTRACT(MONTH FROM fecha_cargue::timestamp) as month')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->get();
+
+        $availableDates = [];
+        foreach ($fechasDisponibles as $fecha) {
+            $y = (int) $fecha->year;
+            $m = (int) $fecha->month;
+            $availableDates[$y][] = [
+                'val' => str_pad($m, 2, '0', STR_PAD_LEFT),
+                'label' => \Carbon\Carbon::create()->month($m)->translatedFormat('F'),
+            ];
+        }
+
+        return view('Solicitud.prefactura', compact('diarias', 'years', 'months', 'year', 'month', 'availableDates'));
     }
 
     public function infoestatus()
@@ -1070,14 +1096,14 @@ class SolicitudController extends Controller
         $causales = $causes->map(function ($cause) {
             return ['value' => $cause->nombre, 'text' => $cause->nombre];
         });
-        
+
         $startOfLastMonth = Carbon::now()->subMonth(3)->startOfMonth()->toDateString(); // Inicio del mes anterior
         $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString(); // Fin del mes actual
         $diarias = DB::table('infoestatus')->where('facturar', 'NO')->whereBetween('fecha_cargue', [$startOfLastMonth, $endOfCurrentMonth])->orderBy('fecha_cargue', 'desc')->get();
 
         // Obtener A├▒os y Meses disponibles para el filtro
         $fechasDisponibles = DB::table('infoestatus')
-            ->selectRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) as year, EXTRACT(MONTH FROM fecha_cargue::timestamp) as month")
+            ->selectRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) as year, EXTRACT(MONTH FROM fecha_cargue::timestamp) as month')
             ->distinct()
             ->orderBy('year', 'desc')
             ->orderBy('month', 'desc')
@@ -1086,8 +1112,8 @@ class SolicitudController extends Controller
         // Estructurar datos: [ 2024 => [1, 2, ...], 2023 => [12, 11, ...] ]
         $availableDates = [];
         foreach ($fechasDisponibles as $fecha) {
-            $year = (int)$fecha->year;
-            $month = (int)$fecha->month;
+            $year = (int) $fecha->year;
+            $month = (int) $fecha->month;
             $availableDates[$year][] = $month;
         }
 
@@ -1098,10 +1124,10 @@ class SolicitudController extends Controller
     {
         // Obtener los a├▒os ├║nicos del campo fecha_cargue
         $years = DB::table('infoestatus')
-            ->selectRaw("DISTINCT EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year")
+            ->selectRaw('DISTINCT EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year')
             ->orderBy('year', 'desc')
             ->pluck('year')
-            ->map(fn($y) => (int) $y);
+            ->map(fn ($y) => (int) $y);
 
         // Determinar a├▒o seleccionado (por defecto el ├║ltimo disponible o el actual)
         $defaultYear = $years->first() ?: Carbon::now()->year;
@@ -1109,18 +1135,18 @@ class SolicitudController extends Controller
 
         // Obtener los meses ├║nicos para el a├▒o seleccionado
         $months = DB::table('infoestatus')
-            ->selectRaw("DISTINCT EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month")
-            ->whereRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?", [$year])
+            ->selectRaw('DISTINCT EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month')
+            ->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year])
             ->orderBy('month', 'asc')
             ->pluck('month')
-            ->map(fn($m) => (int) $m);
+            ->map(fn ($m) => (int) $m);
 
         // Determinar mes seleccionado
         // Si el mes solicitado est├í en la lista de meses disponibles, usarlo.
         // Si no (ej. cambio de a├▒o), usar el ├║ltimo mes disponible.
         $requestedMonth = $request->input('month');
-        if ($requestedMonth && $months->contains((int)$requestedMonth)) {
-            $month = (int)$requestedMonth;
+        if ($requestedMonth && $months->contains((int) $requestedMonth)) {
+            $month = (int) $requestedMonth;
         } else {
             $month = $months->last() ?: Carbon::now()->month;
         }
@@ -1128,8 +1154,8 @@ class SolicitudController extends Controller
         // Filtrar por a├▒o y mes seleccionados
         $diarias = DB::table('infoestatus')
             ->where('facturar', 'SI')
-            ->whereRaw("EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?", [$year])
-            ->whereRaw("EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?", [$month])
+            ->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year])
+            ->whereRaw('EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?', [$month])
             ->orderBy('fecha_cargue', 'desc')
             ->get();
 
@@ -1165,12 +1191,12 @@ class SolicitudController extends Controller
     {
         // Primero definir la funci├│n de limpieza fuera del scope
         $limpiarTexto = function ($texto) {
-            if (is_null($texto) || !is_string($texto)) {
+            if (is_null($texto) || ! is_string($texto)) {
                 return $texto;
             }
 
             // Convertir a UTF-8 si no lo est├í
-            if (!mb_check_encoding($texto, 'UTF-8')) {
+            if (! mb_check_encoding($texto, 'UTF-8')) {
                 $texto = mb_convert_encoding($texto, 'UTF-8', 'UTF-8');
             }
 
@@ -1199,24 +1225,25 @@ class SolicitudController extends Controller
         };
 
         $fields = [
-            'archivo' => 'required|max:10000|mimes:xlsx'
+            'archivo' => 'required|max:10000|mimes:xlsx',
         ];
         $message = [
-            'archivo.required' => 'El archivo es requerido'
+            'archivo.required' => 'El archivo es requerido',
         ];
         $this->validate($request, $fields, $message);
 
         $archivo = $request->file('archivo');
         $datosArchivo = Excel::toArray([], $archivo);
         $filasEstatus = array_slice($datosArchivo[0], 1);
-        
+
         // Agrupar las filas por ID
         $filasPorId = array_reduce($filasEstatus, function ($carry, $fila) {
             $id = $fila[0];
-            if (!isset($carry[$id])) {
+            if (! isset($carry[$id])) {
                 $carry[$id] = [];
             }
             $carry[$id][] = $fila;
+
             return $carry;
         }, []);
 
@@ -1275,7 +1302,7 @@ class SolicitudController extends Controller
                             'plfpli' => $filaLimpia[9],
                             'costo_flete' => $costoFlete,
                             'valor_cliente' => $valorCliente,
-                            'created_at' => Carbon::now()
+                            'created_at' => Carbon::now(),
                         ];
                     } elseif (isset($filaLimpia[0], $filaLimpia[1]) && empty($filaLimpia[2]) && empty($filaLimpia[3]) && empty($filaLimpia[4]) && empty($filaLimpia[5]) && empty($filaLimpia[6]) && empty($filaLimpia[7])) {
                         $solicitud = DB::table('solicitudes')->where('id', $filaLimpia[0])->first();
@@ -1303,33 +1330,34 @@ class SolicitudController extends Controller
                                 'plfpli' => 0,
                                 'costo_flete' => $costoFlete,
                                 'valor_cliente' => $valorCliente,
-                                'created_at' => Carbon::now()
+                                'created_at' => Carbon::now(),
                             ];
                         }
                     }
                 } catch (\Exception $e) {
                     // Registrar error pero continuar procesando
-                    $errores[] = "Error en fila con ID {$id}, gu├¡a {$fila[1]}: " . $e->getMessage();
+                    $errores[] = "Error en fila con ID {$id}, gu├¡a {$fila[1]}: ".$e->getMessage();
                     Log::error('Error procesando archivo Excel', [
                         'id' => $id,
                         'guia' => $fila[1],
                         'error' => $e->getMessage(),
-                        'fila' => $fila
+                        'fila' => $fila,
                     ]);
+
                     continue;
                 }
             }
         }
 
         $datos = array_filter($datos);
-        $cantidadInsertada = count($datos);        
+        $cantidadInsertada = count($datos);
 
         if ($cantidadInsertada > 0) {
             DB::table('estatus')->insert($datos);
 
-            $mensaje = 'Datos procesados correctamente. Se insertaron ' . $cantidadInsertada . ' registros.';
-            if (!empty($errores)) {
-                $mensaje .= ' Hubo ' . count($errores) . ' errores durante el procesamiento.';
+            $mensaje = 'Datos procesados correctamente. Se insertaron '.$cantidadInsertada.' registros.';
+            if (! empty($errores)) {
+                $mensaje .= ' Hubo '.count($errores).' errores durante el procesamiento.';
             }
 
             return back()->with('success', $mensaje)->with('cantidad', $cantidadInsertada);
@@ -1342,10 +1370,10 @@ class SolicitudController extends Controller
     {
         // Validar archivo
         $fields = [
-            'archivo' => 'required|max:10000|mimes:xlsx'
+            'archivo' => 'required|max:10000|mimes:xlsx',
         ];
         $message = [
-            'archivo.required' => 'El archivo es requerido'
+            'archivo.required' => 'El archivo es requerido',
         ];
         $this->validate($request, $fields, $message);
 
@@ -1379,8 +1407,12 @@ class SolicitudController extends Controller
                 'updated_at' => now(),
             ];
 
-            if ($recibido_cumplido !== '') $camposActualizar['recibido_cumplido'] = $recibido_cumplido;
-            if ($fecha_envio !== '') $camposActualizar['fecha_envio'] = $fecha_envio;
+            if ($recibido_cumplido !== '') {
+                $camposActualizar['recibido_cumplido'] = $recibido_cumplido;
+            }
+            if ($fecha_envio !== '') {
+                $camposActualizar['fecha_envio'] = $fecha_envio;
+            }
 
             // Solo actualizar si hay al menos un campo para modificar
             if (count($camposActualizar) > 1) { // >1 porque 'updated_at' siempre est├í
@@ -1405,14 +1437,13 @@ class SolicitudController extends Controller
             ->with('cantidad', $cantidad);
     }
 
-
     public function procesarRegistros(Request $request)
     {
         $fields = [
-            'archivo' => 'required|max:10000|mimes:xlsx'
+            'archivo' => 'required|max:10000|mimes:xlsx',
         ];
         $message = [
-            'archivo.required' => 'El archivo es requerido'
+            'archivo.required' => 'El archivo es requerido',
         ];
         $this->validate($request, $fields, $message);
 
@@ -1430,20 +1461,21 @@ class SolicitudController extends Controller
                 ->where('guia', $guia)
                 ->update([
                     'factura_siigo' => $facturaSiigo,
-                    'fecha_siigo' => $fechaSiigo
+                    'fecha_siigo' => $fechaSiigo,
                 ]);
         }
-        $mensaje = $actualizadas . ' registros actualizados correctamente.';
+        $mensaje = $actualizadas.' registros actualizados correctamente.';
+
         return redirect()->back()->with('success', $mensaje);
     }
 
     public function procesarItems(Request $request)
     {
         $fields = [
-            'archivo' => 'required|max:10000|mimes:xlsx'
+            'archivo' => 'required|max:10000|mimes:xlsx',
         ];
         $message = [
-            'archivo.required' => 'El archivo es requerido'
+            'archivo.required' => 'El archivo es requerido',
         ];
         $this->validate($request, $fields, $message);
 
@@ -1485,13 +1517,13 @@ class SolicitudController extends Controller
                     'dst' => $dst,
                     'egreso_anticipo' => $egreso_anticipo,
                     'egreso_saldo' => $egreso_saldo,
-                    'fecha_saldo' => $fecha_saldo
+                    'fecha_saldo' => $fecha_saldo,
                 ]);
         }
-        $mensaje = $actualizadas . ' registros actualizados correctamente.';
+        $mensaje = $actualizadas.' registros actualizados correctamente.';
+
         return redirect()->back()->with('success', $mensaje);
     }
-
 
     public function total(Request $request)
     {
@@ -1499,12 +1531,12 @@ class SolicitudController extends Controller
         $month = $request->input('month');
 
         // Validar que los valores sean v├ílidos
-        if (!checkdate($month, 1, $year)) {
+        if (! checkdate($month, 1, $year)) {
             return redirect()->back()->withErrors(['date' => 'Fecha inv├ílida']);
         }
 
         // Generar el nombre del archivo din├ímicamente
-        $filename = 'historicos_' . $year . '_' . str_pad($month, 2, '0', STR_PAD_LEFT) . '.xlsx';
+        $filename = 'historicos_'.$year.'_'.str_pad($month, 2, '0', STR_PAD_LEFT).'.xlsx';
 
         // Descargar el archivo usando los par├ímetros
         return Excel::download(new HistoricosExport($year, $month), $filename);
@@ -1516,7 +1548,8 @@ class SolicitudController extends Controller
         if ($month < 1 || $month > 12) {
             return redirect()->back()->withErrors(['month' => 'Mes inv├ílido']);
         }
-        return Excel::download(new LogsExport($month), 'logs_mes_' . $month . '.xlsx');
+
+        return Excel::download(new LogsExport($month), 'logs_mes_'.$month.'.xlsx');
     }
 
     public function mastotal(Request $request)
@@ -1525,7 +1558,8 @@ class SolicitudController extends Controller
         if ($month < 1 || $month > 12) {
             return redirect()->back()->withErrors(['month' => 'Mes inv├ílido']);
         }
-        return Excel::download(new MastotalesExport($month), 'utilidad_masivos_mes_' . $month . '.xlsx');
+
+        return Excel::download(new MastotalesExport($month), 'utilidad_masivos_mes_'.$month.'.xlsx');
     }
 
     public function paqtotal(Request $request)
@@ -1534,7 +1568,8 @@ class SolicitudController extends Controller
         if ($month < 1 || $month > 12) {
             return redirect()->back()->withErrors(['month' => 'Mes inv├ílido']);
         }
-        return Excel::download(new PaqtotalesExport($month), 'utilidad_paqueteo_mes_' . $month . '.xlsx');
+
+        return Excel::download(new PaqtotalesExport($month), 'utilidad_paqueteo_mes_'.$month.'.xlsx');
     }
 
     public function transito()
@@ -1548,20 +1583,20 @@ class SolicitudController extends Controller
         $month = $request->input('month');
 
         // Validar a├▒o
-        if (!$year || !is_numeric($year)) {
+        if (! $year || ! is_numeric($year)) {
             return redirect()->back()->withErrors(['year' => 'A├▒o inv├ílido']);
         }
 
         // Validar mes (puede ser n├║mero o 'todos')
-        if ($month !== 'todos' && (!is_numeric($month) || $month < 1 || $month > 12)) {
+        if ($month !== 'todos' && (! is_numeric($month) || $month < 1 || $month > 12)) {
             return redirect()->back()->withErrors(['month' => 'Mes inv├ílido']);
         }
 
         // Generar nombre de archivo
         if ($month === 'todos') {
-            $filename = 'sac_' . $year . '_completo.xlsx';
+            $filename = 'sac_'.$year.'_completo.xlsx';
         } else {
-            $filename = 'sac_' . $year . '_' . str_pad($month, 2, '0', STR_PAD_LEFT) . '.xlsx';
+            $filename = 'sac_'.$year.'_'.str_pad($month, 2, '0', STR_PAD_LEFT).'.xlsx';
         }
 
         // Descargar el archivo usando los par├ímetros
@@ -1573,6 +1608,7 @@ class SolicitudController extends Controller
         $clientes = DB::table('clientesa')->select('nombre')->orderBy('nombre')->get();
         $municipios = DB::table('municipios')->select('municipio')->orderBy('municipio')->get();
         $tipos = DB::table('tipo_vehiculos')->orderBy('tipo')->get();
+
         return view('Solicitud.create', compact('clientes', 'municipios', 'tipos'));
     }
 
@@ -1596,7 +1632,7 @@ class SolicitudController extends Controller
                     if ($fecha_cargue == $currentDate && $value < $currentTime) {
                         $fail('La hora de cargue debe ser igual o mayor que la hora actual para la fecha de cargue.');
                     }
-                }
+                },
             ],
             'fecha_descargue' => 'required|date|after_or_equal:fecha_cargue',
             'hora_descargue' => [
@@ -1609,7 +1645,7 @@ class SolicitudController extends Controller
                     if ($fecha_descargue == $fecha_cargue && $value <= $hora_cargue) {
                         $fail('La hora de descargue debe ser mayor que la hora de cargue para la misma fecha.');
                     }
-                }
+                },
             ],
             'cliente' => 'required',
             'origen' => 'required',
@@ -1646,14 +1682,15 @@ class SolicitudController extends Controller
         ];
 
         $validator = validator($request->all(), $fields, $message);
-        
+
         if ($validator->fails()) {
             if ($request->wantsJson()) {
                 return response()->json([
                     'message' => 'Error de validaci├│n',
-                    'errors' => $validator->errors()
+                    'errors' => $validator->errors(),
                 ], 422);
             }
+
             return back()->withErrors($validator)->withInput();
         }
 
@@ -1677,7 +1714,7 @@ class SolicitudController extends Controller
                 'direccion',
                 'piezas',
                 'peso',
-                'valor_declarado'
+                'valor_declarado',
             ]);
 
             $dataSolicitud['created_at'] = Carbon::now();
@@ -1685,42 +1722,44 @@ class SolicitudController extends Controller
 
             if ($request->wantsJson()) {
                 return response()->json([
-                    'message' => 'Solicitud creada correctamente'
+                    'message' => 'Solicitud creada correctamente',
                 ], 201);
             }
 
             return back()->with('success', 'Solicitud creada correctamente');
         } catch (\Exception $e) {
-            \Log::error('Error al crear solicitud: ' . $e->getMessage());
-            
+            \Log::error('Error al crear solicitud: '.$e->getMessage());
+
             if ($request->wantsJson()) {
                 return response()->json([
-                    'message' => 'Error al guardar la solicitud: ' . $e->getMessage()
+                    'message' => 'Error al guardar la solicitud: '.$e->getMessage(),
                 ], 500);
             }
-            
-            return back()->with('error', 'Error al guardar la solicitud: ' . $e->getMessage())->withInput();
+
+            return back()->with('error', 'Error al guardar la solicitud: '.$e->getMessage())->withInput();
         }
     }
 
     public function store2(Request $request)
     {
         $data = $request->only('cliente', 'states', 'radicado', 'paytype', 'fecha_cargue', 'fecha_descargue', 'placa', 'razon', 'sucursal', 'tipo_trayecto');
+
         return redirect()->route('solicitud.index')->with('data', $data);
     }
 
     public function show($id)
     {
         $detalles = DB::table('solicitudes')->where('id', '=', $id)->get();
+
         return view('Solicitud.show', compact('detalles'));
     }
 
     public function show2($id)
     {
         $data = DB::table('solicitudes')->where('id', $id)->first();
+
         return response()->json($data);
     }
-
 
     public function edit(Solicitud $solicitud)
     {
@@ -1739,8 +1778,8 @@ class SolicitudController extends Controller
             // Manejar campos num├®ricos
             if (in_array($request->name, $camposNumericos)) {
                 $value = str_replace('.', '', $request->value); // Limpiar puntos para n├║meros
-                
-                if (!is_numeric($value)) {
+
+                if (! is_numeric($value)) {
                     return response()->json(['success' => false, 'message' => 'El valor no es un n├║mero v├ílido.']);
                 }
 
@@ -1749,7 +1788,7 @@ class SolicitudController extends Controller
                     ->where('id', $request->pk)
                     ->update([
                         $request->name => $value,
-                        'registrado' => $usuarioSesion // Guardar el usuario de la sesi├│n
+                        'registrado' => $usuarioSesion, // Guardar el usuario de la sesi├│n
                     ]);
 
                 return response()->json(['success' => true]);
@@ -1762,7 +1801,7 @@ class SolicitudController extends Controller
                     ->update([
                         $request->name => $request->value,
                         'asignado' => $usuarioSesion,           // usuario que asigna la placa
-                        'fecha_placa' => Carbon::now('America/Bogota')
+                        'fecha_placa' => Carbon::now('America/Bogota'),
                     ]);
 
                 return response()->json(['success' => true]);
@@ -1770,12 +1809,12 @@ class SolicitudController extends Controller
 
             if ($request->name === 'razon') {
                 $raw = trim($request->value);
-                if (strlen($raw) !== 15 || !is_numeric($raw)) {
+                if (strlen($raw) !== 15 || ! is_numeric($raw)) {
                     return response()->json(['success' => false, 'message' => 'El manifiesto debe tener exactamente 15 n├║meros.']);
                 }
 
                 $solicitud = DB::table('solicitudes')->where('id', $request->pk)->first();
-                if (!$solicitud) {
+                if (! $solicitud) {
                     return response()->json(['success' => false, 'message' => 'Registro no encontrado.']);
                 }
 
@@ -1792,7 +1831,7 @@ class SolicitudController extends Controller
                     ->where('id', $request->pk)
                     ->update([
                         'razon' => $raw,
-                        'registrado' => $usuarioSesion
+                        'registrado' => $usuarioSesion,
                     ]);
 
                 return response()->json(['success' => true]);
@@ -1822,23 +1861,23 @@ class SolicitudController extends Controller
             // Dispatch WhatsApp notification
             $whapiToken = env('WHAPI_TOKEN');
             $whapiUrl = rtrim(env('WHAPI_API_URL', 'https://gate.whapi.cloud/messages/text'), '/');
-            if (!str_ends_with($whapiUrl, '/messages/text')) {
+            if (! str_ends_with($whapiUrl, '/messages/text')) {
                 $whapiUrl .= '/messages/text';
             }
 
             if ($whapiToken && $whapiUrl) {
-                $mensaje = "Hola Magaly,\n" .
-                           "Se acaba de cargar informaci├│n correspondiente a una cuenta de cobro para el id {$request->pk}.\n" .
-                           "Queda pendiente de tu aprobaci├│n.\n\n" .
-                           "Atentamente,\n" .
-                           "Sistema de notificaciones GLE";
+                $mensaje = "Hola Magaly,\n".
+                           "Se acaba de cargar informaci├│n correspondiente a una cuenta de cobro para el id {$request->pk}.\n".
+                           "Queda pendiente de tu aprobaci├│n.\n\n".
+                           "Atentamente,\n".
+                           'Sistema de notificaciones GLE';
 
                 // Enviar mensaje hacia WhatsApp
                 \Illuminate\Support\Facades\Http::withToken($whapiToken)
                     ->post($whapiUrl, [
                         'typing_time' => 0,
                         'to' => '573174428909',
-                        'body' => $mensaje
+                        'body' => $mensaje,
                     ]);
             }
 
@@ -1851,13 +1890,15 @@ class SolicitudController extends Controller
     public function showSoporte($id)
     {
         $solicitud = DB::table('solicitudes')->where('id', $id)->first();
-        if (!$solicitud || !$solicitud->soporte) abort(404);
+        if (! $solicitud || ! $solicitud->soporte) {
+            abort(404);
+        }
 
         $data = $solicitud->soporte;
 
         if (strpos($data, 'data:') === 0) {
-            list($type, $dataStr) = explode(';', $data);
-            list(, $dataStr) = explode(',', $dataStr);
+            [$type, $dataStr] = explode(';', $data);
+            [, $dataStr] = explode(',', $dataStr);
             $mimeType = str_replace('data:', '', $type);
             $fileData = base64_decode($dataStr);
 
@@ -1865,7 +1906,7 @@ class SolicitudController extends Controller
 
             return response($fileData)
                 ->header('Content-Type', $mimeType)
-                ->header('Content-Disposition', 'inline; filename="soporte_' . $id . '.' . $ext . '"');
+                ->header('Content-Disposition', 'inline; filename="soporte_'.$id.'.'.$ext.'"');
         }
 
         abort(404);
@@ -1879,6 +1920,7 @@ class SolicitudController extends Controller
         }
         $dataOrigen = request()->only(['oriuser', 'oridate', 'orinote']);
         DB::table('solicitudes')->where('id', '=', $id)->update($dataOrigen);
+
         return back()->with('success', 'ok');
     }
 
@@ -1893,9 +1935,9 @@ class SolicitudController extends Controller
         }
         $dataSalida = $request->only(['saluser', 'saldate', 'salnote']);
         DB::table('solicitudes')->where('id', '=', $id)->update($dataSalida);
+
         return back()->with('success', 'ok');
     }
-
 
     public function update4(Request $request, $id)
     {
@@ -1908,6 +1950,7 @@ class SolicitudController extends Controller
         }
         $dataDestino = request()->only(['desuser', 'desdate', 'desnote']);
         DB::table('solicitudes')->where('id', '=', $id)->update($dataDestino);
+
         return back()->with('success', 'ok');
     }
 
@@ -1917,12 +1960,12 @@ class SolicitudController extends Controller
             'finnote' => 'required|string',
             'responsable' => 'required|string',
             'cte' => 'required',
-            'ays' => 'required'
+            'ays' => 'required',
         ], [
             'finnote.required' => 'El campo de nota de finalizaci├│n de servicio es obligatorio.',
             'responsable.required' => 'El campo de responsable es obligatorio.',
             'cte.required' => 'La calificaci├│n de tiempos de entrega es obligatoria.',
-            'ays.required' => 'La calificaci├│n de atenci├│n y servicio es obligatoria.'
+            'ays.required' => 'La calificaci├│n de atenci├│n y servicio es obligatoria.',
         ]);
 
         $incluidos = ['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.'];
@@ -1983,6 +2026,7 @@ class SolicitudController extends Controller
     {
         $dataFinal = request()->only(['canuser', 'candate', 'cannote', 'cannotes', 'responsable']);
         DB::table('solicitudes')->where('id', '=', $id)->update($dataFinal);
+
         return back()->with('success', 'ok');
     }
 
@@ -1990,6 +2034,7 @@ class SolicitudController extends Controller
     {
         $dataFinal = request()->only(['caruser', 'cardate', 'carnote']);
         DB::table('solicitudes')->where('id', '=', $id)->update($dataFinal);
+
         return back()->with('success', 'ok');
     }
 
@@ -1997,6 +2042,7 @@ class SolicitudController extends Controller
     {
         $dataFinal = request()->only(['trauser', 'tradate', 'tranote']);
         DB::table('solicitudes')->where('id', '=', $id)->update($dataFinal);
+
         return back()->with('success', 'ok');
     }
 
@@ -2004,6 +2050,7 @@ class SolicitudController extends Controller
     {
         $dataFinal = request()->only(['antuser', 'antdate', 'antnote']);
         DB::table('solicitudes')->where('id', '=', $id)->update($dataFinal);
+
         return back()->with('success', 'ok');
     }
 
@@ -2020,9 +2067,10 @@ class SolicitudController extends Controller
                 'desdate' => $request->desdate,
                 'finuser' => $request->finuser,
                 'findate' => $request->findate,
-                'finnote' => $request->finnote
+                'finnote' => $request->finnote,
 
             ]);
+
         return back()->with('success', 'ok');
     }
 
@@ -2035,6 +2083,7 @@ class SolicitudController extends Controller
             } else {
                 DB::table('estatus')->where('ide', $request->pk)->update([$request->name => $request->value]);
             }
+
             return response()->json(['success' => true]);
         }
     }
@@ -2043,7 +2092,7 @@ class SolicitudController extends Controller
     {
         try {
             $diario = DB::table('estatus')->where('ide', $ide)->first();
-            if (!$diario) {
+            if (! $diario) {
                 return response()->json(['success' => false, 'message' => 'Registro no encontrado'], 404);
             }
 
@@ -2053,35 +2102,37 @@ class SolicitudController extends Controller
                 ->where('ide', $ide)
                 ->update([
                     'facturar' => $request->input('facturar', 'SI'),
-                    'ffacturar' => $fechaActual
+                    'ffacturar' => $fechaActual,
                 ]);
 
             return response()->json([
                 'success' => true,
-                'fecha' => $fechaActual // enviamos la fecha al frontend
+                'fecha' => $fechaActual, // enviamos la fecha al frontend
             ]);
         } catch (\Exception $e) {
-            Log::error('Error actualizando el registro: ' . $e->getMessage());
+            Log::error('Error actualizando el registro: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Ocurri├│ un error: ' . $e->getMessage(),
+                'message' => 'Ocurri├│ un error: '.$e->getMessage(),
             ], 500);
         }
     }
 
     public function update13(Request $request, $id)
     {
-        $dataFinal13 = request()->only(['recibido_cumplido','fecha_envio']);
+        $dataFinal13 = request()->only(['recibido_cumplido', 'fecha_envio']);
         DB::table('solicitudes')->where('id', '=', $id)->update($dataFinal13);
+
         return back()->with('success', 'ok');
     }
 
     public function update14(Request $request, $id)
     {
         try {
-            // Obt├®n el registro original antes de la actualizaci├│n           
+            // Obt├®n el registro original antes de la actualizaci├│n
             $diario = DB::table('peticiones')->where('id', $id)->first();
-            if (!$diario) {
+            if (! $diario) {
                 return response()->json(['success' => false, 'message' => 'Registro no encontrado'], 404);
             }
 
@@ -2089,7 +2140,6 @@ class SolicitudController extends Controller
             if (empty($diario->pagant) || empty($diario->cpagant) || empty($diario->tpagant)) {
                 return response()->json(['success' => false, 'message' => 'datos incompletos del receptor del anticipo'], 400);
             }
-
 
             // Actualiza el campo "enviado"
             DB::table('solicitudes')
@@ -2111,10 +2161,11 @@ class SolicitudController extends Controller
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             // Registra cualquier error en los logs
-            Log::error('Error actualizando el registro: ' . $e->getMessage());
+            Log::error('Error actualizando el registro: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Ocurri├│ un error: ' . $e->getMessage(),
+                'message' => 'Ocurri├│ un error: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -2123,15 +2174,16 @@ class SolicitudController extends Controller
     {
         $dataFinal15 = request()->only(['egreso_anticipo', 'egreso_saldo', 'fecha_saldo']);
         DB::table('solicitudes')->where('id', '=', $id)->update($dataFinal15);
+
         return back()->with('success', 'ok');
     }
 
     public function update16(Request $request, $id)
     {
         try {
-            // Obt├®n el registro original antes de la actualizaci├│n           
+            // Obt├®n el registro original antes de la actualizaci├│n
             $diario = DB::table('peticiones')->where('id', $id)->first();
-            if (!$diario) {
+            if (! $diario) {
                 return response()->json(['success' => false, 'message' => 'Registro no encontrado'], 404);
             }
 
@@ -2139,7 +2191,6 @@ class SolicitudController extends Controller
             if (empty($diario->pagant) || empty($diario->cpagant) || empty($diario->tpagant)) {
                 return response()->json(['success' => false, 'message' => 'datos incompletos del receptor del anticipo'], 400);
             }
-
 
             // Actualizar el campo confirmado
             $nuevoValor = $request->input('confirmado', 'SI');
@@ -2162,10 +2213,11 @@ class SolicitudController extends Controller
             return response()->json(['success' => true]);
         } catch (\Exception $e) {
             // Registrar cualquier error en los logs
-            Log::error('Error actualizando el registro: ' . $e->getMessage());
+            Log::error('Error actualizando el registro: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Ocurri├│ un error: ' . $e->getMessage(),
+                'message' => 'Ocurri├│ un error: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -2174,14 +2226,15 @@ class SolicitudController extends Controller
     {
         $request->validate([
             'placa' => 'required',
-            'lpo' => 'required'
+            'lpo' => 'required',
         ], [
             'placa.required' => 'El campo placa es obligatorio.',
-            'lpo.required' => 'La calificaci├│n del listado pre-operacional es obligatoria.'
+            'lpo.required' => 'La calificaci├│n del listado pre-operacional es obligatoria.',
         ]);
 
         $dataFinal17 = request()->only(['plauser', 'placa', 'lpo', 'nota_lpo']);
         DB::table('solicitudes')->where('id', '=', $id)->update($dataFinal17);
+
         return back()->with('success', 'ok');
     }
 
@@ -2191,8 +2244,10 @@ class SolicitudController extends Controller
         if ($solicitud) {
             $nuevoValor = $solicitud->trafico == 1 ? 0 : 1;
             DB::table('solicitudes')->where('id', $id)->update(['trafico' => $nuevoValor]);
+
             return redirect()->back()->with('success', 'El valor del campo trafico ha sido actualizado.');
         }
+
         return redirect()->back()->with('error', 'Solicitud no encontrada.');
     }
 
@@ -2206,6 +2261,7 @@ class SolicitudController extends Controller
         $fecha = Carbon::now()->locale('es')->isoFormat('dddd, D [de] MMMM [de] YYYY');
         $primero = Carbon::now()->startOfMonth()->format('j/n/Y');
         $ultimo = Carbon::now()->endOfMonth()->format('d/m/Y');
+
         return view('Generar.prefacturas', compact('datos', 'cliente', 'fecha', 'primero', 'ultimo', 'total'));
     }
 
@@ -2219,32 +2275,33 @@ class SolicitudController extends Controller
         $fecha = Carbon::now()->locale('es')->isoFormat('dddd, D [de] MMMM [de] YYYY');
         $primero = Carbon::now()->startOfMonth()->format('j/n/Y');
         $ultimo = Carbon::now()->endOfMonth()->format('d/m/Y');
+
         return view('Generar.facturas', compact('datos', 'cliente', 'fecha', 'primero', 'ultimo', 'total'));
     }
 
     public function logs(Request $request)
     {
-        $year  = (int) $request->input('year', Carbon::now()->year);
+        $year = (int) $request->input('year', Carbon::now()->year);
         $month = (int) $request->input('month', Carbon::now()->month);
 
         $diarias = DB::table('logs')
-            ->whereRaw("EXTRACT(YEAR FROM fecha_evento::timestamp) = ?", [$year])
-            ->whereRaw("EXTRACT(MONTH FROM fecha_evento::timestamp) = ?", [$month])
+            ->whereRaw('EXTRACT(YEAR FROM fecha_evento::timestamp) = ?', [$year])
+            ->whereRaw('EXTRACT(MONTH FROM fecha_evento::timestamp) = ?', [$month])
             ->orderBy('fecha_evento', 'desc')
             ->get();
 
         $years = DB::table('logs')
-            ->selectRaw("DISTINCT EXTRACT(YEAR FROM fecha_evento::timestamp) AS year")
+            ->selectRaw('DISTINCT EXTRACT(YEAR FROM fecha_evento::timestamp) AS year')
             ->orderBy('year', 'desc')
             ->pluck('year')
-            ->map(fn($y) => (int) $y);
+            ->map(fn ($y) => (int) $y);
 
         $months = DB::table('logs')
-            ->selectRaw("DISTINCT EXTRACT(MONTH FROM fecha_evento::timestamp) AS month")
-            ->whereRaw("EXTRACT(YEAR FROM fecha_evento::timestamp) = ?", [$year])
+            ->selectRaw('DISTINCT EXTRACT(MONTH FROM fecha_evento::timestamp) AS month')
+            ->whereRaw('EXTRACT(YEAR FROM fecha_evento::timestamp) = ?', [$year])
             ->orderBy('month', 'asc')
             ->pluck('month')
-            ->map(fn($m) => (int) $m);
+            ->map(fn ($m) => (int) $m);
 
         return view('Solicitud.logs', compact('diarias', 'years', 'months', 'year', 'month'));
     }
@@ -2254,20 +2311,24 @@ class SolicitudController extends Controller
         if ($request->ajax()) {
             $solicitud = DB::table('solicitudes')->where('id', $id)->first();
             if ($solicitud) {
-                if (!$solicitud->avalado) {
+                if (! $solicitud->avalado) {
                     DB::table('solicitudes')
                         ->where('id', $id)
                         ->update([
                             'avalado' => true,
                             'usercc' => Auth::user()->name,
-                            'datecc' => Carbon::now()
+                            'datecc' => Carbon::now(),
                         ]);
+
                     return response()->json(['success' => true]);
                 }
+
                 return response()->json(['success' => false, 'message' => 'Ya fue aprobado']);
             }
+
             return response()->json(['success' => false, 'message' => 'Solicitud no encontrada']);
         }
+
         return response()->json(['success' => false, 'message' => 'Petici├│n inv├ílida']);
     }
 
@@ -2276,19 +2337,23 @@ class SolicitudController extends Controller
         if ($request->ajax()) {
             $solicitud = DB::table('solicitudes')->where('id', $id)->first();
             if ($solicitud) {
-                if (!$solicitud->verificado) {
+                if (! $solicitud->verificado) {
                     DB::table('solicitudes')
                         ->where('id', $id)
                         ->update([
                             'verificado' => true,
-                            'fecha_envio' => \Carbon\Carbon::now()
+                            'fecha_envio' => \Carbon\Carbon::now(),
                         ]);
+
                     return response()->json(['success' => true]);
                 }
+
                 return response()->json(['success' => false, 'message' => 'Ya fue verificado']);
             }
+
             return response()->json(['success' => false, 'message' => 'Solicitud no encontrada']);
         }
+
         return response()->json(['success' => false, 'message' => 'Petici├│n inv├ílida']);
     }
 }
