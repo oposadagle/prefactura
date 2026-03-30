@@ -178,7 +178,7 @@
                                     <li>
                                         <a href="javascript: void(0);"><i class="ti-control-record"></i>Operaciones<span class="menu-arrow left-has-menu"><i class="mdi mdi-chevron-right"></i></span></a>
                                         <ul class="nav-second-level" aria-expanded="false">
-                                            @can('solicitud.create')
+                                            @can('verificar')
                                             <li class="nav-item"><a class="nav-link" href="{{ route('solicitud.create') }}">Solicitud de
                                                     servicio</a></li>
                                             @endcan
