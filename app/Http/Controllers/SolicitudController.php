@@ -646,6 +646,13 @@ class SolicitudController extends Controller
 
         $lines = [$header];
 
+        $cleaner = function($str) {
+            $str = str_replace(["\r", "\n", "\t"], ' ', $str ?? '');
+            $unwanted = ['Á'=>'A', 'É'=>'E', 'Í'=>'I', 'Ó'=>'O', 'Ú'=>'U', 'Ñ'=>'N', 'á'=>'a', 'é'=>'e', 'í'=>'i', 'ó'=>'o', 'ú'=>'u', 'ñ'=>'n'];
+            $str = strtr($str, $unwanted);
+            return preg_replace('/[^\x20-\x7E]/', '', $str);
+        };
+
         // ========== DETAIL LINES ==========
         foreach ($registros as $reg) {
             // Derive tipo_transaccion from tipo_cuenta
@@ -654,12 +661,12 @@ class SolicitudController extends Controller
                 $tipoTransaccion = '27';
             }
 
-            $line = str_pad($reg->tipo_documento ?? '6', 1);                      // 1  - Tipo doc beneficiario
-            $line .= str_pad($reg->cpagsal ?? '', 15);                             // 15 - NIT/C├®dula (left-aligned, space-padded)
-            $line .= str_pad(mb_substr($reg->pagsal ?? '', 0, 30), 30);            // 30 - Nombre beneficiario
+            $line = str_pad($cleaner($reg->tipo_documento ?? '6'), 1);                      // 1  - Tipo doc beneficiario
+            $line .= str_pad($cleaner($reg->cpagsal ?? ''), 15);                             // 15 - NIT/Cédula
+            $line .= str_pad(mb_substr($cleaner($reg->pagsal ?? ''), 0, 30), 30);            // 30 - Nombre beneficiario
             $line .= '00000';                                                       // 5  - Ceros fijos
-            $line .= str_pad($reg->codigo_banco ?? '1007', 4, '0', STR_PAD_LEFT);  // 4  - C├│digo banco
-            $line .= str_pad($reg->numero_cuenta ?? '', 17);                       // 17 - N├║mero cuenta (left-aligned, space-padded)
+            $line .= str_pad($cleaner($reg->codigo_banco ?? '1007'), 4, '0', STR_PAD_LEFT);  // 4  - Código banco
+            $line .= str_pad($cleaner($reg->numero_cuenta ?? ''), 17);                       // 17 - Número cuenta
             $line .= 'S';                                                           // 1  - Fijo
             $line .= $tipoTransaccion;                                              // 2  - Tipo transacci├│n
             $line .= str_pad(intval($reg->saldo_total), 15, '0', STR_PAD_LEFT);    // 15 - Valor transacci├│n
@@ -739,6 +746,13 @@ class SolicitudController extends Controller
 
         $lines = [$header];
 
+        $cleaner = function($str) {
+            $str = str_replace(["\r", "\n", "\t"], ' ', $str ?? '');
+            $unwanted = ['Á'=>'A', 'É'=>'E', 'Í'=>'I', 'Ó'=>'O', 'Ú'=>'U', 'Ñ'=>'N', 'á'=>'a', 'é'=>'e', 'í'=>'i', 'ó'=>'o', 'ú'=>'u', 'ñ'=>'n'];
+            $str = strtr($str, $unwanted);
+            return preg_replace('/[^\x20-\x7E]/', '', $str);
+        };
+
         // ========== DETAIL LINES ==========
         foreach ($registros as $reg) {
             // Derive tipo_transaccion from tipo_cuenta
@@ -747,12 +761,12 @@ class SolicitudController extends Controller
                 $tipoTransaccion = '27';
             }
 
-            $line = str_pad($reg->tipo_documento ?? '6', 1);                      // 1  - Tipo doc beneficiario
-            $line .= str_pad($reg->cpagant ?? '', 15);                             // 15 - NIT/C├®dula (left-aligned, space-padded)
-            $line .= str_pad(mb_substr($reg->pagant ?? '', 0, 30), 30);            // 30 - Nombre beneficiario
+            $line = str_pad($cleaner($reg->tipo_documento ?? '6'), 1);                      // 1  - Tipo doc beneficiario
+            $line .= str_pad($cleaner($reg->cpagant ?? ''), 15);                             // 15 - NIT/Cédula
+            $line .= str_pad(mb_substr($cleaner($reg->pagant ?? ''), 0, 30), 30);            // 30 - Nombre beneficiario
             $line .= '00000';                                                       // 5  - Ceros fijos
-            $line .= str_pad($reg->codigo_banco ?? '1007', 4, '0', STR_PAD_LEFT);  // 4  - C├│digo banco
-            $line .= str_pad($reg->numero_cuenta ?? '', 17);                       // 17 - N├║mero cuenta (left-aligned, space-padded)
+            $line .= str_pad($cleaner($reg->codigo_banco ?? '1007'), 4, '0', STR_PAD_LEFT);  // 4  - Código banco
+            $line .= str_pad($cleaner($reg->numero_cuenta ?? ''), 17);                       // 17 - Número cuenta
             $line .= 'S';                                                           // 1  - Fijo
             $line .= $tipoTransaccion;                                              // 2  - Tipo transacci├│n
             $line .= str_pad(intval($reg->amount), 15, '0', STR_PAD_LEFT);         // 15 - Valor transacci├│n
@@ -840,6 +854,13 @@ class SolicitudController extends Controller
 
         $lines = [$header];
 
+        $cleaner = function($str) {
+            $str = str_replace(["\r", "\n", "\t"], ' ', $str ?? '');
+            $unwanted = ['Á'=>'A', 'É'=>'E', 'Í'=>'I', 'Ó'=>'O', 'Ú'=>'U', 'Ñ'=>'N', 'á'=>'a', 'é'=>'e', 'í'=>'i', 'ó'=>'o', 'ú'=>'u', 'ñ'=>'n'];
+            $str = strtr($str, $unwanted);
+            return preg_replace('/[^\x20-\x7E]/', '', $str);
+        };
+
         // ========== DETAIL LINES ==========
         foreach ($registros as $reg) {
             $tipoTransaccion = '37'; // default: CUENTA DE AHORRO
@@ -847,12 +868,12 @@ class SolicitudController extends Controller
                 $tipoTransaccion = '27';
             }
 
-            $line = str_pad($reg->tipo_documento ?? '6', 1);                      // 1  - Tipo doc beneficiario
-            $line .= str_pad($reg->cpagcon ?? '', 15);                             // 15 - NIT/C├®dula
-            $line .= str_pad(mb_substr($reg->pagcon ?? '', 0, 30), 30);            // 30 - Nombre beneficiario
+            $line = str_pad($cleaner($reg->tipo_documento ?? '6'), 1);                      // 1  - Tipo doc beneficiario
+            $line .= str_pad($cleaner($reg->cpagcon ?? ''), 15);                             // 15 - NIT/Cédula
+            $line .= str_pad(mb_substr($cleaner($reg->pagcon ?? ''), 0, 30), 30);            // 30 - Nombre beneficiario
             $line .= '00000';                                                       // 5  - Ceros fijos
-            $line .= str_pad($reg->codigo_banco ?? '1007', 4, '0', STR_PAD_LEFT);  // 4  - C├│digo banco
-            $line .= str_pad($reg->numero_cuenta ?? '', 17);                       // 17 - N├║mero cuenta
+            $line .= str_pad($cleaner($reg->codigo_banco ?? '1007'), 4, '0', STR_PAD_LEFT);  // 4  - Código banco
+            $line .= str_pad($cleaner($reg->numero_cuenta ?? ''), 17);                       // 17 - Número cuenta
             $line .= 'S';                                                           // 1  - Fijo
             $line .= $tipoTransaccion;                                              // 2  - Tipo transacci├│n
             $line .= str_pad(intval($reg->amount), 15, '0', STR_PAD_LEFT);         // 15 - Valor transacci├│n
