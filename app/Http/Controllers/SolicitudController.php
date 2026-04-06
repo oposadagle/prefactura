@@ -1122,14 +1122,13 @@ class SolicitudController extends Controller
         $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString(); // Fin del mes actual
         $diarias = DB::table('infoestatus')->where('facturar', 'NO')->whereBetween('fecha_cargue', [$startOfLastMonth, $endOfCurrentMonth])->orderBy('fecha_cargue', 'desc')->get();
 
-        // Obtener A├▒os y Meses disponibles para el filtro
+        // Obtener Años y Meses disponibles para el filtro
         $fechasDisponibles = DB::table('infoestatus')
             ->selectRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) as year, EXTRACT(MONTH FROM fecha_cargue::timestamp) as month')
             ->distinct()
             ->orderBy('year', 'desc')
             ->orderBy('month', 'desc')
             ->get();
-
         // Estructurar datos: [ 2024 => [1, 2, ...], 2023 => [12, 11, ...] ]
         $availableDates = [];
         foreach ($fechasDisponibles as $fecha) {
@@ -1754,9 +1753,13 @@ class SolicitudController extends Controller
 
                 if ($maxGuia) {
                     $consecutivo = (int) substr($maxGuia, 8); // MAS-2026xxxxxx (8 caracteres: MAS-2026)
+                    // Asegurarnos de que el consecutivo inicie mínimo en 6500
+                    if ($consecutivo < 6500) {
+                        $consecutivo = 6500;
+                    }
                     $nuevoConsecutivo = str_pad($consecutivo + 1, 6, '0', STR_PAD_LEFT);
                 } else {
-                    $nuevoConsecutivo = '000001';
+                    $nuevoConsecutivo = '006501';
                 }
 
                 $guia = $prefix . $nuevoConsecutivo;

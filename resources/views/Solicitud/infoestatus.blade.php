@@ -13,6 +13,10 @@
 .selected-row {
     background-color: #FEEAEE;
   }
+/* Ocultar el scroll horizontal nativo (el de abajo) */
+.table-container-ie::-webkit-scrollbar:horizontal {
+    display: none;
+}
 </style>
 
 <div class="row">
@@ -150,7 +154,10 @@
             </script>
             </div>
             <div class="card-body">                
-                <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                <div class="top-scrollbar-wrapper" style="overflow-x: auto; overflow-y: hidden; max-width: 100%;">
+                    <div class="top-scrollbar-fake" style="height: 1px;"></div>
+                </div>
+                <div class="table-responsive table-container-ie" style="max-height: 500px; overflow-y: auto;">
                     <table id="exampleie" class="table table-striped">
                         <thead class="table-dark" style="font-size: 11px;position: sticky;top: 0;z-index: 1000;">
                             <tr>
@@ -901,6 +908,41 @@ $('.editablef').on('click', function(e) {
     });
 </script>
 
+<script>
+    $(document).ready(function() {
+        const topScrollWrapper = document.querySelector('.top-scrollbar-wrapper');
+        const topScrollFake = document.querySelector('.top-scrollbar-fake');
+        const tableContainer = document.querySelector('.table-container-ie');
+        const tableIE = document.querySelector('#exampleie');
+
+        function syncWidth() {
+            if (tableIE) {
+                topScrollFake.style.width = tableIE.offsetWidth + 'px';
+            }
+        }
+
+        // Sincronizar ancho inicial y al cambiar tamaño
+        syncWidth();
+        window.addEventListener('resize', syncWidth);
+        
+        // Sincronizar también cuando DataTable dibuja
+        $('#exampleie').on('draw.dt', function () {
+            syncWidth();
+        });
+
+        // Sincronizar el scroll (scroll horizontal)
+        topScrollWrapper.addEventListener('scroll', function() {
+            tableContainer.scrollLeft = topScrollWrapper.scrollLeft;
+        });
+
+        tableContainer.addEventListener('scroll', function() {
+            topScrollWrapper.scrollLeft = tableContainer.scrollLeft;
+        });
+        
+        // Timeout para asegurar que la tabla ha sido renderizada completamente por dataTables
+        setTimeout(syncWidth, 500);
+    });
+</script>
 
  @if(session('success'))
 <script>
