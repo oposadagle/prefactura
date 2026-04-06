@@ -596,7 +596,7 @@ class SolicitudController extends Controller
             ]);
         }
 
-        $LINE_WIDTH = 320;
+        $LINE_WIDTH = 264;
 
         $registros = DB::table('peticiones')
             ->leftJoin('datos_bancarios', function ($join) {
@@ -672,7 +672,7 @@ class SolicitudController extends Controller
             $lines[] = $line;
         }
 
-        $content = implode("\r\n", $lines);
+        $content = implode("\r\n", $lines) . "\r\n";
 
         return response($content, 200)
             ->header('Content-Type', 'text/plain; charset=UTF-8')
@@ -690,7 +690,7 @@ class SolicitudController extends Controller
             ]);
         }
 
-        $LINE_WIDTH = 320;
+        $LINE_WIDTH = 264;
 
         $registros = DB::table('peticiones')
             ->leftJoin('datos_bancarios', function ($join) {
@@ -765,7 +765,7 @@ class SolicitudController extends Controller
             $lines[] = $line;
         }
 
-        $content = implode("\r\n", $lines);
+        $content = implode("\r\n", $lines) . "\r\n";
 
         return response($content, 200)
             ->header('Content-Type', 'text/plain; charset=UTF-8')
@@ -783,7 +783,7 @@ class SolicitudController extends Controller
             ]);
         }
 
-        $LINE_WIDTH = 320;
+        $LINE_WIDTH = 264;
 
         $registros = DB::table('peticiones')
             ->leftJoin('datos_bancarios', function ($join) {
@@ -865,7 +865,7 @@ class SolicitudController extends Controller
             $lines[] = $line;
         }
 
-        $content = implode("\r\n", $lines);
+        $content = implode("\r\n", $lines) . "\r\n";
 
         return response($content, 200)
             ->header('Content-Type', 'text/plain; charset=UTF-8')
