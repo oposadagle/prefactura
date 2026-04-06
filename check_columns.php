@@ -1,17 +1,10 @@
 <?php
-require 'c:/xampp/htdocs/laravel/prefactura/vendor/autoload.php';
-$app = require_once 'c:/xampp/htdocs/laravel/prefactura/bootstrap/app.php';
+require __DIR__ . '/vendor/autoload.php';
+$app = require_once __DIR__ . '/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-try {
-    $cols = DB::select("SELECT column_name FROM information_schema.columns WHERE table_name = 'solicitudes'");
-    echo "Solicitudes Columns:\n";
-    foreach ($cols as $c) {
-        echo $c->column_name . "\n";
-    }
-} catch (\Exception $e) {
-    echo "Error: " . $e->getMessage();
-}
+$columns = Schema::getColumnListing('estatus');
+echo implode(", ", $columns) . "\n";

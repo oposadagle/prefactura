@@ -1189,18 +1189,27 @@ class SolicitudController extends Controller
 
     public function procesarArchivos(Request $request)
     {
-        // Primero definir la funci├│n de limpieza fuera del scope
+        // Clientes permitidos para carga manual
+        $clientesPermitidos = [
+            'DERCO COLOMBIA SAS',
+            'INCHCAPE COLOMBIA S A S',
+            'METROKIA S.A.',
+            'ASAP CONCEPTOS PROMOCIONALES DE MARKETING SAS',
+            'SIMONIZ SA'
+        ];
+
+        // Primero definir la función de limpieza fuera del scope
         $limpiarTexto = function ($texto) {
             if (is_null($texto) || ! is_string($texto)) {
                 return $texto;
             }
 
-            // Convertir a UTF-8 si no lo est├í
+            // Convertir a UTF-8 si no lo está
             if (! mb_check_encoding($texto, 'UTF-8')) {
                 $texto = mb_convert_encoding($texto, 'UTF-8', 'UTF-8');
             }
 
-            // Lista de caracteres problem├íticos comunes
+            // Lista de caracteres problemáticos comunes
             $caracteresProblema = [
                 "\xE2\x80\x8B", // Zero Width Space
                 "\xE2\x80\x8C", // Zero Width Non-Joiner
@@ -1218,7 +1227,7 @@ class SolicitudController extends Controller
             // Eliminar caracteres de control (excepto tab y newline)
             $texto = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/u', '', $texto);
 
-            // Normalizar espacios m├║ltiples
+            // Normalizar espacios múltiples
             $texto = preg_replace('/\s+/', ' ', $texto);
 
             return trim($texto);
@@ -1257,89 +1266,85 @@ class SolicitudController extends Controller
 
             $id = (int) $id;
             $solicitud = DB::table('solicitudes')->where('id', $id)->first();
-            $costo = $solicitud ? $solicitud->costo : 0;
-            $cliente = $solicitud ? $solicitud->cliente : null;
+
+            // Validar si la solicitud existe y pertenece a los clientes permitidos
+            if (!$solicitud) {
+                $errores[] = "Error: El ID {$id} no existe en la tabla de solicitudes.";
+                continue;
+            }
+
+            if (!in_array($solicitud->cliente, $clientesPermitidos)) {
+                $errores[] = "Error: El ID {$id} pertenece al cliente '{$solicitud->cliente}', el cual no tiene permitida la carga por este medio.";
+                continue;
+            }
+
+            $costo = $solicitud->costo;
+            $cliente = $solicitud->cliente;
 
             foreach ($filas as $index => $fila) {
                 try {
-                    // Limpiar cada campo usando la funci├│n definida
+                    // Limpiar cada campo usando la función definida
                     $filaLimpia = array_map($limpiarTexto, $fila);
 
                     // Validar y convertir tipos de datos
                     $filaLimpia[0] = intval($filaLimpia[0]); // ID
-                    $filaLimpia[6] = intval($filaLimpia[6]); // Piezas
-                    $filaLimpia[7] = floatval($filaLimpia[7]); // Peso
-                    $filaLimpia[8] = floatval($filaLimpia[8]); // Valor declarado
-                    $filaLimpia[9] = intval($filaLimpia[9]); // PLF-PLI
+                    $guia = $filaLimpia[1] ?? ''; // Guía
 
-                    $existeGuia = DB::table('estatus')->where('guia', $filaLimpia[1])->exists();
+                    // El número de guía es MANDATORIO para estos clientes
+                    if (empty($guia)) {
+                        $errores[] = "Error en fila con ID {$id}: El número de guía es obligatorio.";
+                        continue;
+                    }
+
+                    $existeGuia = DB::table('estatus')->where('guia', $guia)->exists();
                     if ($existeGuia) {
                         continue;
                     }
+
+                    $filaLimpia[6] = intval($filaLimpia[6] ?? 0); // Piezas
+                    $filaLimpia[7] = floatval($filaLimpia[7] ?? 0); // Peso
+                    $filaLimpia[8] = floatval($filaLimpia[8] ?? 0); // Valor declarado
 
                     $costoFlete = ($index == 0) ? $costo : 0;
                     $valorCliente = 0;
 
                     if ($cliente === 'CPA DISTRIBUCIONES') {
-                        if ($filaLimpia[2] === 'BOGOTA D.C.') {
+                        if (($filaLimpia[2] ?? '') === 'BOGOTA D.C.') {
                             $valorCliente = $filaLimpia[7] * 58;
                         } else {
                             $valorCliente = $filaLimpia[7] * 63;
                         }
                     }
 
-                    if (isset($filaLimpia[0], $filaLimpia[1], $filaLimpia[2], $filaLimpia[3], $filaLimpia[4], $filaLimpia[5], $filaLimpia[6], $filaLimpia[7], $filaLimpia[8], $filaLimpia[9])) {
-                        $datos[] = [
-                            'id' => $filaLimpia[0],
-                            'guia' => $filaLimpia[1],
-                            'destino_real' => $filaLimpia[2],
-                            'documento_cliente' => $filaLimpia[3],
-                            'destinatario' => $filaLimpia[4],
-                            'direccion' => $filaLimpia[5],
-                            'piezas' => $filaLimpia[6],
-                            'peso' => $filaLimpia[7],
-                            'valor_declarado' => $filaLimpia[8],
-                            'plfpli' => $filaLimpia[9],
-                            'costo_flete' => $costoFlete,
-                            'valor_cliente' => $valorCliente,
-                            'created_at' => Carbon::now(),
-                        ];
-                    } elseif (isset($filaLimpia[0], $filaLimpia[1]) && empty($filaLimpia[2]) && empty($filaLimpia[3]) && empty($filaLimpia[4]) && empty($filaLimpia[5]) && empty($filaLimpia[6]) && empty($filaLimpia[7])) {
-                        $solicitud = DB::table('solicitudes')->where('id', $filaLimpia[0])->first();
+                    // Si los campos básicos vienen en el excel, usarlos. Si no, fetch from solicitud.
+                    $destino_real = !empty($filaLimpia[2]) ? $filaLimpia[2] : $limpiarTexto($solicitud->destino);
+                    $documento_cliente = !empty($filaLimpia[3]) ? $filaLimpia[3] : $limpiarTexto($solicitud->documento_cliente);
+                    $destinatario = !empty($filaLimpia[4]) ? $filaLimpia[4] : $limpiarTexto($solicitud->destinatario);
+                    $direccion = !empty($filaLimpia[5]) ? $filaLimpia[5] : $limpiarTexto($solicitud->direccion);
+                    $piezas = ($filaLimpia[6] > 0) ? $filaLimpia[6] : $solicitud->piezas;
+                    $peso = ($filaLimpia[7] > 0) ? $filaLimpia[7] : $solicitud->peso;
+                    $valor_declarado = ($filaLimpia[8] > 0) ? $filaLimpia[8] : $solicitud->valor_declarado;
 
-                        if ($solicitud) {
-                            $valorCliente = 0;
-                            if ($solicitud->cliente === 'CPA DISTRIBUCIONES') {
-                                if ($solicitud->destino === 'BOGOTA D.C.') {
-                                    $valorCliente = $solicitud->peso * 58;
-                                } else {
-                                    $valorCliente = $solicitud->peso * 63;
-                                }
-                            }
+                    $datos[] = [
+                        'id' => $filaLimpia[0],
+                        'guia' => $guia,
+                        'destino_real' => $destino_real,
+                        'documento_cliente' => $documento_cliente,
+                        'destinatario' => $destinatario,
+                        'direccion' => $direccion,
+                        'piezas' => $piezas,
+                        'peso' => $peso,
+                        'valor_declarado' => $valor_declarado,
+                        'costo_flete' => $costoFlete,
+                        'valor_cliente' => $valorCliente,
+                        'created_at' => Carbon::now(),
+                    ];
 
-                            $datos[] = [
-                                'id' => $filaLimpia[0],
-                                'guia' => $filaLimpia[1],
-                                'destino_real' => $limpiarTexto($solicitud->destino),
-                                'documento_cliente' => $limpiarTexto($solicitud->documento_cliente),
-                                'destinatario' => $limpiarTexto($solicitud->destinatario),
-                                'direccion' => $limpiarTexto($solicitud->direccion),
-                                'piezas' => $solicitud->piezas,
-                                'peso' => $solicitud->peso,
-                                'valor_declarado' => $solicitud->valor_declarado,
-                                'plfpli' => 0,
-                                'costo_flete' => $costoFlete,
-                                'valor_cliente' => $valorCliente,
-                                'created_at' => Carbon::now(),
-                            ];
-                        }
-                    }
                 } catch (\Exception $e) {
                     // Registrar error pero continuar procesando
-                    $errores[] = "Error en fila con ID {$id}, gu├¡a {$fila[1]}: ".$e->getMessage();
+                    $errores[] = "Error en fila con ID {$id}: ".$e->getMessage();
                     Log::error('Error procesando archivo Excel', [
                         'id' => $id,
-                        'guia' => $fila[1],
                         'error' => $e->getMessage(),
                         'fila' => $fila,
                     ]);
@@ -1357,12 +1362,16 @@ class SolicitudController extends Controller
 
             $mensaje = 'Datos procesados correctamente. Se insertaron '.$cantidadInsertada.' registros.';
             if (! empty($errores)) {
-                $mensaje .= ' Hubo '.count($errores).' errores durante el procesamiento.';
+                $mensaje .= ' Hubo '.count($errores).' errores/advertencias durante el procesamiento.';
             }
 
-            return back()->with('success', $mensaje)->with('cantidad', $cantidadInsertada);
+            return back()->with('success', $mensaje)->with('cantidad', $cantidadInsertada)->with('errores', $errores);
         } else {
-            return back()->with('warning', 'No se encontraron datos nuevos para procesar');
+            $mensajeError = 'No se insertó ningún dato.';
+            if (!empty($errores)) {
+                $mensajeError .= ' Errores: ' . implode(', ', $errores);
+            }
+            return back()->with('warning', $mensajeError);
         }
     }
 
@@ -1695,6 +1704,43 @@ class SolicitudController extends Controller
         }
 
         try {
+            $cliente = $request->input('cliente');
+            $excluidos = [
+                'DERCO COLOMBIA SAS',
+                'INCHCAPE COLOMBIA S A S',
+                'METROKIA S.A.',
+                'ASAP CONCEPTOS PROMOCIONALES DE MARKETING SAS',
+                'SIMONIZ SA'
+            ];
+
+            $guia = null;
+            if (!in_array($cliente, $excluidos)) {
+                $year = Carbon::now()->year;
+                $prefix = "MAS-" . $year;
+
+                // Obtener el máximo consecutivo de ambas tablas para asegurar unicidad
+                $maxEstatus = DB::table('estatus')
+                    ->where('guia', 'LIKE', $prefix . '%')
+                    ->orderBy('guia', 'desc')
+                    ->value('guia');
+
+                $maxSolicitudes = DB::table('solicitudes')
+                    ->where('guia', 'LIKE', $prefix . '%')
+                    ->orderBy('guia', 'desc')
+                    ->value('guia');
+
+                $maxGuia = ($maxEstatus > $maxSolicitudes) ? $maxEstatus : $maxSolicitudes;
+
+                if ($maxGuia) {
+                    $consecutivo = (int) substr($maxGuia, 8); // MAS-2026xxxxxx (8 caracteres: MAS-2026)
+                    $nuevoConsecutivo = str_pad($consecutivo + 1, 6, '0', STR_PAD_LEFT);
+                } else {
+                    $nuevoConsecutivo = '000001';
+                }
+
+                $guia = $prefix . $nuevoConsecutivo;
+            }
+
             $dataSolicitud = request()->only([
                 'fecha_solicitud',
                 'fecha_cargue',
@@ -1717,16 +1763,35 @@ class SolicitudController extends Controller
                 'valor_declarado',
             ]);
 
+            $dataSolicitud['guia'] = $guia;
             $dataSolicitud['created_at'] = Carbon::now();
-            DB::table('solicitudes')->insert($dataSolicitud);
+            $insertedId = DB::table('solicitudes')->insertGetId($dataSolicitud);
+
+            // Si se generó una guía (no es cliente excluido), insertar en estatus
+            if ($guia) {
+                DB::table('estatus')->insert([
+                    'id' => $insertedId,
+                    'guia' => $guia,
+                    'destino_real' => $dataSolicitud['destino'],
+                    'documento_cliente' => $dataSolicitud['documento_cliente'],
+                    'destinatario' => $dataSolicitud['destinatario'],
+                    'direccion' => $dataSolicitud['direccion'],
+                    'piezas' => $dataSolicitud['piezas'],
+                    'peso' => $dataSolicitud['peso'],
+                    'valor_declarado' => $dataSolicitud['valor_declarado'],
+                    'costo_flete' => 0, // Inicia en 0 hasta que se asigne costo
+                    'created_at' => Carbon::now(),
+                ]);
+            }
 
             if ($request->wantsJson()) {
                 return response()->json([
                     'message' => 'Solicitud creada correctamente',
+                    'guia' => $guia
                 ], 201);
             }
 
-            return back()->with('success', 'Solicitud creada correctamente');
+            return back()->with('success', 'Solicitud creada correctamente. Guía: ' . ($guia ?? 'N/A'));
         } catch (\Exception $e) {
             \Log::error('Error al crear solicitud: '.$e->getMessage());
 
@@ -1775,21 +1840,24 @@ class SolicitudController extends Controller
             // Definir los campos num├®ricos que requieren limpieza de puntos
             $camposNumericos = ['costo', 'cargaone', 'cargatwo', 'standby', 'costo_desplazamiento', 'deducciones'];
 
-            // Manejar campos num├®ricos
+            // Manejar campos numricos
             if (in_array($request->name, $camposNumericos)) {
-                $value = str_replace('.', '', $request->value); // Limpiar puntos para n├║meros
+                $value = str_replace('.', '', $request->value); // Limpiar puntos para nmeros
 
                 if (! is_numeric($value)) {
-                    return response()->json(['success' => false, 'message' => 'El valor no es un n├║mero v├ílido.']);
+                    return response()->json(['success' => false, 'message' => 'El valor no es un nmero vClido.']);
                 }
 
-                // Actualizar el campo num├®rico junto con el campo 'registrado'
+                $updateData = [$request->name => $value];
+
+                // Solo actualizar 'registrado' si se esta modificando el campo 'costo'
+                if ($request->name === 'costo') {
+                    $updateData['registrado'] = $usuarioSesion;
+                }
+
                 DB::table('solicitudes')
                     ->where('id', $request->pk)
-                    ->update([
-                        $request->name => $value,
-                        'registrado' => $usuarioSesion, // Guardar el usuario de la sesi├│n
-                    ]);
+                    ->update($updateData);
 
                 return response()->json(['success' => true]);
             }
@@ -1831,7 +1899,6 @@ class SolicitudController extends Controller
                     ->where('id', $request->pk)
                     ->update([
                         'razon' => $raw,
-                        'registrado' => $usuarioSesion,
                     ]);
 
                 return response()->json(['success' => true]);
@@ -1876,7 +1943,7 @@ class SolicitudController extends Controller
                 \Illuminate\Support\Facades\Http::withToken($whapiToken)
                     ->post($whapiUrl, [
                         'typing_time' => 0,
-                        'to' => '573174428909',
+                        'to' => '573174428909',                        
                         'body' => $mensaje,
                     ]);
             }

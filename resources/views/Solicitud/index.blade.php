@@ -191,12 +191,13 @@
                     <table id="exampl" class="table table-striped mb-0" style="transform: rotateX(180deg);">
                         <thead class="table-darke" style="font-size: 11px;background-color:#021526">
                             <tr>
-                                <th class="celdas" style="color: #C4F4FF;border: 1px solid #0c213a;">ID</th>
+                                <th class="celdas" style="color: #C4F4FF;border: 1px solid #0c213a;">ID</th>                                
                                 <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0" /><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" /><g id="SVGRepo_iconCarrier"><path d="M3 9H21M7 3V5M17 3V5M6 13H8M6 17H8M11 13H13M11 17H13M16 13H18M16 17H18M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="#C3FF93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></g></svg> SOLICITUD</th>                                                                
                                 <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0" /><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" /><g id="SVGRepo_iconCarrier"><path d="M3 9H21M7 3V5M17 3V5M6 13H8M6 17H8M11 13H13M11 17H13M16 13H18M16 17H18M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="#C3FF93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></g></svg> CARGUE</th>
                                 <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0" /><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" /><g id="SVGRepo_iconCarrier"><path d="M12 7V12L9.5 13.5M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#C3FF93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></g></svg> CARGUE</th>
                                 <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0" /><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" /><g id="SVGRepo_iconCarrier"><path d="M3 9H21M7 3V5M17 3V5M6 13H8M6 17H8M11 13H13M11 17H13M16 13H18M16 17H18M6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4802 21 18.9201 21 17.8V8.2C21 7.07989 21 6.51984 20.782 6.09202C20.5903 5.71569 20.2843 5.40973 19.908 5.21799C19.4802 5 18.9201 5 17.8 5H6.2C5.0799 5 4.51984 5 4.09202 5.21799C3.71569 5.40973 3.40973 5.71569 3.21799 6.09202C3 6.51984 3 7.07989 3 8.2V17.8C3 18.9201 3 19.4802 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21Z" stroke="#C3FF93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></g></svg> DESCARGUE</th>
                                 <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0" /><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" /><g id="SVGRepo_iconCarrier"><path d="M12 7V12L9.5 13.5M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#C3FF93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></g></svg> DESCARGUE</th>
+                                <th class="celdas" style="color: #C4F4FF;border: 1px solid #0c213a;">GUIA</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">NIT</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CLIENTE</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">ESTADO</th>
@@ -259,8 +260,18 @@
                         </thead>
                         <tbody style="font-size: 12px;font-family: Titillium Web;">
                             @foreach ($diarias as $diario)
+                                @php
+                                    $fechaDescargueParsed = $diario->fecha_descargue ? \Carbon\Carbon::parse($diario->fecha_descargue) : null;
+                                    $diasLimiteCierre = ($diario->cliente === 'SIMONIZ SA') ? 5 : 3;
+                                    $fechaLimiteEdicion = $fechaDescargueParsed ? $fechaDescargueParsed->copy()->addDays($diasLimiteCierre)->endOfDay() : null;
+                                    $dentroDelPlazoEdicion = $fechaLimiteEdicion ? \Carbon\Carbon::now()->lessThanOrEqualTo($fechaLimiteEdicion) : false;
+
+                                    $camposObligatoriosLlenos = !empty($diario->placa) && !empty($diario->costo) && !empty($diario->paytype);
+                                    
+                                    $puedeEditarFinancieros = $camposObligatoriosLlenos && $dentroDelPlazoEdicion && !$diario->avalado;
+                                @endphp
                                 <tr style="text-align: center">
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->id }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->id }}</td>                                    
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_solicitud }}</td>
 
                                     
@@ -300,6 +311,7 @@
                                             {{ ($diario->hora_descargue) }}
                                         @endcan
                                     </td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->guia }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->nit }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->cliente }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
@@ -634,7 +646,7 @@
                                     @endcan
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('originar')
-                                            @if(!$diario->avalado)
+                                            @if($puedeEditarFinancieros)
                                             <a href="#" class="editabler" data-type="text" data-name="cargaone" data-pk="{{$diario->id}}" style="color: #747b8e">
                                                 {{ number_format($diario->cargaone, 0, ',', '.') }}
                                             </a>
@@ -647,7 +659,7 @@
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('originar')
-                                            @if(!$diario->avalado)
+                                            @if($puedeEditarFinancieros)
                                             <a href="#" class="editabler" data-type="text" data-name="cargatwo" data-pk="{{$diario->id}}" style="color: #747b8e">
                                                 {{ number_format($diario->cargatwo, 0, ',', '.') }}
                                             </a>
@@ -660,7 +672,7 @@
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('originar')
-                                            @if(!$diario->avalado)
+                                            @if($puedeEditarFinancieros)
                                             <a href="#" class="editabler" data-type="text" data-name="standby" data-pk="{{$diario->id}}" style="color: #747b8e">
                                                 {{ number_format($diario->standby, 0, ',', '.') }}
                                             </a>
@@ -673,7 +685,7 @@
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         @can('originar')
-                                            @if(!$diario->avalado)
+                                            @if($puedeEditarFinancieros)
                                             <a href="#" class="editabler" data-type="text" data-name="costo_desplazamiento" data-pk="{{$diario->id}}" style="color: #747b8e">
                                                 {{ number_format($diario->costo_desplazamiento, 0, ',', '.') }}
                                             </a>
@@ -697,13 +709,13 @@
                                                 @endif
                                             </a>
                                             @can('originar')
-                                                @if(!$diario->avalado)
+                                                @if($puedeEditarFinancieros)
                                                     <input type="file" class="soporte-upload" data-pk="{{ $diario->id }}" accept=".jpg,.jpeg,.png,.pdf" style="width: 80px; font-size: 10px; display:block; margin-top:5px;">
                                                 @endif
                                             @endcan
                                         @else
                                             @can('originar')
-                                                @if(!$diario->avalado)
+                                                @if($puedeEditarFinancieros)
                                                     <input type="file" class="soporte-upload" data-pk="{{ $diario->id }}" accept=".jpg,.jpeg,.png,.pdf" style="width: 80px; font-size: 10px;">
                                                 @endif
                                             @endcan
