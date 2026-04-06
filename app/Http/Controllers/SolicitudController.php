@@ -640,7 +640,7 @@ class SolicitudController extends Controller
         $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
         $header .= str_pad($cantidadRegistros, 6, '0', STR_PAD_LEFT); // 6  - Cantidad registros
         $header .= str_pad($sumaTotal, 32, '0', STR_PAD_LEFT);       // 32 - Suma total valores
-        $header .= '0018096953824';                                   // 13 - Cuenta a debitar
+        $header .= '0018000042893';                                   // 13 - Cuenta a debitar
         $header .= 'S';                                               // 1  - Tipo cuenta
         $header = str_pad($header, $LINE_WIDTH);                      // Pad to fixed width
 
@@ -733,7 +733,7 @@ class SolicitudController extends Controller
         $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
         $header .= str_pad($cantidadRegistros, 6, '0', STR_PAD_LEFT); // 6  - Cantidad registros
         $header .= str_pad($sumaTotal, 32, '0', STR_PAD_LEFT);       // 32 - Suma total valores
-        $header .= '0018096953824';                                   // 13 - Cuenta a debitar
+        $header .= '0018000042893';                                   // 13 - Cuenta a debitar
         $header .= 'S';                                               // 1  - Tipo cuenta
         $header = str_pad($header, $LINE_WIDTH);                      // Pad to fixed width
 
@@ -834,7 +834,7 @@ class SolicitudController extends Controller
         $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
         $header .= str_pad($cantidadRegistros, 6, '0', STR_PAD_LEFT); // 6  - Cantidad registros
         $header .= str_pad($sumaTotal, 32, '0', STR_PAD_LEFT);       // 32 - Suma total valores
-        $header .= '0018096953824';                                   // 13 - Cuenta a debitar
+        $header .= '0018000042893';                                   // 13 - Cuenta a debitar
         $header .= 'S';                                               // 1  - Tipo cuenta
         $header = str_pad($header, $LINE_WIDTH);                      // Pad to fixed width
 
