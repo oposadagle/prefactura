@@ -1730,7 +1730,8 @@ class SolicitudController extends Controller
                 'INCHCAPE COLOMBIA S A S',
                 'METROKIA S.A.',
                 'ASAP CONCEPTOS PROMOCIONALES DE MARKETING SAS',
-                'SIMONIZ SA'
+                'SIMONIZ SA',
+                'GRUPO LOGISTICO ESPECIALIZADO'
             ];
 
             $guia = null;
