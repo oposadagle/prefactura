@@ -153,13 +153,20 @@ class VehiculoController extends Controller
             // Dispatch WhatsApp messages via Whapi
             $whapiToken = config('services.whapi.token');
             $whapiUrl = rtrim(config('services.whapi.api_url', 'https://gate.whapi.cloud/messages/text'), '/');
+            
+            \Illuminate\Support\Facades\Log::info('Revisión WHAPI:', [
+                'token_configurado' => !empty($whapiToken) ? 'SI' : 'NO',
+                'url' => $whapiUrl
+            ]);
+
             if (!str_ends_with($whapiUrl, '/messages/text')) {
                 $whapiUrl .= '/messages/text';
             }
 
             if ($whapiToken && $whapiUrl) {
-                //$numeros = ['573148289419', '573116335766'];
-                $numeros = ['573192997239'];
+                $numeros = ['573148289419', '573116335766'];                
+                
+                \Illuminate\Support\Facades\Log::info('Iniciando envío de WhatsApp a los números: ' . implode(', ', $numeros));
                 $placa = $request->input('placa');
                 $mensaje = "Buen día,\n\n" .
                            "Se acaba de crear un nuevo vehiculo con placa {$placa}.\n" .
