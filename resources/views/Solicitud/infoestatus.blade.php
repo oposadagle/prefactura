@@ -218,7 +218,7 @@
                                 const option = document.createElement('option');
                                 option.value = month;
                                 option.textContent = monthsNames[month] ||
-                                month; // Usar nombre o número si no hay nombre
+                                    month; // Usar nombre o número si no hay nombre
                                 monthSelect.appendChild(option);
                             });
 
@@ -634,47 +634,58 @@
                                         <td
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-size: 11px;">
                                             <a href="#" class="editablex" data-type="text" data-name="dcf"
-                                                data-pk="{{ $diario->ide }}">{{ $diario->dcf }}</a></td>
+                                                data-pk="{{ $diario->ide }}">{{ $diario->dcf }}</a>
+                                        </td>
                                         <td
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-size: 11px;">
                                             <a href="#" class="editablex" data-type="text" data-name="dts"
-                                                data-pk="{{ $diario->ide }}">{{ $diario->dts }}</a></td>
+                                                data-pk="{{ $diario->ide }}">{{ $diario->dts }}</a>
+                                        </td>
                                         <td
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-size: 11px;">
                                             <a href="#" class="editablex" data-type="text" data-name="dcyd"
-                                                data-pk="{{ $diario->ide }}">{{ $diario->dcyd }}</a></td>
+                                                data-pk="{{ $diario->ide }}">{{ $diario->dcyd }}</a>
+                                        </td>
                                         <td
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-size: 11px;">
                                             <a href="#" class="editablex" data-type="text" data-name="dpaux"
-                                                data-pk="{{ $diario->ide }}">{{ $diario->dpaux }}</a></td>
+                                                data-pk="{{ $diario->ide }}">{{ $diario->dpaux }}</a>
+                                        </td>
                                         <td
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-size: 11px;">
                                             <a href="#" class="editablex" data-type="text" data-name="dpsby"
-                                                data-pk="{{ $diario->ide }}">{{ $diario->dpsby }}</a></td>
+                                                data-pk="{{ $diario->ide }}">{{ $diario->dpsby }}</a>
+                                        </td>
                                         <td
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-size: 11px;">
                                             <a href="#" class="editablex" data-type="text" data-name="dpmtc"
-                                                data-pk="{{ $diario->ide }}">{{ $diario->dpmtc }}</a></td>
+                                                data-pk="{{ $diario->ide }}">{{ $diario->dpmtc }}</a>
+                                        </td>
                                         <td
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-size: 11px;">
                                             <a href="#" class="editablex" data-type="text" data-name="dpesc"
-                                                data-pk="{{ $diario->ide }}">{{ $diario->dpesc }}</a></td>
+                                                data-pk="{{ $diario->ide }}">{{ $diario->dpesc }}</a>
+                                        </td>
                                         <td
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-size: 11px;">
                                             <a href="#" class="editablex" data-type="text" data-name="dpcas"
-                                                data-pk="{{ $diario->ide }}">{{ $diario->dpcas }}</a></td>
+                                                data-pk="{{ $diario->ide }}">{{ $diario->dpcas }}</a>
+                                        </td>
                                         <td
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-size: 11px;">
                                             <a href="#" class="editablex" data-type="text" data-name="dpmon"
-                                                data-pk="{{ $diario->ide }}">{{ $diario->dpmon }}</a></td>
+                                                data-pk="{{ $diario->ide }}">{{ $diario->dpmon }}</a>
+                                        </td>
                                         <td
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-size: 11px;">
                                             <a href="#" class="editablex" data-type="text" data-name="dpesg"
-                                                data-pk="{{ $diario->ide }}">{{ $diario->dpesg }}</a></td>
+                                                data-pk="{{ $diario->ide }}">{{ $diario->dpesg }}</a>
+                                        </td>
                                         <td
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-size: 11px;">
                                             <a href="#" class="editablex" data-type="text" data-name="dst"
-                                                data-pk="{{ $diario->ide }}">{{ $diario->dst }}</a></td>
+                                                data-pk="{{ $diario->ide }}">{{ $diario->dst }}</a>
+                                        </td>
                                     @endcan
                                     @can('egresos.lectura')
                                         <td
@@ -920,6 +931,9 @@
                                                 {{ number_format($diario->costo_standby, 0, ',', '.') }}</td>
                                             <td class="celdas"
                                                 style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                                {{ $diario->pcd }}</td>
+                                            <td class="celdas"
+                                                style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                                 {{ number_format($diario->costo_desplazamiento, 0, ',', '.') }}</td>
                                             <td class="celdas"
                                                 style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
@@ -995,6 +1009,9 @@
                                         <td class="celdas"
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                             {{ number_format($diario->costo_standby, 0, ',', '.') }}</td>
+                                        <td class="celdas"
+                                            style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                            {{ $diario->pcd }}</td>
                                         <td class="celdas"
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                             {{ number_format($diario->costo_desplazamiento, 0, ',', '.') }}</td>
@@ -1210,16 +1227,19 @@
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-size: 11px;">
                                             <a href="#" class="editablex" data-type="text"
                                                 data-name="egreso_anticipo"
-                                                data-pk="{{ $diario->ide }}">{{ $diario->egreso_anticipo }}</a></td>
+                                                data-pk="{{ $diario->ide }}">{{ $diario->egreso_anticipo }}</a>
+                                        </td>
                                         <td
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-size: 11px;">
                                             <a href="#" class="editablex" data-type="text"
                                                 data-name="egreso_saldo"
-                                                data-pk="{{ $diario->ide }}">{{ $diario->egreso_saldo }}</a></td>
+                                                data-pk="{{ $diario->ide }}">{{ $diario->egreso_saldo }}</a>
+                                        </td>
                                         <td
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-size: 11px;">
                                             <a href="#" class="editablex" data-type="text" data-name="fecha_saldo"
-                                                data-pk="{{ $diario->ide }}">{{ $diario->fecha_saldo }}</a></td>
+                                                data-pk="{{ $diario->ide }}">{{ $diario->fecha_saldo }}</a>
+                                        </td>
                                     @endcan
                                     @can('egresos.lectura')
                                         <td
