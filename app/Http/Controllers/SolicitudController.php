@@ -1705,7 +1705,7 @@ class SolicitudController extends Controller
             'documento_cliente.required' => 'El documento del cliente es requerido',
             'destinatario.required' => 'El destinatario es requerido',
             'direccion.required' => 'La direccion es requerida',
-            'piezas.required' => 'El n├║mero de piezas es requerido',
+            'piezas.required' => 'El numero de piezas es requerido',
             'peso.required' => 'El peso es requerido',
             'valor_declarado.required' => 'El valor declarado es requerido',
         ];
