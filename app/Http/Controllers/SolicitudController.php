@@ -2330,14 +2330,22 @@ class SolicitudController extends Controller
         return back()->with('success', 'ok');
     }
 
-    public function toggleTrafico($id)
+    public function toggleTrafico(Request $request, $id)
     {
         $solicitud = DB::table('solicitudes')->where('id', $id)->first();
         if ($solicitud) {
             $nuevoValor = $solicitud->trafico == 1 ? 0 : 1;
             DB::table('solicitudes')->where('id', $id)->update(['trafico' => $nuevoValor]);
 
+            if ($request->ajax()) {
+                return response()->json(['success' => true, 'nuevoValor' => $nuevoValor]);
+            }
+
             return redirect()->back()->with('success', 'El valor del campo trafico ha sido actualizado.');
+        }
+
+        if ($request->ajax()) {
+            return response()->json(['success' => false, 'message' => 'Solicitud no encontrada.']);
         }
 
         return redirect()->back()->with('error', 'Solicitud no encontrada.');

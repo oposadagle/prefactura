@@ -473,7 +473,7 @@
                                                     $fondo = '#4CCD99'; }
                                         @endphp                                 
                                         @can('costos')
-                                            <a href="{{ route('solicitudes.toggleTrafico', $diario->id) }}" class="btn btn-icon-square-xs py-0 my-0" 
+                                            <a href="javascript:void(0)" data-url="{{ route('solicitudes.toggleTrafico', $diario->id) }}" class="btn btn-icon-square-xs py-0 my-0 btn-toggle-trafico" 
                                                 style="background-color: {{ $fondo }}">
                                                 <svg width="24" height="24" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--twemoji" preserveAspectRatio="xMidYMid meet"><path fill="#31373D" d="M36 23a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V13a4 4 0 0 1 4-4h28a4 4 0 0 1 4 4v10z"></path><circle fill="#77B255" cx="7" cy="18" r="4"></circle><circle fill="#FFCC4D" cx="18" cy="18" r="4"></circle><circle fill="#DD2E44" cx="29" cy="18" r="4"></circle></svg>
                                             </a>
@@ -1581,6 +1581,35 @@
                 });
             };
             reader.readAsDataURL(file);
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('.btn-toggle-trafico').on('click', function(e) {
+            e.preventDefault();
+            var btn = $(this);
+            var url = btn.data('url');
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function(response) {
+                    if(response.success) {
+                        if(response.nuevoValor == 1) {
+                            btn.css('background-color', '#4CCD99');
+                        } else {
+                            btn.css('background-color', '#E2DFD0');
+                        }
+                    } else {
+                        Swal.fire('Error', response.message || 'No se pudo actualizar el tráfico.', 'error');
+                    }
+                },
+                error: function() {
+                    Swal.fire('Error', 'Ocurrió un error en el servidor.', 'error');
+                }
+            });
         });
     });
 </script>
