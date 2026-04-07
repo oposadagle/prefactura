@@ -31,4 +31,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'whapi' => [
+        'token' => env('WHAPI_TOKEN'),
+        'api_url' => env('WHAPI_API_URL', 'https://gate.whapi.cloud/messages/text'),
+    ],
+
 ];

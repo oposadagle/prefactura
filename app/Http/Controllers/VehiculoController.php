@@ -151,8 +151,8 @@ class VehiculoController extends Controller
             DB::table('vehiculos')->insert($dataVehiculo);
 
             // Dispatch WhatsApp messages via Whapi
-            $whapiToken = env('WHAPI_TOKEN');
-            $whapiUrl = rtrim(env('WHAPI_API_URL', 'https://gate.whapi.cloud/messages/text'), '/');
+            $whapiToken = config('services.whapi.token');
+            $whapiUrl = rtrim(config('services.whapi.api_url', 'https://gate.whapi.cloud/messages/text'), '/');
             if (!str_ends_with($whapiUrl, '/messages/text')) {
                 $whapiUrl .= '/messages/text';
             }
