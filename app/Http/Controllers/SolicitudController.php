@@ -1903,7 +1903,7 @@ class SolicitudController extends Controller
             if ($request->name === 'razon') {
                 $raw = trim($request->value);
                 if (strlen($raw) !== 15 || ! is_numeric($raw)) {
-                    return response()->json(['success' => false, 'message' => 'El manifiesto debe tener exactamente 15 n├║meros.']);
+                    return response()->json(['success' => false, 'message' => 'El manifiesto debe tener exactamente 15 numeros.']);
                 }
 
                 $solicitud = DB::table('solicitudes')->where('id', $request->pk)->first();
