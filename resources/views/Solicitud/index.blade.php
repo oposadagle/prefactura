@@ -264,7 +264,7 @@
                                     $fechaDescargueParsed = $diario->fecha_descargue ? \Carbon\Carbon::parse($diario->fecha_descargue) : null;
                                     $diasLimiteCierre = ($diario->cliente === 'SIMONIZ SA') ? 5 : 3;
                                     $fechaLimiteEdicion = $fechaDescargueParsed ? $fechaDescargueParsed->copy()->addDays($diasLimiteCierre)->endOfDay() : null;
-                                    $dentroDelPlazoEdicion = $fechaLimiteEdicion ? \Carbon\Carbon::now()->lessThanOrEqualTo($fechaLimiteEdicion) : false;
+                                    $dentroDelPlazoEdicion = $fechaLimiteEdicion ? \Carbon\Carbon::now()->lessThanOrEqualTo($fechaLimiteEdicion) : true;
 
                                     $camposObligatoriosLlenos = !empty($diario->placa) && !empty($diario->costo) && !empty($diario->paytype);
                                     
