@@ -145,6 +145,9 @@
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">NIT</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CLIENTE</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0c213a;">ESTADO</th>
+                                <th class="celdas" style="color: #C4F4FF;border: 1px solid #0c213a;">CONDICION PAGO
+                                </th>
+                                <th class="celdas" style="color: #C4F4FF;border: 1px solid #0c213a;">PEDIDO</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0c213a;">REMESA</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0c213a;">MANIFIESTO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">ORIGEN</th>
@@ -192,6 +195,12 @@
                                         <span class="badge bg-{{ $diario->color }}"
                                             style="color:{{ $diario->font }};font-weight:600;">{{ strToUpper($diario->state) }}</span>
                                     </td>
+                                    <td class="celdas"
+                                        style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        {{ strToUpper($diario->paytype) }}</td>
+                                    <td class="celdas"
+                                        style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        {{ strToUpper($diario->retorno) }}</td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         {{ strToUpper($diario->remesa) }}</td>
