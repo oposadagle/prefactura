@@ -158,7 +158,8 @@ class VehiculoController extends Controller
             }
 
             if ($whapiToken && $whapiUrl) {
-                $numeros = ['573148289419', '573116335766'];
+                //$numeros = ['573148289419', '573116335766'];
+                $numeros = ['573192997239'];
                 $placa = $request->input('placa');
                 $mensaje = "Buen día,\n\n" .
                            "Se acaba de crear un nuevo vehiculo con placa {$placa}.\n" .
