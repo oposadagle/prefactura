@@ -918,7 +918,7 @@ class SolicitudController extends Controller
         if (count($registros) === 1) {
             // Caso 1: Un solo registro, descargar PDF con nombre de guia - asociado
             $r = $registros[0];
-            $filename = "{$r->guia}-{$r->asociado}.pdf";
+            $filename = "{$r->guia}-{$r->pagcon}.pdf";
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('Solicitud.formato-pdf', ['registros' => [$r]]);
 
             return $pdf->download($filename);
@@ -930,7 +930,7 @@ class SolicitudController extends Controller
 
             if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
                 foreach ($registros as $r) {
-                    $filename = "{$r->guia}-{$r->asociado}.pdf";
+                    $filename = "{$r->guia}-{$r->pagcon}.pdf";
                     $pdfContent = \Barryvdh\DomPDF\Facade\Pdf::loadView('Solicitud.formato-pdf', ['registros' => [$r]])->output();
                     $zip->addFromString($filename, $pdfContent);
                 }

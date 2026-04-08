@@ -37,7 +37,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
         th, td {
             border: 1px solid #000;
@@ -50,10 +50,10 @@
             width: 35%;
         }
         .footer-section {
-            margin-top: 60px;
+            margin-top: 20px;
         }
         .signature-space {
-            margin-top: 80px;
+            margin-top: 50px;
         }
         
         /* Print rules for combo file */
