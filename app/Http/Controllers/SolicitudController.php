@@ -1215,7 +1215,9 @@ class SolicitudController extends Controller
             'INCHCAPE COLOMBIA S A S',
             'METROKIA S.A.',
             'ASAP CONCEPTOS PROMOCIONALES DE MARKETING SAS',
-            'SIMONIZ SA'
+            'SIMONIZ SA',
+            'GRUPO LOGISTICO ESPECIALIZADO',
+            'AUTOMOTORES COMERCIALES AUTOCOM S.A'
         ];
 
         // Primero definir la función de limpieza fuera del scope
@@ -1731,7 +1733,8 @@ class SolicitudController extends Controller
                 'METROKIA S.A.',
                 'ASAP CONCEPTOS PROMOCIONALES DE MARKETING SAS',
                 'SIMONIZ SA',
-                'GRUPO LOGISTICO ESPECIALIZADO'
+                'GRUPO LOGISTICO ESPECIALIZADO',
+               'AUTOMOTORES COMERCIALES AUTOCOM S.A'
             ];
 
             $guia = null;
