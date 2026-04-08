@@ -904,7 +904,7 @@ class SolicitudController extends Controller
             ]);
         }
 
-        $registros = DB::table('peticiones')
+        $registros = DB::table('cuentas')
             ->whereIn('id', $ids)
             ->get();
 
