@@ -1759,8 +1759,8 @@ class SolicitudController extends Controller
                 if ($maxGuia) {
                     $consecutivo = (int) substr($maxGuia, 8); // MAS-2026xxxxxx (8 caracteres: MAS-2026)
                     // Asegurarnos de que el consecutivo inicie mínimo en 6500
-                    if ($consecutivo < 6500) {
-                        $consecutivo = 6500;
+                    if ($consecutivo < 6600) {
+                        $consecutivo = 6600;
                     }
                     $nuevoConsecutivo = str_pad($consecutivo + 1, 6, '0', STR_PAD_LEFT);
                 } else {
