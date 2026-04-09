@@ -633,8 +633,11 @@ class SolicitudController extends Controller
         $header .= '900614022';                                     // 9  - NIT Pagador
         $header .= 'I';                                             // 1  - Aplicaci├│n
         $header .= str_repeat(' ', 15);                             // 15 - Espacios
+        $seq = $this->obtenerSiguienteConsecutivo('SALDOS');
+        $concepto = 'MS' . substr($fecha, 2) . str_pad($seq, 2, '0', STR_PAD_LEFT);
+
         $header .= '220';                                           // 3  - Tipo de pago
-        $header .= 'MAS ANT AM';                                    // 10 - Descripción fija
+        $header .= $concepto;                                       // 10 - Concepto dinámico
         $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
         $header .= 'A1';                                            // 2  - Secuencia de env├¡o
         $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
@@ -733,8 +736,11 @@ class SolicitudController extends Controller
         $header .= '900614022';                                     // 9  - NIT Pagador
         $header .= 'I';                                             // 1  - Aplicaci├│n
         $header .= str_repeat(' ', 15);                             // 15 - Espacios
+        $seq = $this->obtenerSiguienteConsecutivo('ANTICIPOS');
+        $concepto = 'MA' . substr($fecha, 2) . str_pad($seq, 2, '0', STR_PAD_LEFT);
+
         $header .= '220';                                           // 3  - Tipo de pago
-        $header .= 'MAS ANT AM';                                    // 10 - Descripción fija
+        $header .= $concepto;                                       // 10 - Concepto dinámico
         $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
         $header .= 'A1';                                            // 2  - Secuencia de env├¡o
         $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
@@ -841,8 +847,11 @@ class SolicitudController extends Controller
         $header .= '900614022';                                     // 9  - NIT Pagador
         $header .= 'I';                                             // 1  - Aplicaci├│n
         $header .= str_repeat(' ', 15);                             // 15 - Espacios
+        $seq = $this->obtenerSiguienteConsecutivo('CUENTAS');
+        $concepto = 'MC' . substr($fecha, 2) . str_pad($seq, 2, '0', STR_PAD_LEFT);
+
         $header .= '220';                                           // 3  - Tipo de pago
-        $header .= 'MAS ANT AM';                                    // 10 - Descripción fija
+        $header .= $concepto;                                       // 10 - Concepto dinámico
         $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
         $header .= 'A1';                                            // 2  - Secuencia de env├¡o
         $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
@@ -2459,5 +2468,39 @@ class SolicitudController extends Controller
         }
 
         return response()->json(['success' => false, 'message' => 'Petici├│n inv├ílida']);
+    }
+    private function obtenerSiguienteConsecutivo($menu)
+    {
+        $fecha = Carbon::now('America/Bogota')->toDateString();
+
+        return DB::transaction(function () use ($menu, $fecha) {
+            $registro = DB::table('consecutivos_planos')
+                ->where('menu', $menu)
+                ->where('fecha', $fecha)
+                ->lockForUpdate()
+                ->first();
+
+            if ($registro) {
+                $siguiente = ($registro->ultimo_valor % 99) + 1;
+                DB::table('consecutivos_planos')
+                    ->where('id', $registro->id)
+                    ->update([
+                        'ultimo_valor' => $siguiente,
+                        'updated_at' => Carbon::now('America/Bogota'),
+                    ]);
+
+                return $siguiente;
+            }
+
+            DB::table('consecutivos_planos')->insert([
+                'menu' => $menu,
+                'fecha' => $fecha,
+                'ultimo_valor' => 1,
+                'created_at' => Carbon::now('America/Bogota'),
+                'updated_at' => Carbon::now('America/Bogota'),
+            ]);
+
+            return 1;
+        });
     }
 }
