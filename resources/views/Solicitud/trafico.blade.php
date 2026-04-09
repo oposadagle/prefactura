@@ -150,6 +150,7 @@
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0c213a;">PEDIDO</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0c213a;">REMESA</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0c213a;">MANIFIESTO</th>
+                                <th class="celdas" style="color: #C4F4FF;border: 1px solid #0c213a;">RADICADO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">ORIGEN</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">DESTINO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">TIPO TRAYECTO
@@ -207,6 +208,9 @@
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         {{ strToUpper($diario->razon) }}</td>
+                                    <td class="celdas"
+                                        style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        {{ strToUpper($diario->radicado) }}</td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         {{ strtoupper($diario->origen) }}</td>
