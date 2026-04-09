@@ -16,34 +16,42 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center m-2">
                 <div class="d-flex">
-                    <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 512 512"
-                        xml:space="preserve" fill="#000000">
-                        <g id="SVGRepo_bgCarrier" stroke-width="0" />
-                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                    <svg width="28px" height="28px" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+                        class="iconify iconify--noto" preserveAspectRatio="xMidYMid meet" fill="#000000">
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
                         <g id="SVGRepo_iconCarrier">
-                            <style type="text/css">
-                                .st0 {
-                                    fill: #fe252d;
-                                }
-                            </style>
-                            <g>
-                                <path class="st0"
-                                    d="M396.719,140.719H115.281C51.719,140.719,0,192.438,0,256s51.719,115.281,115.281,115.281h281.438 C460.266,371.281,512,319.563,512,256S460.266,140.719,396.719,140.719z M396.719,344.156H115.281 c-48.594,0-88.156-39.547-88.156-88.156s39.563-88.156,88.156-88.156h281.438c48.594,0,88.156,39.547,88.156,88.156 S445.313,344.156,396.719,344.156z" />
-                                <path class="st0"
-                                    d="M397.984,198.328c-31.859,0-57.672,25.828-57.672,57.672s25.813,57.688,57.672,57.688 s57.672-25.844,57.672-57.688S429.844,198.328,397.984,198.328z" />
-                                <path class="st0"
-                                    d="M114.016,198.328c-31.859,0-57.688,25.828-57.688,57.672s25.828,57.688,57.688,57.688 c31.844,0,57.672-25.844,57.672-57.688S145.859,198.328,114.016,198.328z" />
-                                <path class="st0"
-                                    d="M256,198.328c-31.859,0-57.688,25.828-57.688,57.672s25.828,57.688,57.688,57.688 c31.844,0,57.672-25.844,57.672-57.688S287.844,198.328,256,198.328z" />
-                            </g>
+                            <path
+                                d="M4 83.05v-38.1c0-5.26 4.27-9.53 9.53-9.53h100.94c5.26 0 9.53 4.27 9.53 9.53v38.11c0 5.26-4.27 9.53-9.53 9.53H13.53C8.27 92.58 4 88.32 4 83.05z"
+                                fill="#424242"></path>
+                            <circle cx="27.29" cy="65.26" r="13.41" fill="#4caf50"></circle>
+                            <path
+                                d="M17.93 66.44c-1.14-.36-1.45-4.36 1.22-7.57c3.98-4.79 9.71-4.67 10.32-2.12c.85 3.57-3.67 2.16-7.11 5.04c-2.14 1.8-2.62 5.21-4.43 4.65z"
+                                fill="#6fd86f"></path>
+                            <circle cx="64" cy="65.26" r="13.41" fill="#ffca28"></circle>
+                            <path
+                                d="M54.64 66.45c-1.14-.36-1.45-4.36 1.22-7.57c3.98-4.79 9.71-4.67 10.32-2.12c.85 3.57-3.67 2.16-7.11 5.04c-2.15 1.8-2.62 5.21-4.43 4.65z"
+                                fill="#fff59d"></path>
+                            <circle cx="100.71" cy="65.26" r="13.41" fill="#f44336"></circle>
+                            <path
+                                d="M91.35 66.45c-1.14-.36-1.45-4.36 1.22-7.57c3.98-4.79 9.71-4.67 10.32-2.12c.85 3.57-3.67 2.16-7.11 5.04c-2.15 1.8-2.62 5.21-4.43 4.65z"
+                                fill="#ff8155"></path>
+                            <path
+                                d="M12.77 58.77c-.47.92-1.89.88-1.76-.52c.32-3.41 2.26-6.09 3.85-7.73c3.16-3.32 7.8-5.21 12.43-5.2c4.63-.02 9.27 1.88 12.44 5.19c1.59 1.64 3.85 5.3 3.86 7.85c0 1.11-1.26 1.41-1.72.51c-1.15-2.24-4.71-9.55-14.57-9.55s-13.39 7.23-14.53 9.45z"
+                                fill="#757575"></path>
+                            <path
+                                d="M49.48 58.77c-.47.92-1.89.88-1.76-.52c.32-3.41 2.26-6.09 3.85-7.73c3.16-3.32 7.8-5.21 12.43-5.2c4.63-.02 9.27 1.88 12.44 5.19c1.59 1.64 3.85 5.3 3.86 7.85c0 1.11-1.26 1.41-1.72.51c-1.15-2.24-4.71-9.55-14.57-9.55s-13.39 7.23-14.53 9.45z"
+                                fill="#757575"></path>
+                            <path
+                                d="M86.18 58.77c-.47.92-1.89.88-1.76-.52c.32-3.41 2.26-6.09 3.85-7.73c3.16-3.32 7.8-5.21 12.43-5.2c4.63-.02 9.27 1.88 12.44 5.19c1.59 1.64 3.85 5.3 3.86 7.85c0 1.11-1.26 1.41-1.72.51c-1.15-2.24-4.71-9.55-14.57-9.55s-13.38 7.23-14.53 9.45z"
+                                fill="#757575"></path>
                         </g>
                     </svg>
                     <h4 class="card-title" style="margin-left: 10px;">TRAFICO</h4>
                 </div>
 
-                <a class="btn btn-outline-primary py-2"
-                    style="font-size: 12px;font-family: Titillium Web;font-weight: 700;"
+                <a class="btn btn-primary py-2" style="font-size: 12px;font-family: Titillium Web;font-weight: 700;"
                     href="{{ route('solicitud.transito') }}">
                     <svg width="16" height="16" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"
                         xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -117,11 +125,12 @@
                                                 stroke-linejoin="round" />
                                         </g>
                                     </svg> CARGUE</th>
-                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;"><svg width="14"
-                                        height="14" viewBox="0 0 24 24" fill="none"
+                                <th class="celdas" style="color: #C3FF93;border: 1px solid #0c213a;"><svg
+                                        width="14" height="14" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <g id="SVGRepo_bgCarrier" stroke-width="0" />
-                                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+                                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                            stroke-linejoin="round" />
                                         <g id="SVGRepo_iconCarrier">
                                             <path
                                                 d="M12 7V12L9.5 13.5M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
