@@ -633,8 +633,8 @@ class SolicitudController extends Controller
         $header .= '900614022';                                     // 9  - NIT Pagador
         $header .= 'I';                                             // 1  - Aplicaci├│n
         $header .= str_repeat(' ', 15);                             // 15 - Espacios
-        $header .= '225';                                           // 3  - Tipo de pago
-        $header .= str_repeat(' ', 10);                             // 10 - Espacios
+        $header .= '220';                                           // 3  - Tipo de pago
+        $header .= 'MAS ANT AM';                                    // 10 - Descripción fija
         $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
         $header .= 'A1';                                            // 2  - Secuencia de env├¡o
         $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
@@ -661,7 +661,7 @@ class SolicitudController extends Controller
                 $tipoTransaccion = '27';
             }
 
-            $line = str_pad($cleaner($reg->tipo_documento ?? '6'), 1);                      // 1  - Tipo doc beneficiario
+            $line = '6';                                                    // 1  - Tipo registro (Fijo para detalle)
             $line .= str_pad($cleaner($reg->cpagsal ?? ''), 15);                             // 15 - NIT/Cédula
             $line .= str_pad(mb_substr($cleaner($reg->pagsal ?? ''), 0, 30), 30);            // 30 - Nombre beneficiario
             $line .= '00000';                                                       // 5  - Ceros fijos
@@ -733,8 +733,8 @@ class SolicitudController extends Controller
         $header .= '900614022';                                     // 9  - NIT Pagador
         $header .= 'I';                                             // 1  - Aplicaci├│n
         $header .= str_repeat(' ', 15);                             // 15 - Espacios
-        $header .= '225';                                           // 3  - Tipo de pago
-        $header .= str_repeat(' ', 10);                             // 10 - Espacios
+        $header .= '220';                                           // 3  - Tipo de pago
+        $header .= 'MAS ANT AM';                                    // 10 - Descripción fija
         $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
         $header .= 'A1';                                            // 2  - Secuencia de env├¡o
         $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
@@ -761,7 +761,7 @@ class SolicitudController extends Controller
                 $tipoTransaccion = '27';
             }
 
-            $line = str_pad($cleaner($reg->tipo_documento ?? '6'), 1);                      // 1  - Tipo doc beneficiario
+            $line = '6';                                                    // 1  - Tipo registro (Fijo para detalle)
             $line .= str_pad($cleaner($reg->cpagant ?? ''), 15);                             // 15 - NIT/Cédula
             $line .= str_pad(mb_substr($cleaner($reg->pagant ?? ''), 0, 30), 30);            // 30 - Nombre beneficiario
             $line .= '00000';                                                       // 5  - Ceros fijos
@@ -841,8 +841,8 @@ class SolicitudController extends Controller
         $header .= '900614022';                                     // 9  - NIT Pagador
         $header .= 'I';                                             // 1  - Aplicaci├│n
         $header .= str_repeat(' ', 15);                             // 15 - Espacios
-        $header .= '225';                                           // 3  - Tipo de pago
-        $header .= str_repeat(' ', 10);                             // 10 - Espacios
+        $header .= '220';                                           // 3  - Tipo de pago
+        $header .= 'MAS ANT AM';                                    // 10 - Descripción fija
         $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
         $header .= 'A1';                                            // 2  - Secuencia de env├¡o
         $header .= $fecha;                                          // 8  - Fecha YYYYMMDD
@@ -868,7 +868,7 @@ class SolicitudController extends Controller
                 $tipoTransaccion = '27';
             }
 
-            $line = str_pad($cleaner($reg->tipo_documento ?? '6'), 1);                      // 1  - Tipo doc beneficiario
+            $line = '6';                                                    // 1  - Tipo registro (Fijo para detalle)
             $line .= str_pad($cleaner($reg->cpagcon ?? ''), 15);                             // 15 - NIT/Cédula
             $line .= str_pad(mb_substr($cleaner($reg->pagcon ?? ''), 0, 30), 30);            // 30 - Nombre beneficiario
             $line .= '00000';                                                       // 5  - Ceros fijos
