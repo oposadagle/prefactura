@@ -1177,7 +1177,8 @@ class SolicitudController extends Controller
             ->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year])
             ->whereRaw('EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?', [$month])
             ->orderBy('fecha_cargue', 'desc')
-            ->get();
+            ->paginate(200)
+            ->appends($request->all());
 
         // Datos adicionales para la vista
         $services = DB::table('servicios')->orderBy('nombre')->get();

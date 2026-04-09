@@ -605,9 +605,9 @@
                     </table>
                 </div>
                 
-                {{-- <div class="py-2 px-2">
+                <div class="py-2 px-2">
                     {{ $diarias->links('vendor.pagination.custom') }}
-                </div> --}}
+                </div>
 
             </div>
         </div>
