@@ -2132,6 +2132,9 @@ class SolicitudController extends Controller
         $dataFinal = request()->only(['canuser', 'candate', 'cannote', 'cannotes', 'responsable']);
         DB::table('solicitudes')->where('id', '=', $id)->update($dataFinal);
 
+        // Eliminar registros asociados en la tabla estatus
+        DB::table('estatus')->where('id', '=', $id)->delete();
+
         return back()->with('success', 'ok');
     }
 
