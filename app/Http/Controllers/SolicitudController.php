@@ -274,7 +274,7 @@ class SolicitudController extends Controller
                     $val_pagar = number_format(floatval($p->valor_a_pagar), 0, ',', '.');
 
                     if ($p->pago_completo === 'SI') {
-                        $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realiz├│ un pago por concepto del anticipo correspondiente al manifiesto: {$p->razon}\n\n".
+                        $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realizo un pago por concepto del anticipo correspondiente al manifiesto: {$p->razon}\n\n".
                                    "RESUMEN\n".
                                    "reteica: {$val_reteica}\n".
                                    "retefuente: {$val_retefuente}\n".
@@ -282,7 +282,7 @@ class SolicitudController extends Controller
                                    "valor pagado: {$val_pagar}\n\n".
                                    '...no responder este mensaje...';
                     } else {
-                        $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realiz├│ un pago por concepto del anticipo correspondiente al manifiesto: {$p->razon}\n\n".
+                        $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realizo un pago por concepto del anticipo correspondiente al manifiesto: {$p->razon}\n\n".
                                    "RESUMEN\n".
                                    "valor pagado: {$val_pagar}\n\n".
                                    '...no responder este mensaje...';
@@ -303,7 +303,7 @@ class SolicitudController extends Controller
                 'message' => 'Registros confirmados correctamente.',
             ]);
         } catch (\Exception $e) {
-            Log::error('Error en confirmaci├│n masiva de anticipos: '.$e->getMessage());
+            Log::error('Error en confirmacion masiva de anticipos: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -460,7 +460,7 @@ class SolicitudController extends Controller
                     $val_deducciones = number_format(floatval($p->deducciones), 0, ',', '.');
                     $val_saldototal = number_format($saldo_total, 0, ',', '.');
 
-                    $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realiz├│ un pago por concepto del saldo correspondiente al manifiesto: {$p->razon}\n\n".
+                    $mensaje = "Estimado proveedor, GLE Colombia SAS informa que se le realizo un pago por concepto del saldo correspondiente al manifiesto: {$p->razon}\n\n".
                                "RESUMEN:\n".
                                "COSTO: {$val_costo}\n".
                                "ANTICIPO: {$val_anticipo}\n".
@@ -631,7 +631,7 @@ class SolicitudController extends Controller
         $header = '1';                                              // 1  - Tipo registro
         $header .= '000000';                                        // 6  - Ceros fijos
         $header .= '900614022';                                     // 9  - NIT Pagador
-        $header .= 'I';                                             // 1  - Aplicaci├│n
+        $header .= 'I';                                             // 1  - Aplicacion
         $header .= str_repeat(' ', 15);                             // 15 - Espacios
         $seq = $this->obtenerSiguienteConsecutivo('SALDOS');
         $concepto = 'MS' . substr($fecha, 2) . str_pad($seq, 2, '0', STR_PAD_LEFT);
@@ -671,8 +671,8 @@ class SolicitudController extends Controller
             $line .= str_pad($cleaner($reg->codigo_banco ?? '1007'), 4, '0', STR_PAD_LEFT);  // 4  - Código banco
             $line .= str_pad($cleaner($reg->numero_cuenta ?? ''), 17);                       // 17 - Número cuenta
             $line .= 'S';                                                           // 1  - Fijo
-            $line .= $tipoTransaccion;                                              // 2  - Tipo transacci├│n
-            $line .= str_pad(intval($reg->saldo_total), 15, '0', STR_PAD_LEFT);    // 15 - Valor transacci├│n
+            $line .= $tipoTransaccion;                                              // 2  - Tipo transaccion
+            $line .= str_pad(intval($reg->saldo_total), 15, '0', STR_PAD_LEFT);    // 15 - Valor transaccion
             $line .= '00';                                                          // 2  - Ceros fijos
             $line .= $fecha;                                                        // 8  - Fecha YYYYMMDD
             $line .= str_repeat(' ', 21);                                           // 21 - Espacios
@@ -734,7 +734,7 @@ class SolicitudController extends Controller
         $header = '1';                                              // 1  - Tipo registro
         $header .= '000000';                                        // 6  - Ceros fijos
         $header .= '900614022';                                     // 9  - NIT Pagador
-        $header .= 'I';                                             // 1  - Aplicaci├│n
+        $header .= 'I';                                             // 1  - Aplicacion
         $header .= str_repeat(' ', 15);                             // 15 - Espacios
         $seq = $this->obtenerSiguienteConsecutivo('ANTICIPOS');
         $concepto = 'MA' . substr($fecha, 2) . str_pad($seq, 2, '0', STR_PAD_LEFT);
@@ -774,8 +774,8 @@ class SolicitudController extends Controller
             $line .= str_pad($cleaner($reg->codigo_banco ?? '1007'), 4, '0', STR_PAD_LEFT);  // 4  - Código banco
             $line .= str_pad($cleaner($reg->numero_cuenta ?? ''), 17);                       // 17 - Número cuenta
             $line .= 'S';                                                           // 1  - Fijo
-            $line .= $tipoTransaccion;                                              // 2  - Tipo transacci├│n
-            $line .= str_pad(intval($reg->amount), 15, '0', STR_PAD_LEFT);         // 15 - Valor transacci├│n
+            $line .= $tipoTransaccion;                                              // 2  - Tipo transaccion
+            $line .= str_pad(intval($reg->amount), 15, '0', STR_PAD_LEFT);         // 15 - Valor transaccion
             $line .= '00';                                                          // 2  - Ceros fijos
             $line .= $fecha;                                                        // 8  - Fecha YYYYMMDD
             $line .= str_repeat(' ', 21);                                           // 21 - Espacios
@@ -845,7 +845,7 @@ class SolicitudController extends Controller
         $header = '1';                                              // 1  - Tipo registro
         $header .= '000000';                                        // 6  - Ceros fijos
         $header .= '900614022';                                     // 9  - NIT Pagador
-        $header .= 'I';                                             // 1  - Aplicaci├│n
+        $header .= 'I';                                             // 1  - Aplicacion
         $header .= str_repeat(' ', 15);                             // 15 - Espacios
         $seq = $this->obtenerSiguienteConsecutivo('CUENTAS');
         $concepto = 'MC' . substr($fecha, 2) . str_pad($seq, 2, '0', STR_PAD_LEFT);
@@ -884,8 +884,8 @@ class SolicitudController extends Controller
             $line .= str_pad($cleaner($reg->codigo_banco ?? '1007'), 4, '0', STR_PAD_LEFT);  // 4  - Código banco
             $line .= str_pad($cleaner($reg->numero_cuenta ?? ''), 17);                       // 17 - Número cuenta
             $line .= 'S';                                                           // 1  - Fijo
-            $line .= $tipoTransaccion;                                              // 2  - Tipo transacci├│n
-            $line .= str_pad(intval($reg->amount), 15, '0', STR_PAD_LEFT);         // 15 - Valor transacci├│n
+            $line .= $tipoTransaccion;                                              // 2  - Tipo transaccion
+            $line .= str_pad(intval($reg->amount), 15, '0', STR_PAD_LEFT);         // 15 - Valor transaccion
             $line .= '00';                                                          // 2  - Ceros fijos
             $line .= $fecha;                                                        // 8  - Fecha YYYYMMDD
             $line .= str_repeat(' ', 21);                                           // 21 - Espacios
@@ -1180,12 +1180,25 @@ class SolicitudController extends Controller
             $month = $months->last() ?: Carbon::now()->month;
         }
 
-        // Filtrar por a├▒o y mes seleccionados
-        $diarias = DB::table('infoestatus')
+        // Filtrar por año y mes seleccionados
+        $search = $request->input('search');
+
+        $query = DB::table('infoestatus')
             ->where('facturar', 'SI')
             ->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year])
-            ->whereRaw('EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?', [$month])
-            ->orderBy('fecha_cargue', 'desc')
+            ->whereRaw('EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?', [$month]);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('id::text ILIKE ?', ["%$search%"])
+                    ->orWhere('guia', 'ILIKE', "%$search%")
+                    ->orWhere('cliente', 'ILIKE', "%$search%")
+                    ->orWhere('razon', 'ILIKE', "%$search%")
+                    ->orWhere('radicado', 'ILIKE', "%$search%");
+            });
+        }
+
+        $diarias = $query->orderBy('fecha_cargue', 'desc')
             ->paginate(200)
             ->appends($request->all());
 
@@ -1443,7 +1456,7 @@ class SolicitudController extends Controller
                 continue;
             }
 
-            // Construir array de actualizaci├│n din├ímicamente
+            // Construir array de actualizacion din├ímicamente
             $camposActualizar = [
                 'updated_at' => now(),
             ];
@@ -1466,7 +1479,7 @@ class SolicitudController extends Controller
                 }
             }
 
-            // Si se actualiz├│ algo, incrementar contador
+            // Si se actualizo algo, incrementar contador
             if ($updated) {
                 $cantidad++;
             }
@@ -1727,7 +1740,7 @@ class SolicitudController extends Controller
         if ($validator->fails()) {
             if ($request->wantsJson()) {
                 return response()->json([
-                    'message' => 'Error de validaci├│n',
+                    'message' => 'Error de validacion',
                     'errors' => $validator->errors(),
                 ], 422);
             }
@@ -1872,7 +1885,7 @@ class SolicitudController extends Controller
     public function update(Request $request, Solicitud $solicitud)
     {
         if ($request->ajax()) {
-            // Obtener el usuario de la sesi├│n actual
+            // Obtener el usuario de la sesion actual
             $usuarioSesion = auth()->user()->name; // Ajusta seg├║n tu modelo de usuario
 
             // Definir los campos num├®ricos que requieren limpieza de puntos
@@ -1972,8 +1985,8 @@ class SolicitudController extends Controller
 
             if ($whapiToken && $whapiUrl) {
                 $mensaje = "Hola Magaly,\n".
-                           "Se acaba de cargar informaci├│n correspondiente a una cuenta de cobro para el id {$request->pk}.\n".
-                           "Queda pendiente de tu aprobaci├│n.\n\n".
+                           "Se acaba de cargar informacion correspondiente a una cuenta de cobro para el id {$request->pk}.\n".
+                           "Queda pendiente de tu aprobacion.\n\n".
                            "Atentamente,\n".
                            'Sistema de notificaciones GLE';
 
@@ -2067,10 +2080,10 @@ class SolicitudController extends Controller
             'cte' => 'required',
             'ays' => 'required',
         ], [
-            'finnote.required' => 'El campo de nota de finalizaci├│n de servicio es obligatorio.',
+            'finnote.required' => 'El campo de nota de finalizacion de servicio es obligatorio.',
             'responsable.required' => 'El campo de responsable es obligatorio.',
-            'cte.required' => 'La calificaci├│n de tiempos de entrega es obligatoria.',
-            'ays.required' => 'La calificaci├│n de atenci├│n y servicio es obligatoria.',
+            'cte.required' => 'La calificacion de tiempos de entrega es obligatoria.',
+            'ays.required' => 'La calificacion de atencion y servicio es obligatoria.',
         ]);
 
         $incluidos = ['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.'];
@@ -2095,12 +2108,12 @@ class SolicitudController extends Controller
             return back()->with('error', 'Debe registrar la fecha de descargue para poder finalizar el servicio.');
         }
 
-        // Validaci├│n: paytype no puede ser NULL
+        // Validacion: paytype no puede ser NULL
         if (is_null($restricciones->paytype)) {
-            return back()->with('error', 'Debe haber una condici├│n de pago para poder cerrar el caso.');
+            return back()->with('error', 'Debe haber una condicion de pago para poder cerrar el caso.');
         }
 
-        // Validaci├│n: otros campos requeridos
+        // Validacion: otros campos requeridos
         if (
             is_null($restricciones->remesa) ||
             is_null($restricciones->radicado) ||
@@ -2111,15 +2124,15 @@ class SolicitudController extends Controller
             return back()->with('error', 'Los campos pedido, remesa, manifiesto, radicado y nota cumplido (campo despu├®s de tr├ífico) no pueden estar vac├¡os.');
         }
 
-        // Validaci├│n para pagos anticipados: deben estar confirmados
+        // Validacion para pagos anticipados: deben estar confirmados
         if (in_array($restricciones->paytype, $incluidos)) {
             if ($restricciones->confirmado !== 'SI') {
                 return back()->with('error', 'El anticipo debe estar confirmado para poder cerrar el caso.');
             }
         }
 
-        // SUSPENDIDO TEMPORALMENTE - Validaci├│n de Aprobaci├│n (Paso 5)
-        // Se suspende mientras se decide si esta restricci├│n es funcional o no.
+        // SUSPENDIDO TEMPORALMENTE - Validacion de Aprobacion (Paso 5)
+        // Se suspende mientras se decide si esta restriccion es funcional o no.
         // if (!$restricciones->avalado) {
         //     $fechaSolicitud = Carbon::parse($restricciones->fecha_solicitud);
         //     // diffInDays devuelve la diferencia absoluta en d├¡as
@@ -2131,7 +2144,7 @@ class SolicitudController extends Controller
         //             'datecc' => now()
         //         ]);
         //     } else {
-        //         return back()->with('error', 'Solicitud sin aprobaci├│n, solicite la aprobaci├│n o espere 5 d├¡as calendario para cerrar el caso.');
+        //         return back()->with('error', 'Solicitud sin aprobacion, solicite la aprobacion o espere 5 d├¡as calendario para cerrar el caso.');
         //     }
         // }
 
@@ -2237,7 +2250,7 @@ class SolicitudController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Ocurri├│ un error: '.$e->getMessage(),
+                'message' => 'Ocurrio un error: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -2253,7 +2266,7 @@ class SolicitudController extends Controller
     public function update14(Request $request, $id)
     {
         try {
-            // Obt├®n el registro original antes de la actualizaci├│n
+            // Obt├®n el registro original antes de la actualizacion
             $diario = DB::table('peticiones')->where('id', $id)->first();
             if (! $diario) {
                 return response()->json(['success' => false, 'message' => 'Registro no encontrado'], 404);
@@ -2274,7 +2287,7 @@ class SolicitudController extends Controller
                 'solicitud_id' => $id, // ID de la solicitud
                 'user_id' => auth()->id(), // Usuario autenticado
                 'campo' => 'enviado', // Nombre del campo actualizado
-                'razon' => $diario->razon, // Raz├│n del campo original
+                'razon' => $diario->razon, // Razon del campo original
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->header('User-Agent'),
                 'created_at' => now(), // Fecha y hora del evento
@@ -2288,7 +2301,7 @@ class SolicitudController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Ocurri├│ un error: '.$e->getMessage(),
+                'message' => 'Ocurrio un error: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -2304,7 +2317,7 @@ class SolicitudController extends Controller
     public function update16(Request $request, $id)
     {
         try {
-            // Obt├®n el registro original antes de la actualizaci├│n
+            // Obt├®n el registro original antes de la actualizacion
             $diario = DB::table('peticiones')->where('id', $id)->first();
             if (! $diario) {
                 return response()->json(['success' => false, 'message' => 'Registro no encontrado'], 404);
@@ -2326,7 +2339,7 @@ class SolicitudController extends Controller
                 'solicitud_id' => $id,
                 'user_id' => auth()->id(), // Usuario autenticado
                 'campo' => 'confirmado', // Campo modificado
-                'razon' => $diario->razon, // Raz├│n asociada al registro original
+                'razon' => $diario->razon, // Razon asociada al registro original
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->header('User-Agent'),
                 'created_at' => now(),
@@ -2340,7 +2353,7 @@ class SolicitudController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Ocurri├│ un error: '.$e->getMessage(),
+                'message' => 'Ocurrio un error: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -2352,7 +2365,7 @@ class SolicitudController extends Controller
             'lpo' => 'required',
         ], [
             'placa.required' => 'El campo placa es obligatorio.',
-            'lpo.required' => 'La calificaci├│n del listado pre-operacional es obligatoria.',
+            'lpo.required' => 'La calificacion del listado pre-operacional es obligatoria.',
         ]);
 
         $dataFinal17 = request()->only(['plauser', 'placa', 'lpo', 'nota_lpo']);
@@ -2460,7 +2473,7 @@ class SolicitudController extends Controller
             return response()->json(['success' => false, 'message' => 'Solicitud no encontrada']);
         }
 
-        return response()->json(['success' => false, 'message' => 'Petici├│n inv├ílida']);
+        return response()->json(['success' => false, 'message' => 'Peticion inv├ílida']);
     }
 
     public function verificar(Request $request, $id)
@@ -2485,7 +2498,7 @@ class SolicitudController extends Controller
             return response()->json(['success' => false, 'message' => 'Solicitud no encontrada']);
         }
 
-        return response()->json(['success' => false, 'message' => 'Petici├│n inv├ílida']);
+        return response()->json(['success' => false, 'message' => 'Peticion inv├ílida']);
     }
     private function obtenerSiguienteConsecutivo($menu)
     {

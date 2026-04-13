@@ -36,6 +36,9 @@
                 @endcan
                 
                 <form method="GET" action="{{ route('solicitud.congelado') }}" class="d-flex">
+                    <!-- Buscador -->
+                    <input type="text" name="search" class="form-control me-2" placeholder="ID, Guia, Cliente..." value="{{ request('search') }}" style="width: 200px;">
+                    
                     <!-- Select de Año -->
                     <select name="year" class="form-select me-2" onchange="this.form.submit()"  style="width: 80px;">
                         @foreach ($years as $availableYear)
@@ -51,7 +54,10 @@
                                 {{ \Carbon\Carbon::create()->month($availableMonth)->translatedFormat('F') }}
                             </option>
                         @endforeach
-                    </select>                    
+                    </select>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
                 </form>
             </div>
             <div class="card-body">                
