@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Exports\AnticiposExport;
+use App\Exports\CuentasHistoricoExport;
+use App\Exports\CuentasPendientesExport;
 use App\Exports\DiariasExport;
 use App\Exports\DiariosExport;
 use App\Exports\EstatusExport;
@@ -388,6 +390,16 @@ class SolicitudController extends Controller
         }
 
         return view('Solicitud.historico_cuentas', compact('diarias', 'userName'));
+    }
+
+    public function exportarCuentasExcel()
+    {
+        return Excel::download(new CuentasPendientesExport, 'cuentas_pendientes.xlsx');
+    }
+
+    public function exportarHistoricoCuentasExcel()
+    {
+        return Excel::download(new CuentasHistoricoExport, 'historico_cuentas.xlsx');
     }
 
     private function calcularFechaTentativa($fechaInicial, $diasHabiles, $festivos)

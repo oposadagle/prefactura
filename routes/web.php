@@ -95,6 +95,8 @@ Route::post('/solicitud/cuentas/pagar', [SolicitudController::class, 'pagarCuent
 Route::post('/solicitud/saldos/archivo-plano', [SolicitudController::class, 'archivoPlano'])->name('solicitud.archivoPlano');
 Route::post('/solicitud/cuentas/archivo-plano', [SolicitudController::class, 'archivoPlanoCuentas'])->name('solicitud.archivoPlanoCuentas');
 Route::post('/solicitud/cuentas/descargar-pdf', [SolicitudController::class, 'descargarPdf'])->name('solicitud.descargarPdf');
+Route::get('/solicitud/cuentas/exportar-excel', [SolicitudController::class, 'exportarCuentasExcel'])->name('solicitud.exportarCuentasExcel');
+Route::get('/solicitud/historico-cuentas/exportar-excel', [SolicitudController::class, 'exportarHistoricoCuentasExcel'])->name('solicitud.exportarHistoricoCuentasExcel');
 Route::resource('admin', AdminController::class);
 Route::get('vehiculo/pendientes-bancarios', [VehiculoController::class, 'pendientesBancarios'])->name('vehiculo.pendientesBancarios');
 Route::get('vehiculo/historial-bancario', [VehiculoController::class, 'historialBancario'])->name('vehiculo.historialBancario');
