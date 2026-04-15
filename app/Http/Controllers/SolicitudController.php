@@ -944,9 +944,14 @@ class SolicitudController extends Controller
 
             return $pdf->download($filename);
         } else {
-            // Caso 2: M├║ltiples registros, empaquetar en un archivo .zip al vuelo
+            // Caso 2: Múltiples registros, empaquetar en un archivo .zip al vuelo
             $zip = new \ZipArchive();
-            $zipName = \Carbon\Carbon::now('America/Bogota')->format('ymdHi').'.zip';
+            
+            // Obtener la fecha_envio del primer registro para la parte yymmdd
+            $fechaEnvio = $registros[0]->fecha_envio;
+            $fechaBase = \Carbon\Carbon::parse($fechaEnvio)->format('ymd');
+            $horaActual = \Carbon\Carbon::now('America/Bogota')->format('His');
+            $zipName = $fechaBase.$horaActual.'.zip';
             $zipPath = storage_path('app/'.$zipName);
 
             if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
