@@ -101,7 +101,8 @@ class EstatusExport implements FromCollection, WithHeadings
                 'dst',
                 'egreso_anticipo',
                 'egreso_saldo',
-                'fecha_saldo'
+                'fecha_saldo',
+                'ffacturar'
             )
             ->whereYear('fecha_cargue', $this->year)
             ->when($this->month !== 'todos', function ($query) {
@@ -187,7 +188,8 @@ class EstatusExport implements FromCollection, WithHeadings
             'DOCUMENTO SOBRECOSTO TRANSPORTE',
             'EGRESO ANTICIPO',
             'EGRESO SALDO',
-            'FECHA PAGO SALDO'
+            'FECHA PAGO SALDO',
+            'FECHA CONGELADO'
         ];
     }
 }
