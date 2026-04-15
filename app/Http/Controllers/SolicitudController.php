@@ -1757,7 +1757,7 @@ class SolicitudController extends Controller
                 'ASAP CONCEPTOS PROMOCIONALES DE MARKETING SAS',
                 'SIMONIZ SA',
                 'GRUPO LOGISTICO ESPECIALIZADO',
-               'AUTOMOTORES COMERCIALES AUTOCOM S.A'
+                'AUTOMOTORES COMERCIALES AUTOCOM S.A'
             ];
 
             $guia = null;
@@ -1904,6 +1904,41 @@ class SolicitudController extends Controller
                 // Solo actualizar 'registrado' si se esta modificando el campo 'costo'
                 if ($request->name === 'costo') {
                     $updateData['registrado'] = $usuarioSesion;
+                    
+                    // También actualizar el campo costo_flete en la tabla estatus
+                    $solicitudData = DB::table('solicitudes')->where('id', $request->pk)->first();
+                    
+                    if ($solicitudData) {
+                        $cliente = $solicitudData->cliente;
+                        $excluidos = [
+                            'DERCO COLOMBIA SAS',
+                            'INCHCAPE COLOMBIA S A S',
+                            'METROKIA S.A.',
+                            'ASAP CONCEPTOS PROMOCIONALES DE MARKETING SAS',
+                            'SIMONIZ SA',
+                            'GRUPO LOGISTICO ESPECIALIZADO',
+                            'AUTOMOTORES COMERCIALES AUTOCOM S.A'
+                        ];
+                        
+                        if (!in_array($cliente, $excluidos)) {
+                            // Cliente NO excluido: actualizar directamente por id
+                            DB::table('estatus')
+                                ->where('id', $request->pk)
+                                ->update(['costo_flete' => $value]);
+                        } else {
+                            // Cliente excluido: actualizar solo el registro con la menor guia
+                            $minGuia = DB::table('estatus')
+                                ->where('id', $request->pk)
+                                ->min('guia');
+                            
+                            if ($minGuia) {
+                                DB::table('estatus')
+                                    ->where('id', $request->pk)
+                                    ->where('guia', $minGuia)
+                                    ->update(['costo_flete' => $value]);
+                            }
+                        }
+                    }
                 }
 
                 DB::table('solicitudes')
