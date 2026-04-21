@@ -1002,7 +1002,7 @@ class SolicitudController extends Controller
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
 
             fputcsv($file, [
-                'ID', 'FECHA CARGUE', 'MANIFIESTO', 'MEDIO DE PAGO', 'ESTADO', 'CLIENTE', 'ORIGEN', 'DESTINO', 'PLACA',
+                'ID', 'FECHA CARGUE', 'FACTURA', 'MANIFIESTO', 'MEDIO DE PAGO', 'ESTADO', 'CLIENTE', 'ORIGEN', 'DESTINO', 'PLACA',
                 'CONDUCTOR', 'PAGAR_ANTICIPO_A', 'CEDULA_ANTICIPO', 'PAGAR_SALDO_A', 'CEDULA_SALDO', 'FACT ELECTRONICA',
                 'TIPO VEHICULO', 'COSTO', 'EXTRA', 'PAGO COMPLETO', 'OBSERVACION PAGO', 'ANTICIPO',
                 'ESTADO ANTICIPO', 'SALDO', 'ESTADO SALDO', 'RECIBIDO CUMPLIDO', 'CUMPLIDO', 'PAGAR SALDO', 'TIPO PAGO',
@@ -1013,7 +1013,7 @@ class SolicitudController extends Controller
 
             DB::table('peticiones')
                 ->select(
-                    'id', 'fecha_cargue', 'razon', 'paytype', 'state', 'cliente', 'origen', 'destino', 'placa', 'conductor',
+                    'id', 'fecha_cargue', 'factura', 'razon', 'paytype', 'state', 'cliente', 'origen', 'destino', 'placa', 'conductor',
                     'asociado', 'cedula_asociado', 'pagarsaldo', 'cedula_saldo', 'facele', 'tipo_vehiculo', 'costo', 'costo_tiposerv', 'pago_completo', 'observacion_pago',
                     'anticipo', 'estado_anticipo', 'saldo', 'estado_saldo', 'recibido_cumplido', 'cumplido', 'pagar_saldo', 
                     'tipo_pago', 'fecha_envio', 'estado_pago', 'carnote', 'orinote', 'salnote', 'desnote', 'finnote', 'cannote', 
@@ -1026,6 +1026,7 @@ class SolicitudController extends Controller
                         fputcsv($file, [
                             $record->id,
                             $record->fecha_cargue,
+                            $record->factura,
                             $record->razon,
                             $record->paytype,
                             $record->state,

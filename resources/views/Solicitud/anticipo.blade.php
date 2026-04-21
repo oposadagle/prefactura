@@ -70,6 +70,7 @@
                             <tr>                                
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">MANIFIESTO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">FECHA CARGUE</th>                                
+                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">FACTURA</th>                                
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CONDICION DE PAGO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">ESTADO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">NOTAS</th>
@@ -117,6 +118,15 @@
                                 <tr style="text-align: center">                                                                        
                                     <td class="celdas fw-bold" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;color: #021526;">{{ $diario->razon }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_cargue }}</td>                                    
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        @can('validar')
+                                            <a href="#" class="editable" data-type="text" data-name="factura" data-pk="{{ $diario->id }}">
+                                                {{ $diario->factura }}
+                                            </a>
+                                        @else
+                                            {{ $diario->factura }}
+                                        @endcan
+                                    </td>                                    
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                             @php
                                                 $estadoClase = '';
