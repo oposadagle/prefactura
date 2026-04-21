@@ -984,7 +984,96 @@ class SolicitudController extends Controller
 
     public function adelanto()
     {
-        return Excel::download(new AnticiposExport, 'anticipos.xlsx');
+        $headers = [
+            'Content-type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename=anticipos.csv',
+            'Pragma'              => 'no-cache',
+            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires'             => '0'
+        ];
+
+        $incluidos = ['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE'];
+        $festivos = DB::table('festivos')->pluck('festivo')->toArray();
+
+        $callback = function() use ($incluidos, $festivos) {
+            $file = fopen('php://output', 'w');
+            
+            // Add UTF-8 BOM for Excel compatibility (essential for Spanish characters)
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            fputcsv($file, [
+                'ID', 'FECHA CARGUE', 'MANIFIESTO', 'MEDIO DE PAGO', 'ESTADO', 'CLIENTE', 'ORIGEN', 'DESTINO', 'PLACA',
+                'CONDUCTOR', 'PAGAR_ANTICIPO_A', 'CEDULA_ANTICIPO', 'PAGAR_SALDO_A', 'CEDULA_SALDO', 'FACT ELECTRONICA',
+                'TIPO VEHICULO', 'COSTO', 'EXTRA', 'PAGO COMPLETO', 'OBSERVACION PAGO', 'ANTICIPO',
+                'ESTADO ANTICIPO', 'SALDO', 'ESTADO SALDO', 'RECIBIDO CUMPLIDO', 'CUMPLIDO', 'PAGAR SALDO', 'TIPO PAGO',
+                'FECHA ENVIO', 'ESTADO PAGO', 'NOTA CARGUE', 'NOTA LLEGADA ORIGEN', 'NOTA SALIDA', 'NOTA LLEGADA DESTINO',
+                'NOTA SERVICIO FINALIZADO', 'NOTA SERVICIO CANCELADO', 'NOTA TRAFICO', 'EGRESO ANTICIPO', 'EGRESO SALDO',
+                'FECHA SALDO', 'SALDO FINAL', 'FECHA TENTATIVA'
+            ], ';');
+
+            DB::table('peticiones')
+                ->select(
+                    'id', 'fecha_cargue', 'razon', 'paytype', 'state', 'cliente', 'origen', 'destino', 'placa', 'conductor',
+                    'asociado', 'cedula_asociado', 'pagarsaldo', 'cedula_saldo', 'facele', 'tipo_vehiculo', 'costo', 'costo_tiposerv', 'pago_completo', 'observacion_pago',
+                    'anticipo', 'estado_anticipo', 'saldo', 'estado_saldo', 'recibido_cumplido', 'cumplido', 'pagar_saldo', 
+                    'tipo_pago', 'fecha_envio', 'estado_pago', 'carnote', 'orinote', 'salnote', 'desnote', 'finnote', 'cannote', 
+                    'tranote', 'egreso_anticipo', 'egreso_saldo', 'fecha_saldo', 'saldo_final'
+                )
+                ->whereIn('paytype', $incluidos)
+                ->orderBy('id')
+                ->chunk(500, function($records) use ($file, $festivos) {
+                    foreach ($records as $record) {
+                        fputcsv($file, [
+                            $record->id,
+                            $record->fecha_cargue,
+                            $record->razon,
+                            $record->paytype,
+                            $record->state,
+                            $record->cliente,
+                            $record->origen,
+                            $record->destino,
+                            $record->placa,
+                            $record->conductor,
+                            $record->asociado,
+                            $record->cedula_asociado,
+                            $record->pagarsaldo,
+                            $record->cedula_saldo,
+                            $record->facele,
+                            $record->tipo_vehiculo,
+                            $record->costo,
+                            $record->costo_tiposerv,
+                            $record->pago_completo,
+                            $record->observacion_pago,
+                            $record->anticipo,
+                            $record->estado_anticipo,
+                            $record->saldo,
+                            $record->estado_saldo,
+                            $record->recibido_cumplido,
+                            $record->cumplido,
+                            $record->pagar_saldo,
+                            $record->tipo_pago,
+                            $record->fecha_envio,
+                            $record->estado_pago,
+                            $record->carnote,
+                            $record->orinote,
+                            $record->salnote,
+                            $record->desnote,
+                            $record->finnote,
+                            $record->cannote,
+                            $record->tranote,
+                            $record->egreso_anticipo,
+                            $record->egreso_saldo,
+                            $record->fecha_saldo,
+                            $record->saldo_final,
+                            $this->calcularFechaTentativa($record->fecha_envio, 9, $festivos)
+                        ], ';');
+                    }
+                });
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     public function estatus(Request $request)
