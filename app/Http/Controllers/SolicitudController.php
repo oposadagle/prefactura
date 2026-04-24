@@ -2235,8 +2235,8 @@ class SolicitudController extends Controller
             ->select('remesa', 'radicado', 'retorno', 'razon', 'paytype', 'confirmado', 'nota_cumplido', 'avalado', 'fecha_solicitud', 'cliente', 'fecha_descargue')
             ->first();
 
-        // ValidaciÃ³n: Tiempo transcurrido desde fecha_descargue (3 dÃ­as general, 5 dÃ­as SIMONIZ SA)
-        if ($restricciones->fecha_descargue) {
+        // Validación: Tiempo transcurrido desde fecha_descargue (REGLA ELIMINADA DEL CIERRE)
+        /* if ($restricciones->fecha_descargue) {
             $fechaDescargue = Carbon::parse($restricciones->fecha_descargue)->startOfDay();
             $hoy = Carbon::now()->startOfDay();
             $diasPasados = $fechaDescargue->diffInDays($hoy);
@@ -2244,11 +2244,11 @@ class SolicitudController extends Controller
             $diasRequeridos = ($restricciones->cliente === 'SIMONIZ SA') ? 5 : 3;
 
             if ($diasPasados < $diasRequeridos) {
-                return back()->with('error', "No se puede finalizar el servicio. Deben pasar al menos {$diasRequeridos} dÃ­as calendario desde la fecha de descargue ({$restricciones->fecha_descargue}).");
+                return back()->with('error', "No se puede finalizar el servicio. Deben pasar al menos {$diasRequeridos} días calendario desde la fecha de descargue ({$restricciones->fecha_descargue}).");
             }
         } else {
             return back()->with('error', 'Debe registrar la fecha de descargue para poder finalizar el servicio.');
-        }
+        } */
 
         // Validacion: paytype no puede ser NULL
         if (is_null($restricciones->paytype)) {

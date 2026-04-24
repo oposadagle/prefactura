@@ -561,19 +561,16 @@
                                 $fechaDescargueParsed = $diario->fecha_descargue
                                     ? \Carbon\Carbon::parse($diario->fecha_descargue)
                                     : null;
-                                $diasLimiteCierre = $diario->cliente === 'SIMONIZ SA' ? 5 : 3;
+                                $diasLimiteEdicion = $diario->cliente === 'SIMONIZ SA' ? 5 : 3;
                                 $fechaLimiteEdicion = $fechaDescargueParsed
-                                    ? $fechaDescargueParsed->copy()->addDays($diasLimiteCierre)->endOfDay()
+                                    ? $fechaDescargueParsed->copy()->addDays($diasLimiteEdicion)->endOfDay()
                                     : null;
                                 $dentroDelPlazoEdicion = $fechaLimiteEdicion
                                     ? \Carbon\Carbon::now()->lessThanOrEqualTo($fechaLimiteEdicion)
                                     : true;
 
-                                $camposObligatoriosLlenos =
-                                    !empty($diario->placa) && !empty($diario->costo) && !empty($diario->paytype);
-
-                                $puedeEditarFinancieros =
-                                    $camposObligatoriosLlenos && $dentroDelPlazoEdicion && !$diario->avalado;
+                                // La edición se permite si está dentro del plazo y no ha sido avalado
+                                $puedeEditarFinancieros = $dentroDelPlazoEdicion && !$diario->avalado;
                             @endphp
                             <tr style="text-align: center">
                                 <td class="celdas"
