@@ -282,6 +282,7 @@
                                         <option>GLE</option>
                                         <option>Jessica Motta</option>
                                         <option>Juan Medina</option>
+                                        <option>Luis Diaz</option>
                                         <option>Maicol Palomino</option>
                                         <option>Martha Duarte</option>
                                         <option>Paulina Lucero</option>
