@@ -226,6 +226,7 @@
                                 </th>
                                 <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">TIPO PAGO</th>
                                 <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">FECHA ENVIO</th>
+                                <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">FECHA ENVIO CUMPLIDO</th>
                                 <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">FECHA TENTATIVA
                                 </th>
                                 @can('vehiculo.index')
@@ -499,6 +500,10 @@
                                     </td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        <span>{{ $diario->fenv_cumplido }}</span>
+                                    </td>
+                                    <td class="celdas"
+                                        style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         {{ $diario->fecha_tentativa }}</td>
 
                                     @can('vehiculo.index')
@@ -654,9 +659,9 @@
                                 </div>
                                 <div class="col-md">
                                     <div class="form-floating mb-2">
-                                        <input type="date" class="form-control" name="fecha_envio"
+                                        <input type="date" class="form-control" name="fenv_cumplido"
                                             autocomplete="off">
-                                        <label>Fecha de envio</label>
+                                        <label>Fecha envio cumplido</label>
                                     </div>
                                 </div>
                             </div>

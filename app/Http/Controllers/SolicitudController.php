@@ -211,7 +211,7 @@ class SolicitudController extends Controller
 
         // Calcula la fecha tentativa para cada entrada
         foreach ($diarias as $diario) {
-            $diario->fecha_tentativa = $this->calcularFechaTentativa($diario->fecha_envio, 9, $festivos);
+            $diario->fecha_tentativa = $this->calcularFechaTentativa($diario->fenv_cumplido, 9, $festivos);
         }
 
         // Obtener fechas disponibles para los selectores
@@ -1055,7 +1055,7 @@ class SolicitudController extends Controller
                     'id', 'fecha_cargue', 'factura', 'razon', 'paytype', 'state', 'cliente', 'origen', 'destino', 'placa', 'conductor',
                     'pagant', 'cpagant', 'pagsal', 'cpagsal', 'pagcon', 'cpagcon', 'facele', 'tipo_vehiculo', 'costo', 'costo_tiposerv', 
                     'pago_completo', 'valor_a_pagar', 'retefuente', 'reteica', 'seguro', 'anticipo', 'estado_anticipo', 'valor_saldo', 
-                    'deducciones', 'saldo_total', 'estado_saldo', 'recibido_cumplido', 'tipo_pago', 'fecha_envio', 'enviado', 'notasded'
+                    'deducciones', 'saldo_total', 'estado_saldo', 'recibido_cumplido', 'tipo_pago', 'fecha_envio', 'fenv_cumplido', 'enviado', 'notasded'
                 )
                 ->whereNotNull('razon')
                 ->where('costo', '>', 0)
@@ -1109,7 +1109,7 @@ class SolicitudController extends Controller
                             $record->recibido_cumplido,
                             $record->tipo_pago,
                             $record->fecha_envio,
-                            $this->calcularFechaTentativa($record->fecha_envio, 9, $festivos),
+                            $this->calcularFechaTentativa($record->fenv_cumplido, 9, $festivos),
                             $record->enviado,
                             $record->notasded
                         ], ';');
@@ -1617,7 +1617,7 @@ class SolicitudController extends Controller
                 $camposActualizar['recibido_cumplido'] = $recibido_cumplido;
             }
             if ($fecha_envio !== '') {
-                $camposActualizar['fecha_envio'] = $fecha_envio;
+                $camposActualizar['fenv_cumplido'] = $fecha_envio;
             }
 
             // Solo actualizar si hay al menos un campo para modificar
@@ -2444,7 +2444,7 @@ class SolicitudController extends Controller
 
     public function update13(Request $request, $id)
     {
-        $dataFinal13 = request()->only(['recibido_cumplido', 'fecha_envio']);
+        $dataFinal13 = request()->only(['recibido_cumplido', 'fenv_cumplido']);
         DB::table('solicitudes')->where('id', '=', $id)->update($dataFinal13);
 
         return back()->with('success', 'ok');
