@@ -1010,16 +1010,27 @@ class SolicitudController extends Controller
 
     public function adelanto(Request $request)
     {
+        $year = $request->input('year');
+        $month = $request->input('month');
+
+        $filename = 'anticipos';
+        if ($year && $year !== 'todos') {
+            $filename .= '_' . $year;
+            if ($month && $month !== 'todos') {
+                $filename .= '_' . str_pad($month, 2, '0', STR_PAD_LEFT);
+            }
+        } else {
+            $filename .= '_todo';
+        }
+        $filename .= '.csv';
+
         $headers = [
             'Content-type'        => 'text/csv',
-            'Content-Disposition' => 'attachment; filename=anticipos.csv',
+            'Content-Disposition' => 'attachment; filename=' . $filename,
             'Pragma'              => 'no-cache',
             'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
             'Expires'             => '0'
         ];
-
-        $year = $request->input('year');
-        $month = $request->input('month');
 
         $incluidos = ['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE'];
         $excluidos = ['Servicio cancelado'];

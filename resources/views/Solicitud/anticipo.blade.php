@@ -96,40 +96,35 @@
                 </div>
 
                 <div class="d-flex align-items-center">
-                    <!-- Formulario de Filtrado de Vista -->
-                    <form action="{{ route('solicitud.anticipo') }}" method="GET" class="d-flex align-items-center me-3">
-                        <select name="year" id="year_view" class="form-select me-2" style="width: 100px; font-size: 12px;">
+                    <form method="GET" action="{{ route('solicitud.anticipo') }}" class="d-flex align-items-center">
+                        <!-- Selectores únicos de Año y Mes -->
+                        <select name="year" id="year_select" class="form-select me-2"
+                            style="width: 100px; font-size: 12px;">
                             <option value="todos">Año (Todos)</option>
-                            @foreach(array_keys($availableDates) as $y)
-                                <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            @foreach (array_keys($availableDates) as $y)
+                                <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>
+                                    {{ $y }}</option>
                             @endforeach
                         </select>
-                        <select name="month" id="month_view" class="form-select me-2" style="width: 120px; font-size: 12px;">
+                        <select name="month" id="month_select" class="form-select me-2"
+                            style="width: 120px; font-size: 12px;">
                             <option value="todos">Mes (Todos)</option>
-                            <!-- Se puebla por JS -->
                         </select>
-                        <button type="submit" class="btn btn-outline-secondary" style="font-size: 12px; font-weight: 700;">FILTRAR</button>
-                    </form>
 
-                    <!-- Formulario de Descarga -->
-                    <form action="{{ route('solicitud.adelanto') }}" method="GET" class="d-flex align-items-center">
-                        <select name="year" id="year_download" class="form-select me-2" style="width: 100px; font-size: 12px;">
-                            <option value="todos">Año (Todo)</option>
-                            @foreach(array_keys($availableDates) as $y)
-                                <option value="{{ $y }}">{{ $y }}</option>
-                            @endforeach
-                        </select>
-                        <select name="month" id="month_download" class="form-select me-2" style="width: 120px; font-size: 12px;">
-                            <option value="todos">Mes (Todo)</option>
-                        </select>
-                        
-                        <button type="submit" class="btn btn-outline-primary d-flex align-items-center py-2"
+                        <!-- Botón para Filtrar Vista -->
+                        <button type="submit" class="btn btn-dark me-3"
+                            style="font-size: 12px; font-weight: 700;">FILTRAR</button>
+
+                        <!-- Botón para Descarga (usando formaction) -->
+                        <button type="submit" formaction="{{ route('solicitud.adelanto') }}"
+                            class="btn btn-primary d-flex align-items-center py-2"
                             style="font-size: 12px;font-family: Titillium Web;font-weight: 700;">
                             <svg width="16" height="16" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"
                                 xmlns:xlink="http://www.w3.org/1999/xlink">
                                 <defs>
-                                    <linearGradient id="a" x1="4.494" y1="-2092.086" x2="13.832" y2="-2075.914"
-                                        gradientTransform="translate(0 2100)" gradientUnits="userSpaceOnUse">
+                                    <linearGradient id="a" x1="4.494" y1="-2092.086" x2="13.832"
+                                        y2="-2075.914" gradientTransform="translate(0 2100)"
+                                        gradientUnits="userSpaceOnUse">
                                         <stop offset="0" stop-color="#18884f" />
                                         <stop offset="0.5" stop-color="#117e43" />
                                         <stop offset="1" stop-color="#0b6631" />
@@ -139,7 +134,8 @@
                                 <path
                                     d="M19.581,15.35,8.512,13.4V27.809A1.192,1.192,0,0,0,9.705,29h19.1A1.192,1.192,0,0,0,30,27.809h0V22.5Z"
                                     style="fill:#185c37" />
-                                <path d="M19.581,3H9.705A1.192,1.192,0,0,0,8.512,4.191h0V9.5L19.581,16l5.861,1.95L30,16V9.5Z"
+                                <path
+                                    d="M19.581,3H9.705A1.192,1.192,0,0,0,8.512,4.191h0V9.5L19.581,16l5.861,1.95L30,16V9.5Z"
                                     style="fill:#21a366" />
                                 <path d="M8.512,9.5H19.581V16H8.512Z" style="fill:#107c41" />
                                 <path
@@ -160,7 +156,8 @@
                                 <path
                                     d="M5.7,19.873l2.511-3.884-2.3-3.862H7.758L9.013,14.6c.116.234.2.408.238.524h.017c.082-.188.169-.369.26-.546l1.342-2.447h1.7l-2.359,3.84,2.419,3.905H10.821l-1.45-2.711A2.355,2.355,0,0,1,9.2,16.8H9.176a1.688,1.688,0,0,1-.168.351L7.515,19.873Z"
                                     style="fill:#fff" />
-                                <path d="M28.806,3H19.581V9.5H30V4.191A1.192,1.192,0,0,0,28.806,3Z" style="fill:#33c481" />
+                                <path d="M28.806,3H19.581V9.5H30V4.191A1.192,1.192,0,0,0,28.806,3Z"
+                                    style="fill:#33c481" />
                                 <path d="M19.581,16H30v6.5H19.581Z" style="fill:#107c41" />
                             </svg>
                             <i class="me-2"></i>
@@ -940,43 +937,45 @@
     document.addEventListener('DOMContentLoaded', function() {
         const availableDates = @json($availableDates);
         const monthsNames = {
-            1: 'Enero', 2: 'Febrero', 3: 'Marzo', 4: 'Abril',
-            5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Agosto',
-            9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre', 12: 'Diciembre'
+            1: 'Enero',
+            2: 'Febrero',
+            3: 'Marzo',
+            4: 'Abril',
+            5: 'Mayo',
+            6: 'Junio',
+            7: 'Julio',
+            8: 'Agosto',
+            9: 'Septiembre',
+            10: 'Octubre',
+            11: 'Noviembre',
+            12: 'Diciembre'
         };
 
-        const yearView = document.getElementById('year_view');
-        const monthView = document.getElementById('month_view');
-        const yearDownload = document.getElementById('year_download');
-        const monthDownload = document.getElementById('month_download');
+        const yearSelect = document.getElementById('year_select');
+        const monthSelect = document.getElementById('month_select');
 
-        const selectedYearView = "{{ $year }}";
-        const selectedMonthView = "{{ $month }}";
+        const selectedYear = "{{ $year }}";
+        const selectedMonth = "{{ $month }}";
 
-        function updateMonths(yearSelect, monthSelect, selectedMonth = 'todos') {
-            const year = yearSelect.value;
-            monthSelect.innerHTML = '<option value="todos">Mes (Todos)</option>';
-            
+        function updateMonths(ySelect, mSelect, sMonth = 'todos') {
+            const year = ySelect.value;
+            mSelect.innerHTML = '<option value="todos">Mes (Todos)</option>';
+
             if (year !== 'todos' && availableDates[year]) {
                 const months = availableDates[year].sort((a, b) => a - b);
                 months.forEach(m => {
                     const option = document.createElement('option');
                     option.value = m;
                     option.textContent = monthsNames[m] || m;
-                    if (m == selectedMonth) option.selected = true;
-                    monthSelect.appendChild(option);
+                    if (m == sMonth) option.selected = true;
+                    mSelect.appendChild(option);
                 });
             }
         }
 
-        if (yearView) {
-            yearView.addEventListener('change', () => updateMonths(yearView, monthView));
-            updateMonths(yearView, monthView, selectedMonthView);
-        }
-
-        if (yearDownload) {
-            yearDownload.addEventListener('change', () => updateMonths(yearDownload, monthDownload));
-            updateMonths(yearDownload, monthDownload);
+        if (yearSelect) {
+            yearSelect.addEventListener('change', () => updateMonths(yearSelect, monthSelect));
+            updateMonths(yearSelect, monthSelect, selectedMonth);
         }
     });
 </script>
