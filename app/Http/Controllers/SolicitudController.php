@@ -178,31 +178,57 @@ class SolicitudController extends Controller
         return view('Solicitud.sac', compact('diarias', 'years', 'months', 'year', 'month', 'availableDates'));
     }
 
-    public function anticipo()
+    public function anticipo(Request $request)
     {
         $userName = Auth::user()->name;
         $festivos = DB::table('festivos')->pluck('festivo')->toArray();
         $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE']);
         $excluidos = (['Servicio cancelado']);
 
-        $startOfLastMonth = Carbon::now()->subMonth(2)->startOfMonth()->toDateString(); // Inicio del mes anterior
-        //$startOfLastMonth = Carbon::now()->subYear(1)->startOfMonth()->toDateString();
-        $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString(); // Fin del mes actual
-        $diarias = DB::table('peticiones')
+        // Filtros
+        $year = $request->input('year');
+        $month = $request->input('month');
+
+        $query = DB::table('peticiones')
             ->whereNotNull('razon')
             ->where('costo', '>', 0)
             ->whereIn('paytype', $incluidos)
-            ->whereNotIn('states', $excluidos)
-            ->whereBetween('fecha_cargue', [$startOfLastMonth, $endOfCurrentMonth])
-            ->orderBy('fecha_cargue', 'desc')
-            ->get();
+            ->whereNotIn('states', $excluidos);
+
+        if ($year && $year !== 'todos') {
+            $query->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year]);
+            if ($month && $month !== 'todos') {
+                $query->whereRaw('EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?', [$month]);
+            }
+        } else {
+            // Rango predeterminado si no hay filtro: últimos 3 meses aprox
+            $startOfLastMonth = Carbon::now()->subMonth(2)->startOfMonth()->toDateString();
+            $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString();
+            $query->whereBetween('fecha_cargue', [$startOfLastMonth, $endOfCurrentMonth]);
+        }
+
+        $diarias = $query->orderBy('fecha_cargue', 'desc')->get();
 
         // Calcula la fecha tentativa para cada entrada
         foreach ($diarias as $diario) {
             $diario->fecha_tentativa = $this->calcularFechaTentativa($diario->fecha_envio, 9, $festivos);
         }
 
-        return view('Solicitud.anticipo', compact('diarias', 'festivos', 'userName'));
+        // Obtener fechas disponibles para los selectores
+        $availableDatesRaw = DB::table('peticiones')
+            ->selectRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) as year, EXTRACT(MONTH FROM fecha_cargue::timestamp) as month')
+            ->whereNotNull('fecha_cargue')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->get();
+
+        $availableDates = [];
+        foreach ($availableDatesRaw as $date) {
+            $availableDates[(int) $date->year][] = (int) $date->month;
+        }
+
+        return view('Solicitud.anticipo', compact('diarias', 'festivos', 'userName', 'availableDates', 'year', 'month'));
     }
 
     public function anticipos()
@@ -982,7 +1008,7 @@ class SolicitudController extends Controller
         return Excel::download(new DiariasExport, 'diarias.xlsx');
     }
 
-    public function adelanto()
+    public function adelanto(Request $request)
     {
         $headers = [
             'Content-type'        => 'text/csv',
@@ -992,14 +1018,14 @@ class SolicitudController extends Controller
             'Expires'             => '0'
         ];
 
+        $year = $request->input('year');
+        $month = $request->input('month');
+
         $incluidos = ['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE'];
         $excluidos = ['Servicio cancelado'];
         $festivos = DB::table('festivos')->pluck('festivo')->toArray();
 
-        $startOfLastMonth = Carbon::now()->subMonth(2)->startOfMonth()->toDateString();
-        $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString();
-
-        $callback = function() use ($incluidos, $excluidos, $festivos, $startOfLastMonth, $endOfCurrentMonth) {
+        $callback = function() use ($incluidos, $excluidos, $festivos, $year, $month) {
             $file = fopen('php://output', 'w');
             
             // Add UTF-8 BOM for Excel compatibility (essential for Spanish characters)
@@ -1013,7 +1039,7 @@ class SolicitudController extends Controller
                 'TIPO PAGO', 'FECHA ENVIO', 'FECHA TENTATIVA', 'ENVIADO', 'NOTAS DEDUCCIONES'
             ], ';');
 
-            DB::table('peticiones')
+            $query = DB::table('peticiones')
                 ->select(
                     'id', 'fecha_cargue', 'factura', 'razon', 'paytype', 'state', 'cliente', 'origen', 'destino', 'placa', 'conductor',
                     'pagant', 'cpagant', 'pagsal', 'cpagsal', 'pagcon', 'cpagcon', 'facele', 'tipo_vehiculo', 'costo', 'costo_tiposerv', 
@@ -1023,9 +1049,17 @@ class SolicitudController extends Controller
                 ->whereNotNull('razon')
                 ->where('costo', '>', 0)
                 ->whereIn('paytype', $incluidos)
-                ->whereNotIn('states', $excluidos)
-                ->whereBetween('fecha_cargue', [$startOfLastMonth, $endOfCurrentMonth])
-                ->orderBy('fecha_cargue', 'desc')
+                ->whereNotIn('states', $excluidos);
+
+            if ($year && $year !== 'todos') {
+                $query->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year]);
+                if ($month && $month !== 'todos') {
+                    $query->whereRaw('EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?', [$month]);
+                }
+            }
+            // Si no se especifica año/mes, no hay filtro de fecha_cargue -> HISTORICO!
+
+            $query->orderBy('fecha_cargue', 'desc')
                 ->chunk(500, function($records) use ($file, $festivos) {
                     foreach ($records as $record) {
                         fputcsv($file, [
