@@ -77,6 +77,7 @@ Route::put('/solicitud/{id}/update15', [solicitudController::class, 'update15'])
 Route::put('/solicitud/{id}/update16', [solicitudController::class, 'update16'])->name('solicitud.update16');
 Route::put('/solicitud/{id}/update17', [SolicitudController::class, 'update17'])->name('solicitud.update17');
 Route::put('/solicitud/{id}/aprobar', [SolicitudController::class, 'aprobar'])->name('solicitud.aprobar');
+Route::put('/solicitud/{id}/rechazar', [SolicitudController::class, 'rechazar'])->name('solicitud.rechazar');
 Route::put('/solicitud/{id}/verificar', [SolicitudController::class, 'verificar'])->name('solicitud.verificar');
 Route::get('/solicitudes/toggle-trafico/{id}', [SolicitudController::class, 'toggleTrafico'])->name('solicitudes.toggleTrafico');
 Route::get('/trafico', [SolicitudController::class, 'trafico'])->name('solicitud.trafico');

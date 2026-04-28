@@ -2660,7 +2660,31 @@ class SolicitudController extends Controller
             return response()->json(['success' => false, 'message' => 'Solicitud no encontrada']);
         }
 
-        return response()->json(['success' => false, 'message' => 'Peticion inv├ílida']);
+        return response()->json(['success' => false, 'message' => 'Peticion inválida']);
+    }
+
+    public function rechazar(Request $request, $id)
+    {
+        if ($request->ajax()) {
+            $solicitud = DB::table('solicitudes')->where('id', $id)->first();
+            if ($solicitud && !$solicitud->avalado && !is_null($solicitud->soporte)) {
+                DB::table('solicitudes')
+                    ->where('id', $id)
+                    ->update([
+                        'cargaone' => null,
+                        'cargatwo' => null,
+                        'standby' => null,
+                        'costo_desplazamiento' => null,
+                        'soporte' => null,
+                    ]);
+
+                return response()->json(['success' => true]);
+            }
+
+            return response()->json(['success' => false, 'message' => 'No se puede rechazar o solicitud no encontrada']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Peticion inválida']);
     }
 
     public function verificar(Request $request, $id)

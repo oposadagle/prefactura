@@ -539,6 +539,9 @@
                             <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ DESPLAZAMIENTO</th>
                             <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">SOPORTE</th>
                             <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">APROBADO</th>
+                            @can('verificar')
+                                <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">RECHAZAR</th>
+                            @endcan
                             <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">VERIFICADO</th>
                             <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">TIPO 🚗</th>
                             <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">PLACA POR</th>
@@ -1233,6 +1236,22 @@
                                         @endcan
                                     @endif
                                 </td>
+                                @can('verificar')
+                                    <td class="celdas"
+                                        style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        @if (!$diario->avalado && !is_null($diario->soporte))
+                                            <button type="button" class="btn btn-danger btn-xs btn-rechazar"
+                                                data-id="{{ $diario->id }}" style="width: 100%;">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        @else
+                                            <button type="button" class="btn btn-danger btn-xs disabled"
+                                                style="width: 100%; pointer-events: none;">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        @endif
+                                    </td>
+                                @endcan
                                 <td class="celdas"
                                     style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                     @if ($diario->verificado)
@@ -2066,6 +2085,59 @@
                                     'Error!',
                                     response.message ||
                                     'No se pudo aprobar la solicitud.',
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function() {
+                            Swal.fire(
+                                'Error!',
+                                'Ocurrió un error en el servidor.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+
+        $('.btn-rechazar').on('click', function(e) {
+            e.preventDefault();
+            var button = $(this);
+            var id = button.data('id');
+            var token = "{{ csrf_token() }}";
+
+            Swal.fire({
+                title: '¿Rechazar solicitud?',
+                text: "Esta acción borrará los valores de carga, standby, desplazamiento y el soporte. ¿Está seguro?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, rechazar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/solicitud/' + id + '/rechazar',
+                        type: 'PUT',
+                        data: {
+                            _token: token
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire(
+                                    'Rechazado!',
+                                    'La solicitud ha sido rechazada y los campos se han limpiado.',
+                                    'success'
+                                ).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    response.message ||
+                                    'No se pudo rechazar la solicitud.',
                                     'error'
                                 );
                             }
