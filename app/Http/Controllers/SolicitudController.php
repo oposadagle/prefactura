@@ -1391,7 +1391,7 @@ class SolicitudController extends Controller
     public function procesarArchivos(Request $request)
     {
         // Clientes permitidos para carga manual
-        /* $clientesPermitidos = [
+        $clientesPermitidos = [
             'DERCO COLOMBIA SAS',
             'INCHCAPE COLOMBIA S A S',
             'METROKIA S.A.',
@@ -1399,7 +1399,7 @@ class SolicitudController extends Controller
             'SIMONIZ SA',
             'GRUPO LOGISTICO ESPECIALIZADO',
             'AUTOMOTORES COMERCIALES AUTOCOM S.A'
-        ]; */
+        ];
 
         // Primero definir la función de limpieza fuera del scope
         $limpiarTexto = function ($texto) {
@@ -1476,10 +1476,10 @@ class SolicitudController extends Controller
                 continue;
             }
 
-            /* if (!in_array($solicitud->cliente, $clientesPermitidos)) {
+            if (!in_array($solicitud->cliente, $clientesPermitidos)) {
                 $errores[] = "Error: El ID {$id} pertenece al cliente '{$solicitud->cliente}', el cual no tiene permitida la carga por este medio.";
                 continue;
-            } */
+            }
 
             $costo = $solicitud->costo;
             $cliente = $solicitud->cliente;
