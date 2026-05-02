@@ -579,12 +579,20 @@
                                     ? \Carbon\Carbon::parse($diario->fecha_descargue)
                                     : null;
                                 $diasLimiteEdicion = $diario->cliente === 'SIMONIZ SA' ? 5 : 3;
-                                $fechaLimiteEdicion = $fechaDescargueParsed
-                                    ? $fechaDescargueParsed->copy()->addDays($diasLimiteEdicion)->endOfDay()
-                                    : null;
-                                $dentroDelPlazoEdicion = $fechaLimiteEdicion
-                                    ? \Carbon\Carbon::now()->lessThanOrEqualTo($fechaLimiteEdicion)
-                                    : true;
+                                
+                                $dentroDelPlazoEdicion = true;
+                                if ($fechaDescargueParsed) {
+                                    $fechaAux = $fechaDescargueParsed->copy();
+                                    $contadorHabiles = 0;
+                                    while ($contadorHabiles < $diasLimiteEdicion) {
+                                        $fechaAux->addDay();
+                                        if (!$fechaAux->isWeekend() && !in_array($fechaAux->toDateString(), $festivos)) {
+                                            $contadorHabiles++;
+                                        }
+                                    }
+                                    $fechaLimiteEdicion = $fechaAux->endOfDay();
+                                    $dentroDelPlazoEdicion = \Carbon\Carbon::now()->lessThanOrEqualTo($fechaLimiteEdicion);
+                                }
 
                                 // La edición se permite si está dentro del plazo y no ha sido avalado
                                 $puedeEditarFinancieros = $dentroDelPlazoEdicion && !$diario->avalado;

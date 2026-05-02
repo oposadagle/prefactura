@@ -113,8 +113,9 @@ class SolicitudController extends Controller
         }
 
         $diarias = $query->orderBy('fecha_cargue', 'desc')->paginate(100);
+        $festivos = DB::table('festivos')->pluck('festivo')->toArray();
 
-        return view('Solicitud.index', compact('vehiculos', 'placas', 'medios', 'diarias', 'userName', 'actual', 'clientes', 'estados', 'radicados', 'pagos', 'cargues', 'descargues', 'matriculas', 'manifiestos', 'sucursales', 'tipos', 'types', 'municipios', 'places', 'ciudades', 'trayectos', 'licencias'));
+        return view('Solicitud.index', compact('vehiculos', 'placas', 'medios', 'diarias', 'userName', 'actual', 'clientes', 'estados', 'radicados', 'pagos', 'cargues', 'descargues', 'matriculas', 'manifiestos', 'sucursales', 'tipos', 'types', 'municipios', 'places', 'ciudades', 'trayectos', 'licencias', 'festivos'));
     }
 
     public function trafico()
@@ -444,7 +445,8 @@ class SolicitudController extends Controller
 
         while ($contador < $diasHabiles) {
             $fecha->addDay();
-            if (! in_array($fecha->toDateString(), $festivos)) {
+            // Excluir sábados (6), domingos (0) y festivos
+            if (!$fecha->isWeekend() && !in_array($fecha->toDateString(), $festivos)) {
                 $contador++;
             }
         }
