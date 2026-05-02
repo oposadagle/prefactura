@@ -89,7 +89,7 @@ class SolicitudController extends Controller
         }
 
         if ($request != null) {
-            $filtros = ['cliente', 'states', 'radicado', 'paytype', 'fecha_cargue', 'fecha_descargue', 'placa', 'razon', 'sucursal', 'tipo_trayecto'];
+            $filtros = ['cliente', 'states', 'radicado', 'paytype', 'fecha_cargue', 'fecha_descargue', 'placa', 'razon', 'sucursal', 'tipo_trayecto', 'cuenta_de_cobro'];
 
             foreach ($filtros as $filtro) {
                 if (isset($request[$filtro])) {
@@ -99,6 +99,12 @@ class SolicitudController extends Controller
                         $query->whereNull('razon');
                     } elseif ($filtro == 'radicado' && $valor == 'Sin asignar') {
                         $query->whereNull('radicado');
+                    } elseif ($filtro == 'cuenta_de_cobro') {
+                        if ($valor == 'SI') {
+                            $query->whereNotNull('soporte');
+                        } elseif ($valor == 'NO') {
+                            $query->whereNull('soporte');
+                        }
                     } else {
                         $query->where($filtro, $valor);
                     }
@@ -2010,7 +2016,7 @@ class SolicitudController extends Controller
 
     public function store2(Request $request)
     {
-        $data = $request->only('cliente', 'states', 'radicado', 'paytype', 'fecha_cargue', 'fecha_descargue', 'placa', 'razon', 'sucursal', 'tipo_trayecto');
+        $data = $request->only('cliente', 'states', 'radicado', 'paytype', 'fecha_cargue', 'fecha_descargue', 'placa', 'razon', 'sucursal', 'tipo_trayecto', 'cuenta_de_cobro');
 
         return redirect()->route('solicitud.index')->with('data', $data);
     }
