@@ -94,6 +94,13 @@
                                 @can('costos')
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">COSTO FLETE</th>
                                 @endcan
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ CARGUE</th>
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ DESCARGUE</th>
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ STANDBY</th>
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">$ DESPLAZAMIENTO</th>
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">SOPORTE</th>
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">APROBADO</th>
+                                <th class="celdas" style="color: #F0FFDF;border: 1px solid #0c213a;">VERIFICADO</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">PLACA POR</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">COSTO POR</th>
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">NOTAS</th>
@@ -153,6 +160,58 @@
                                         </a>
                                     </td>
                                     @endcan
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        {{ number_format($diario->cargaone, 0, ',', '.') }}
+                                    </td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        {{ number_format($diario->cargatwo, 0, ',', '.') }}
+                                    </td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        {{ number_format($diario->standby, 0, ',', '.') }}
+                                    </td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        {{ number_format($diario->costo_desplazamiento, 0, ',', '.') }}
+                                    </td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        @if ($diario->soporte)
+                                            @php
+                                                $esPdf = str_contains($diario->soporte, 'application/pdf');
+                                            @endphp
+                                            <a href="{{ route('solicitud.showSoporte', $diario->id) }}" target="_blank" title="Ver soporte">
+                                                @if ($esPdf)
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7 18H17V16H7V18ZM7 14H17V12H7V14ZM6 22C5.45 22 4.979 21.804 4.587 21.413C4.196 21.021 4 20.55 4 20V4C4 3.45 4.196 2.979 4.587 2.587C4.979 2.196 5.45 2 6 2H14L20 8V20C20 20.55 19.804 21.021 19.413 21.413C19.021 21.804 18.55 22 18 22H6ZM13 9V4H6V20H18V9H13Z" fill="#FF5722" />
+                                                    </svg>
+                                                @else
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M21 19V5C21 3.9 20.1 3 19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19ZM8.5 13.5L11 16.51L14.5 12L19 18H5L8.5 13.5Z" fill="#4CAF50" />
+                                                    </svg>
+                                                @endif
+                                            </a>
+                                        @endif
+                                    </td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        @if ($diario->avalado)
+                                            <button type="button" class="btn btn-success btn-xs disabled" style="width: 100%; pointer-events: none;">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        @else
+                                            <button type="button" class="btn btn-warning btn-xs disabled" style="width: 100%; pointer-events: none;">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                        @endif
+                                    </td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        @if ($diario->verificado)
+                                            <button type="button" class="btn btn-success btn-xs disabled" style="width: 100%; pointer-events: none;">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        @else
+                                            <button type="button" class="btn btn-secondary btn-xs disabled" style="width: 100%; pointer-events: none;">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                        @endif
+                                    </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->asignado }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->registrado }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">

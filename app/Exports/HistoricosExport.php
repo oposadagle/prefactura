@@ -23,7 +23,7 @@ class HistoricosExport implements FromCollection, WithHeadings
 
         return DB::table('peticiones')
                     ->select('id','fecha_solicitud','fecha_cargue','hora_cargue','fecha_descargue','hora_descargue','nit','cliente','origen','destino','ejecutivo',
-                             'tipo_vehiculo','tipo_trayecto','placa','costo','conductor','cedula_conductor','telefono_conductor','usuario_gps','clave_gps',
+                             'tipo_vehiculo','tipo_trayecto','placa','costo','cargaone','cargatwo','standby','costo_desplazamiento','avalado','verificado','conductor','cedula_conductor','telefono_conductor','usuario_gps','clave_gps',
                              'empresa_gps','states','paytype','sucursal','remesa','radicado','retorno','razon','oriuser','oridate','orinote','saluser','saldate','salnote',
                              'desuser','desdate','desnote','finuser','findate','finnote','nota_cierre','canuser','candate','cannote')
                     ->whereIn('states', $incluidos)
@@ -50,6 +50,12 @@ class HistoricosExport implements FromCollection, WithHeadings
             'TIPO_TRAYECTO',
             'PLACA',
             'COSTO',
+            'VALOR CARGUE',
+            'VALOR DESCARGUE',
+            'VALOR STANDBY',
+            'VALOR DESPLAZAMIENTO',
+            'AVALADO',
+            'VERIFICADO',
             'CONDUCTOR',
             'CEDULA_CONDUCTOR',
             'TELEFONO_CONDUCTOR',
