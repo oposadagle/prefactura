@@ -807,6 +807,42 @@
 </script>
 
    
+<script>
+    $(document).ready(function() {
+        const topScrollWrapper = document.querySelector('.top-scrollbar-wrapper');
+        const topScrollFake = document.querySelector('.top-scrollbar-fake');
+        const tableContainer = document.querySelector('.table-container-ie');
+        const tableIE = document.querySelector('#exampleie');
+
+        function syncWidth() {
+            if (tableIE) {
+                topScrollFake.style.width = tableIE.offsetWidth + 'px';
+            }
+        }
+
+        // Sincronizar ancho inicial y al cambiar tamaño
+        syncWidth();
+        window.addEventListener('resize', syncWidth);
+
+        // Sincronizar también cuando DataTable dibuja
+        $('#exampleie').on('draw.dt', function() {
+            syncWidth();
+        });
+
+        // Sincronizar el scroll (scroll horizontal)
+        topScrollWrapper.addEventListener('scroll', function() {
+            tableContainer.scrollLeft = topScrollWrapper.scrollLeft;
+        });
+
+        tableContainer.addEventListener('scroll', function() {
+            topScrollWrapper.scrollLeft = tableContainer.scrollLeft;
+        });
+
+        // Timeout para asegurar que la tabla ha sido renderizada completamente por dataTables
+        setTimeout(syncWidth, 500);
+    });
+</script>
+
 @if(session('success'))
 <script>
     Swal.fire({

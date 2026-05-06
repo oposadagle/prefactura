@@ -519,7 +519,6 @@
                             <th class="celdas" style="color: #FF55BB;border: 1px solid #0c213a;">RADICADO</th>
                             <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">📄 CARGUE</th>
                             <th class="celdas" style="color: #FBB454;border: 1px solid #0c213a;">🚚 TRAFICO</th>
-                            <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">📄 CUMPLIDO</th>
                             <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">▲ ORIGEN</th>
                             <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">▲ HORA</th>
                             <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">SALIDA ►</th>
@@ -907,19 +906,6 @@
                                     @endcan
                                 </td>
 
-                                <td class="celdas"
-                                    style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                    @can('servicio')
-                                        <a href="#" class="editable" data-type="select" data-name="nota_cumplido"
-                                            data-pk="{{ $diario->id }}"
-                                            data-source='[{"value":"NO REQUIERE DOCUMENTOS","text":"NO REQUIERE DOCUMENTOS"},{"value":"REQUIERE DOCUMENTOS","text":"REQUIERE DOCUMENTOS"},{"value":"TRASLADO DE BODEGAS","text":"TRASLADO DE BODEGAS"},{"value":"","text":""}]'
-                                            style="font-weight:500;font-size:10px;">
-                                            {{ $diario->nota_cumplido }}
-                                        </a>
-                                    @else
-                                        <a href="#">{{ $diario->nota_cumplido }}</a>
-                                    @endcan
-                                </td>
 
                                 <td class="celdas"
                                     style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">

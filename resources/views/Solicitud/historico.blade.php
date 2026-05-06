@@ -77,7 +77,6 @@
                                 <th class="celdas" style="color: #FF55BB;border: 1px solid #0c213a;">REMESA</th>
                                 <th class="celdas" style="color: #FF55BB;border: 1px solid #0c213a;">MANIFIESTO</th>
                                 <th class="celdas" style="color: #FF55BB;border: 1px solid #0c213a;">RADICADO</th> 
-                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">📄 CUMPLIDO</th>                                                              
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">▲ ORIGEN</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">SALIDA ►</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">▼ DESTINO</th>
@@ -129,7 +128,6 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->remesa }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->razon }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->radicado }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strtoupper($diario->nota_cumplido) }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         <a href="#" data-id="{{ $diario->id }}" class="btn btn-icon-square-xs py-0 my-0" data-bs-toggle="modal" data-bs-target="#exampleModalCenter" style="background-color:{{$diario->oricolor}}"><i class="{{$diario->orimage}}" style="color: white"></i></a>
                                     </td>                                    
