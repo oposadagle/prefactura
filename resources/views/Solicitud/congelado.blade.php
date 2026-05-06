@@ -127,6 +127,8 @@
                                 <th class="      " style="color: #F7E6AD;border: 1px solid #0c213a;">COSTO CARGUE Y DESCARGUE2</th>
                                 <th class="      " style="color: #F7E6AD;border: 1px solid #0c213a;">PSBY</th>
                                 <th class="      " style="color: #F7E6AD;border: 1px solid #0c213a;">COSTO STAND BY</th>
+                                <th class="      " style="color: #F7E6AD;border: 1px solid #0c213a;">PCD</th>
+                                <th class="      " style="color: #F7E6AD;border: 1px solid #0c213a;">COSTO DESPLAZAMIENTO</th>
                                 <th class="      " style="color: #F7E6AD;border: 1px solid #0c213a;">PMTC</th>
                                 <th class="      " style="color: #F7E6AD;border: 1px solid #0c213a;">COSTO MONTACARGAS</th>
                                 <th class="      " style="color: #F7E6AD;border: 1px solid #0c213a;">PESC</th>
@@ -380,6 +382,8 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
 										<a href="#" class="editabler" data-type="text" data-name="costo_standby" data-pk="{{$diario->ide}}">{{ number_format($diario->costo_standby, 0, ',', '.') }}
 										</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->pcd }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo_desplazamiento, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-size: 11px;">
                                         <a href="#" class="editablex" data-type="select" data-name="pmtc" data-pk="{{$diario->ide}}" data-source='@json($autos)'>
                                             {{$diario->pmtc}}
@@ -443,6 +447,8 @@
                                         <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo_auxiliar, 0, ',', '.') }}</td>                                        
                                         <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->psby }}</td>
                                         <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo_standby, 0, ',', '.') }}</td>
+                                        <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->pcd }}</td>
+                                        <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo_desplazamiento, 0, ',', '.') }}</td>
                                         <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->pmtc }}</td>
                                         <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo_montacarga, 0, ',', '.') }}</td>
                                         <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->pesc }}</td>
@@ -468,6 +474,8 @@
                                         <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo_auxiliar, 0, ',', '.') }}</td>                                        
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->psby }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo_standby, 0, ',', '.') }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->pcd }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo_desplazamiento, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->pmtc }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo_montacarga, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->pesc }}</td>
