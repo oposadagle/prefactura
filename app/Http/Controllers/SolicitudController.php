@@ -1055,7 +1055,7 @@ class SolicitudController extends Controller
                 'CONDUCTOR', 'PAGAR_ANTICIPO_A', 'CEDULA_ANTICIPO', 'PAGAR_SALDO_A', 'CEDULA_SALDO', 'PAGAR_CONTADO_A', 'CEDULA_CONTADO',
                 'FACT ELECTRONICA', 'TIPO VEHICULO', 'COSTO', 'EXTRA', 'PAGO COMPLETO', 'VALOR A PAGAR', 'RETEFUENTE', 'RETEICA', 'SEGURO',
                 'ANTICIPO', 'ESTADO ANTICIPO', 'VALOR SALDO', 'OTRAS DEDUCCIONES', 'SALDO TOTAL', 'ESTADO SALDO', 'RECIBIDO CUMPLIDO', 
-                'TIPO PAGO', 'FECHA ENVIO', 'FECHA TENTATIVA', 'ENVIADO', 'NOTAS DEDUCCIONES'
+                'TIPO PAGO', 'FECHA ENVIO', 'FECHA ENVIO CUMPLIDO', 'FECHA TENTATIVA', 'ENVIADO', 'NOTAS DEDUCCIONES'
             ], ';');
 
             $query = DB::table('peticiones')
@@ -1117,6 +1117,7 @@ class SolicitudController extends Controller
                             $record->recibido_cumplido,
                             $record->tipo_pago,
                             $record->fecha_envio,
+                            $record->fenv_cumplido,
                             $this->calcularFechaTentativa($record->fenv_cumplido, 9, $festivos),
                             $record->enviado,
                             $record->notasded

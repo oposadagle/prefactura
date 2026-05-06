@@ -31,7 +31,7 @@ class AnticiposExport implements FromQuery, WithHeadings, WithMapping
                 'id', 'fecha_cargue', 'razon', 'paytype', 'state', 'cliente', 'origen', 'destino', 'placa', 'conductor',
                 'asociado', 'cedula_asociado','pagarsaldo','cedula_saldo','facele','tipo_vehiculo', 'costo', 'costo_tiposerv', 'pago_completo','observacion_pago',
                 'anticipo', 'estado_anticipo','saldo', 'estado_saldo', 'recibido_cumplido', 'cumplido', 'pagar_saldo', 
-                'tipo_pago', 'fecha_envio','estado_pago', 'carnote', 'orinote', 'salnote', 'desnote', 'finnote','cannote', 
+                'tipo_pago', 'fecha_envio', 'fenv_cumplido', 'estado_pago', 'carnote', 'orinote', 'salnote', 'desnote', 'finnote','cannote', 
                 'tranote', 'egreso_anticipo','egreso_saldo', 'fecha_saldo', 'saldo_final'
             )
             ->whereIn('paytype', $incluidos)
@@ -70,6 +70,7 @@ class AnticiposExport implements FromQuery, WithHeadings, WithMapping
             $record->pagar_saldo,
             $record->tipo_pago,
             $record->fecha_envio,
+            $record->fenv_cumplido,
             $record->estado_pago,
             $record->carnote,
             $record->orinote,
@@ -82,7 +83,7 @@ class AnticiposExport implements FromQuery, WithHeadings, WithMapping
             $record->egreso_saldo,
             $record->fecha_saldo,
             $record->saldo_final,
-            $this->calcularFechaTentativa($record->fecha_envio, 9, $this->festivos)
+            $this->calcularFechaTentativa($record->fenv_cumplido, 9, $this->festivos)
         ];
     }
 
@@ -112,7 +113,7 @@ class AnticiposExport implements FromQuery, WithHeadings, WithMapping
             'CONDUCTOR', 'PAGAR_ANTICIPO_A','CEDULA_ANTICIPO','PAGAR_SALDO_A','CEDULA_SALDO','FACT ELECTRONICA',
             'TIPO VEHICULO', 'COSTO', 'EXTRA', 'PAGO COMPLETO', 'OBSERVACION PAGO', 'ANTICIPO',
             'ESTADO ANTICIPO', 'SALDO', 'ESTADO SALDO', 'RECIBIDO CUMPLIDO', 'CUMPLIDO', 'PAGAR SALDO', 'TIPO PAGO',
-            'FECHA ENVIO', 'ESTADO PAGO', 'NOTA CARGUE', 'NOTA LLEGADA ORIGEN', 'NOTA SALIDA', 'NOTA LLEGADA DESTINO',
+            'FECHA ENVIO', 'FECHA ENVIO CUMPLIDO', 'ESTADO PAGO', 'NOTA CARGUE', 'NOTA LLEGADA ORIGEN', 'NOTA SALIDA', 'NOTA LLEGADA DESTINO',
             'NOTA SERVICIO FINALIZADO', 'NOTA SERVICIO CANCELADO', 'NOTA TRAFICO', 'EGRESO ANTICIPO', 'EGRESO SALDO',
             'FECHA SALDO', 'SALDO FINAL', 'FECHA TENTATIVA'
         ];
