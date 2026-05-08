@@ -421,11 +421,15 @@
                             <div class="col-lg-2 col-md-3 col-sm-4 mx-1" style="width:180px">
                                 <div class="input-group mb-3">
                                     <span class="input-group-text" id="basic-addon1">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M7 18H17V16H7V18ZM7 14H17V12H7V14ZM6 22C5.45 22 4.979 21.804 4.587 21.413C4.196 21.021 4 20.55 4 20V4C4 3.45 4.196 2.979 4.587 2.587C4.979 2.196 5.45 2 6 2H14L20 8V20C20 20.55 19.804 21.021 19.413 21.413C19.021 21.804 18.55 22 18 22H6ZM13 9V4H6V20H18V9H13Z" fill="#ff2029"/>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M7 18H17V16H7V18ZM7 14H17V12H7V14ZM6 22C5.45 22 4.979 21.804 4.587 21.413C4.196 21.021 4 20.55 4 20V4C4 3.45 4.196 2.979 4.587 2.587C4.979 2.196 5.45 2 6 2H14L20 8V20C20 20.55 19.804 21.021 19.413 21.413C19.021 21.804 18.55 22 18 22H6ZM13 9V4H6V20H18V9H13Z"
+                                                fill="#ff2029" />
                                         </svg>
                                     </span>
-                                    <select class="form-select" autocomplete="off" name="cuenta_de_cobro" style="font-size: 11px">
+                                    <select class="form-select" autocomplete="off" name="cuenta_de_cobro"
+                                        style="font-size: 11px">
                                         <option selected disabled>CUENTA DE COBRO</option>
                                         <option value="SI">SI</option>
                                         <option value="NO">NO</option>
@@ -519,6 +523,7 @@
                             <th class="celdas" style="color: #FF55BB;border: 1px solid #0c213a;">RADICADO</th>
                             <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">📄 CARGUE</th>
                             <th class="celdas" style="color: #FBB454;border: 1px solid #0c213a;">🚚 TRAFICO</th>
+                            <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">📄 CUMPLIDO</th>
                             <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">▲ ORIGEN</th>
                             <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">▲ HORA</th>
                             <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">SALIDA ►</th>
@@ -578,19 +583,24 @@
                                     ? \Carbon\Carbon::parse($diario->fecha_descargue)
                                     : null;
                                 $diasLimiteEdicion = $diario->cliente === 'SIMONIZ SA' ? 5 : 3;
-                                
+
                                 $dentroDelPlazoEdicion = true;
                                 if ($fechaDescargueParsed) {
                                     $fechaAux = $fechaDescargueParsed->copy();
                                     $contadorHabiles = 0;
                                     while ($contadorHabiles < $diasLimiteEdicion) {
                                         $fechaAux->addDay();
-                                        if (!$fechaAux->isWeekend() && !in_array($fechaAux->toDateString(), $festivos)) {
+                                        if (
+                                            !$fechaAux->isWeekend() &&
+                                            !in_array($fechaAux->toDateString(), $festivos)
+                                        ) {
                                             $contadorHabiles++;
                                         }
                                     }
                                     $fechaLimiteEdicion = $fechaAux->endOfDay();
-                                    $dentroDelPlazoEdicion = \Carbon\Carbon::now()->lessThanOrEqualTo($fechaLimiteEdicion);
+                                    $dentroDelPlazoEdicion = \Carbon\Carbon::now()->lessThanOrEqualTo(
+                                        $fechaLimiteEdicion,
+                                    );
                                 }
 
                                 // La edición se permite si está dentro del plazo y no ha sido avalado
@@ -906,6 +916,19 @@
                                     @endcan
                                 </td>
 
+                                <td class="celdas"
+                                    style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                    @can('servicio')
+                                        <a href="#" class="editable" data-type="select" data-name="nota_cumplido"
+                                            data-pk="{{ $diario->id }}"
+                                            data-source='[{"value":"NO REQUIERE DOCUMENTOS","text":"NO REQUIERE DOCUMENTOS"},{"value":"REQUIERE DOCUMENTOS","text":"REQUIERE DOCUMENTOS"},{"value":"TRASLADO DE BODEGAS","text":"TRASLADO DE BODEGAS"},{"value":"","text":""}]'
+                                            style="font-weight:500;font-size:10px;">
+                                            {{ $diario->nota_cumplido }}
+                                        </a>
+                                    @else
+                                        <a href="#">{{ $diario->nota_cumplido }}</a>
+                                    @endcan
+                                </td>
 
                                 <td class="celdas"
                                     style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
@@ -1737,7 +1760,7 @@
         var exampleModal = document.getElementById('exampleModalCenter');
         exampleModal.addEventListener('show.bs.modal', function(event) {
             var button = event
-            .relatedTarget; // BotÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n que activÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ el modal
+                .relatedTarget; // BotÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n que activÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ el modal
             var id = button.getAttribute('data-id'); // Extraer info de atributos de datos
 
             // Construir la URL de la acciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n del formulario
@@ -1756,7 +1779,7 @@
         var exampleModal = document.getElementById('exampleModalCenter2');
         exampleModal.addEventListener('show.bs.modal', function(event) {
             var button = event
-            .relatedTarget; // BotÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n que activÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ el modal
+                .relatedTarget; // BotÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n que activÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ el modal
             var id = button.getAttribute('data-id'); // Extraer info de atributos de datos
 
             // Construir la URL de la acciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n del formulario
@@ -1775,7 +1798,7 @@
         var exampleModal = document.getElementById('exampleModalCenter3');
         exampleModal.addEventListener('show.bs.modal', function(event) {
             var button = event
-            .relatedTarget; // BotÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n que activÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ el modal
+                .relatedTarget; // BotÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n que activÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ el modal
             var id = button.getAttribute('data-id'); // Extraer info de atributos de datos
 
             // Construir la URL de la acciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n del formulario
@@ -1794,7 +1817,7 @@
         var exampleModal = document.getElementById('exampleModalCenter4');
         exampleModal.addEventListener('show.bs.modal', function(event) {
             var button = event
-            .relatedTarget; // BotÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n que activÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ el modal
+                .relatedTarget; // BotÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n que activÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ el modal
             var id = button.getAttribute('data-id'); // Extraer info de atributos de datos
 
             // Construir la URL de la acciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n del formulario
@@ -1813,7 +1836,7 @@
         var exampleModal = document.getElementById('exampleModalCenter5');
         exampleModal.addEventListener('show.bs.modal', function(event) {
             var button = event
-            .relatedTarget; // BotÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n que activÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ el modal
+                .relatedTarget; // BotÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n que activÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ el modal
             var id = button.getAttribute('data-id'); // Extraer info de atributos de datos
 
             // Construir la URL de la acciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n del formulario
@@ -1832,7 +1855,7 @@
         var exampleModal = document.getElementById('exampleModalCenter6');
         exampleModal.addEventListener('show.bs.modal', function(event) {
             var button = event
-            .relatedTarget; // BotÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n que activÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ el modal
+                .relatedTarget; // BotÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n que activÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³ el modal
             var id = button.getAttribute('data-id'); // Extraer info de atributos de datos
 
             // Construir la URL de la acciÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n del formulario
