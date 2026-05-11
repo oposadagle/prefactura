@@ -212,7 +212,7 @@
                                         {{ $diario->id }}</td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ $diario->fecha_envio }}</td>
+                                        {{ $diario->fecver }}</td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC; padding-top:10px; padding-bottom:10px;">
                                         @php

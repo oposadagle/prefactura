@@ -15,7 +15,7 @@ class CuentasHistoricoExport implements FromCollection, WithHeadings, WithMappin
             ->select(
                 'razon',
                 'id',
-                'fecha_envio',
+                'fecver',
                 'verificado',
                 'avalado',
                 'pagada',
@@ -77,7 +77,7 @@ class CuentasHistoricoExport implements FromCollection, WithHeadings, WithMappin
         return [
             $diario->razon,
             $diario->id,
-            $diario->fecha_envio,
+            $diario->fecver,
             $estado_cuenta,
             $diario->placa,
             $diario->cargaone,

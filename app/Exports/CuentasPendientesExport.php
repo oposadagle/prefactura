@@ -15,7 +15,7 @@ class CuentasPendientesExport implements FromCollection, WithHeadings, WithMappi
             ->select(
                 'guia',
                 'razon',
-                'fecha_envio',
+                'fecver',
                 'verificado',
                 'avalado',
                 'pagada',
@@ -88,7 +88,7 @@ class CuentasPendientesExport implements FromCollection, WithHeadings, WithMappi
         return [
             $diario->guia,
             $diario->razon,
-            $diario->fecha_envio,
+            $diario->fecver,
             $estado_cuenta,
             $diario->placa,
             $diario->cargaone,

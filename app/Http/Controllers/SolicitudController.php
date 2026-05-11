@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\AnticiposExport;
 use App\Exports\CuentasHistoricoExport;
 use App\Exports\CuentasPendientesExport;
 use App\Exports\DiariasExport;
@@ -386,7 +385,7 @@ class SolicitudController extends Controller
             ->whereNotNull('soporte')
             ->where('verificado', true)
             ->where('pagada', false)
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         foreach ($diarias as $diario) {
@@ -446,7 +445,7 @@ class SolicitudController extends Controller
         while ($contador < $diasHabiles) {
             $fecha->addDay();
             // Excluir sábados (6), domingos (0) y festivos
-            if (!$fecha->isWeekend() && !in_array($fecha->toDateString(), $festivos)) {
+            if (! $fecha->isWeekend() && ! in_array($fecha->toDateString(), $festivos)) {
                 $contador++;
             }
         }
@@ -680,7 +679,7 @@ class SolicitudController extends Controller
         $header .= 'I';                                             // 1  - Aplicacion
         $header .= str_repeat(' ', 15);                             // 15 - Espacios
         $seq = $this->obtenerSiguienteConsecutivo('SALDOS');
-        $concepto = 'MS' . substr($fecha, 2) . str_pad($seq, 2, '0', STR_PAD_LEFT);
+        $concepto = 'MS'.substr($fecha, 2).str_pad($seq, 2, '0', STR_PAD_LEFT);
 
         $header .= '220';                                           // 3  - Tipo de pago
         $header .= $concepto;                                       // 10 - Concepto dinámico
@@ -695,10 +694,11 @@ class SolicitudController extends Controller
 
         $lines = [$header];
 
-        $cleaner = function($str) {
+        $cleaner = function ($str) {
             $str = str_replace(["\r", "\n", "\t"], ' ', $str ?? '');
-            $unwanted = ['Á'=>'A', 'É'=>'E', 'Í'=>'I', 'Ó'=>'O', 'Ú'=>'U', 'Ñ'=>'N', 'á'=>'a', 'é'=>'e', 'í'=>'i', 'ó'=>'o', 'ú'=>'u', 'ñ'=>'n'];
+            $unwanted = ['Á' => 'A', 'É' => 'E', 'Í' => 'I', 'Ó' => 'O', 'Ú' => 'U', 'Ñ' => 'N', 'á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ñ' => 'n'];
             $str = strtr($str, $unwanted);
+
             return preg_replace('/[^\x20-\x7E]/', '', $str);
         };
 
@@ -728,7 +728,7 @@ class SolicitudController extends Controller
             $lines[] = $line;
         }
 
-        $content = implode("\r\n", $lines) . "\r\n";
+        $content = implode("\r\n", $lines)."\r\n";
 
         return response($content, 200)
             ->header('Content-Type', 'text/plain; charset=UTF-8')
@@ -783,7 +783,7 @@ class SolicitudController extends Controller
         $header .= 'I';                                             // 1  - Aplicacion
         $header .= str_repeat(' ', 15);                             // 15 - Espacios
         $seq = $this->obtenerSiguienteConsecutivo('ANTICIPOS');
-        $concepto = 'MA' . substr($fecha, 2) . str_pad($seq, 2, '0', STR_PAD_LEFT);
+        $concepto = 'MA'.substr($fecha, 2).str_pad($seq, 2, '0', STR_PAD_LEFT);
 
         $header .= '220';                                           // 3  - Tipo de pago
         $header .= $concepto;                                       // 10 - Concepto dinámico
@@ -798,10 +798,11 @@ class SolicitudController extends Controller
 
         $lines = [$header];
 
-        $cleaner = function($str) {
+        $cleaner = function ($str) {
             $str = str_replace(["\r", "\n", "\t"], ' ', $str ?? '');
-            $unwanted = ['Á'=>'A', 'É'=>'E', 'Í'=>'I', 'Ó'=>'O', 'Ú'=>'U', 'Ñ'=>'N', 'á'=>'a', 'é'=>'e', 'í'=>'i', 'ó'=>'o', 'ú'=>'u', 'ñ'=>'n'];
+            $unwanted = ['Á' => 'A', 'É' => 'E', 'Í' => 'I', 'Ó' => 'O', 'Ú' => 'U', 'Ñ' => 'N', 'á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ñ' => 'n'];
             $str = strtr($str, $unwanted);
+
             return preg_replace('/[^\x20-\x7E]/', '', $str);
         };
 
@@ -831,7 +832,7 @@ class SolicitudController extends Controller
             $lines[] = $line;
         }
 
-        $content = implode("\r\n", $lines) . "\r\n";
+        $content = implode("\r\n", $lines)."\r\n";
 
         return response($content, 200)
             ->header('Content-Type', 'text/plain; charset=UTF-8')
@@ -894,7 +895,7 @@ class SolicitudController extends Controller
         $header .= 'I';                                             // 1  - Aplicacion
         $header .= str_repeat(' ', 15);                             // 15 - Espacios
         $seq = $this->obtenerSiguienteConsecutivo('CUENTAS');
-        $concepto = 'MC' . substr($fecha, 2) . str_pad($seq, 2, '0', STR_PAD_LEFT);
+        $concepto = 'MC'.substr($fecha, 2).str_pad($seq, 2, '0', STR_PAD_LEFT);
 
         $header .= '220';                                           // 3  - Tipo de pago
         $header .= $concepto;                                       // 10 - Concepto dinámico
@@ -909,10 +910,11 @@ class SolicitudController extends Controller
 
         $lines = [$header];
 
-        $cleaner = function($str) {
+        $cleaner = function ($str) {
             $str = str_replace(["\r", "\n", "\t"], ' ', $str ?? '');
-            $unwanted = ['Á'=>'A', 'É'=>'E', 'Í'=>'I', 'Ó'=>'O', 'Ú'=>'U', 'Ñ'=>'N', 'á'=>'a', 'é'=>'e', 'í'=>'i', 'ó'=>'o', 'ú'=>'u', 'ñ'=>'n'];
+            $unwanted = ['Á' => 'A', 'É' => 'E', 'Í' => 'I', 'Ó' => 'O', 'Ú' => 'U', 'Ñ' => 'N', 'á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ñ' => 'n'];
             $str = strtr($str, $unwanted);
+
             return preg_replace('/[^\x20-\x7E]/', '', $str);
         };
 
@@ -941,7 +943,7 @@ class SolicitudController extends Controller
             $lines[] = $line;
         }
 
-        $content = implode("\r\n", $lines) . "\r\n";
+        $content = implode("\r\n", $lines)."\r\n";
 
         return response($content, 200)
             ->header('Content-Type', 'text/plain; charset=UTF-8')
@@ -980,7 +982,7 @@ class SolicitudController extends Controller
         } else {
             // Caso 2: Múltiples registros, empaquetar en un archivo .zip al vuelo
             $zip = new \ZipArchive();
-            
+
             // Obtener la fecha_envio del primer registro para la parte yymmdd
             $fechaEnvio = $registros[0]->fecha_envio;
             $fechaBase = \Carbon\Carbon::parse($fechaEnvio)->format('ymd');
@@ -1023,9 +1025,9 @@ class SolicitudController extends Controller
 
         $filename = 'anticipos';
         if ($year && $year !== 'todos') {
-            $filename .= '_' . $year;
+            $filename .= '_'.$year;
             if ($month && $month !== 'todos') {
-                $filename .= '_' . str_pad($month, 2, '0', STR_PAD_LEFT);
+                $filename .= '_'.str_pad($month, 2, '0', STR_PAD_LEFT);
             }
         } else {
             $filename .= '_todo';
@@ -1033,20 +1035,20 @@ class SolicitudController extends Controller
         $filename .= '.csv';
 
         $headers = [
-            'Content-type'        => 'text/csv',
-            'Content-Disposition' => 'attachment; filename=' . $filename,
-            'Pragma'              => 'no-cache',
-            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires'             => '0'
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename='.$filename,
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ];
 
         $incluidos = ['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE'];
         $excluidos = ['Servicio cancelado'];
         $festivos = DB::table('festivos')->pluck('festivo')->toArray();
 
-        $callback = function() use ($incluidos, $excluidos, $festivos, $year, $month) {
+        $callback = function () use ($incluidos, $excluidos, $festivos, $year, $month) {
             $file = fopen('php://output', 'w');
-            
+
             // Add UTF-8 BOM for Excel compatibility (essential for Spanish characters)
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
 
@@ -1054,15 +1056,15 @@ class SolicitudController extends Controller
                 'ID', 'FECHA CARGUE', 'FACTURA', 'MANIFIESTO', 'MEDIO DE PAGO', 'ESTADO', 'CLIENTE', 'ORIGEN', 'DESTINO', 'PLACA',
                 'CONDUCTOR', 'PAGAR_ANTICIPO_A', 'CEDULA_ANTICIPO', 'PAGAR_SALDO_A', 'CEDULA_SALDO', 'PAGAR_CONTADO_A', 'CEDULA_CONTADO',
                 'FACT ELECTRONICA', 'TIPO VEHICULO', 'COSTO', 'EXTRA', 'PAGO COMPLETO', 'VALOR A PAGAR', 'RETEFUENTE', 'RETEICA', 'SEGURO',
-                'ANTICIPO', 'ESTADO ANTICIPO', 'VALOR SALDO', 'OTRAS DEDUCCIONES', 'SALDO TOTAL', 'ESTADO SALDO', 'RECIBIDO CUMPLIDO', 
-                'TIPO PAGO', 'FECHA ENVIO', 'FECHA ENVIO CUMPLIDO', 'FECHA TENTATIVA', 'ENVIADO', 'NOTAS DEDUCCIONES'
+                'ANTICIPO', 'ESTADO ANTICIPO', 'VALOR SALDO', 'OTRAS DEDUCCIONES', 'SALDO TOTAL', 'ESTADO SALDO', 'RECIBIDO CUMPLIDO',
+                'TIPO PAGO', 'FECHA ENVIO', 'FECHA ENVIO CUMPLIDO', 'FECHA TENTATIVA', 'ENVIADO', 'NOTAS DEDUCCIONES',
             ], ';');
 
             $query = DB::table('peticiones')
                 ->select(
                     'id', 'fecha_cargue', 'factura', 'razon', 'paytype', 'state', 'cliente', 'origen', 'destino', 'placa', 'conductor',
-                    'pagant', 'cpagant', 'pagsal', 'cpagsal', 'pagcon', 'cpagcon', 'facele', 'tipo_vehiculo', 'costo', 'costo_tiposerv', 
-                    'pago_completo', 'valor_a_pagar', 'retefuente', 'reteica', 'seguro', 'anticipo', 'estado_anticipo', 'valor_saldo', 
+                    'pagant', 'cpagant', 'pagsal', 'cpagsal', 'pagcon', 'cpagcon', 'facele', 'tipo_vehiculo', 'costo', 'costo_tiposerv',
+                    'pago_completo', 'valor_a_pagar', 'retefuente', 'reteica', 'seguro', 'anticipo', 'estado_anticipo', 'valor_saldo',
                     'deducciones', 'saldo_total', 'estado_saldo', 'recibido_cumplido', 'tipo_pago', 'fecha_envio', 'fenv_cumplido', 'enviado', 'notasded'
                 )
                 ->whereNotNull('razon')
@@ -1079,7 +1081,7 @@ class SolicitudController extends Controller
             // Si no se especifica año/mes, no hay filtro de fecha_cargue -> HISTORICO!
 
             $query->orderBy('fecha_cargue', 'desc')
-                ->chunk(500, function($records) use ($file, $festivos) {
+                ->chunk(500, function ($records) use ($file, $festivos) {
                     foreach ($records as $record) {
                         fputcsv($file, [
                             $record->id,
@@ -1120,7 +1122,7 @@ class SolicitudController extends Controller
                             $record->fenv_cumplido,
                             $this->calcularFechaTentativa($record->fenv_cumplido, 9, $festivos),
                             $record->enviado,
-                            $record->notasded
+                            $record->notasded,
                         ], ';');
                     }
                 });
@@ -1401,7 +1403,7 @@ class SolicitudController extends Controller
             'ASAP CONCEPTOS PROMOCIONALES DE MARKETING SAS',
             'SIMONIZ SA',
             'GRUPO LOGISTICO ESPECIALIZADO',
-            'AUTOMOTORES COMERCIALES AUTOCOM S.A'
+            'AUTOMOTORES COMERCIALES AUTOCOM S.A',
         ];
 
         // Primero definir la función de limpieza fuera del scope
@@ -1474,13 +1476,15 @@ class SolicitudController extends Controller
             $solicitud = DB::table('solicitudes')->where('id', $id)->first();
 
             // Validar si la solicitud existe y pertenece a los clientes permitidos
-            if (!$solicitud) {
+            if (! $solicitud) {
                 $errores[] = "Error: El ID {$id} no existe en la tabla de solicitudes.";
+
                 continue;
             }
 
-            if (!in_array($solicitud->cliente, $clientesPermitidos)) {
+            if (! in_array($solicitud->cliente, $clientesPermitidos)) {
                 $errores[] = "Error: El ID {$id} pertenece al cliente '{$solicitud->cliente}', el cual no tiene permitida la carga por este medio.";
+
                 continue;
             }
 
@@ -1499,6 +1503,7 @@ class SolicitudController extends Controller
                     // El número de guía es MANDATORIO para estos clientes
                     if (empty($guia)) {
                         $errores[] = "Error en fila con ID {$id}: El número de guía es obligatorio.";
+
                         continue;
                     }
 
@@ -1523,10 +1528,10 @@ class SolicitudController extends Controller
                     }
 
                     // Si los campos básicos vienen en el excel, usarlos. Si no, fetch from solicitud.
-                    $destino_real = !empty($filaLimpia[2]) ? $filaLimpia[2] : $limpiarTexto($solicitud->destino);
-                    $documento_cliente = !empty($filaLimpia[3]) ? $filaLimpia[3] : $limpiarTexto($solicitud->documento_cliente);
-                    $destinatario = !empty($filaLimpia[4]) ? $filaLimpia[4] : $limpiarTexto($solicitud->destinatario);
-                    $direccion = !empty($filaLimpia[5]) ? $filaLimpia[5] : $limpiarTexto($solicitud->direccion);
+                    $destino_real = ! empty($filaLimpia[2]) ? $filaLimpia[2] : $limpiarTexto($solicitud->destino);
+                    $documento_cliente = ! empty($filaLimpia[3]) ? $filaLimpia[3] : $limpiarTexto($solicitud->documento_cliente);
+                    $destinatario = ! empty($filaLimpia[4]) ? $filaLimpia[4] : $limpiarTexto($solicitud->destinatario);
+                    $direccion = ! empty($filaLimpia[5]) ? $filaLimpia[5] : $limpiarTexto($solicitud->direccion);
                     $piezas = ($filaLimpia[6] > 0) ? $filaLimpia[6] : $solicitud->piezas;
                     $peso = ($filaLimpia[7] > 0) ? $filaLimpia[7] : $solicitud->peso;
                     $valor_declarado = ($filaLimpia[8] > 0) ? $filaLimpia[8] : $solicitud->valor_declarado;
@@ -1574,9 +1579,10 @@ class SolicitudController extends Controller
             return back()->with('success', $mensaje)->with('cantidad', $cantidadInsertada)->with('errores', $errores);
         } else {
             $mensajeError = 'No se insertó ningún dato.';
-            if (!empty($errores)) {
-                $mensajeError .= ' Errores: ' . implode(', ', $errores);
+            if (! empty($errores)) {
+                $mensajeError .= ' Errores: '.implode(', ', $errores);
             }
+
             return back()->with('warning', $mensajeError);
         }
     }
@@ -1918,22 +1924,22 @@ class SolicitudController extends Controller
                 'ASAP CONCEPTOS PROMOCIONALES DE MARKETING SAS',
                 'SIMONIZ SA',
                 'GRUPO LOGISTICO ESPECIALIZADO',
-                'AUTOMOTORES COMERCIALES AUTOCOM S.A'
+                'AUTOMOTORES COMERCIALES AUTOCOM S.A',
             ];
 
             $guia = null;
-            if (!in_array($cliente, $excluidos)) {
+            if (! in_array($cliente, $excluidos)) {
                 $year = Carbon::now()->year;
-                $prefix = "MAS-" . $year;
+                $prefix = 'MAS-'.$year;
 
                 // Obtener el máximo consecutivo de ambas tablas para asegurar unicidad
                 $maxEstatus = DB::table('estatus')
-                    ->where('guia', 'LIKE', $prefix . '%')
+                    ->where('guia', 'LIKE', $prefix.'%')
                     ->orderBy('guia', 'desc')
                     ->value('guia');
 
                 $maxSolicitudes = DB::table('solicitudes')
-                    ->where('guia', 'LIKE', $prefix . '%')
+                    ->where('guia', 'LIKE', $prefix.'%')
                     ->orderBy('guia', 'desc')
                     ->value('guia');
 
@@ -1950,7 +1956,7 @@ class SolicitudController extends Controller
                     $nuevoConsecutivo = '006501';
                 }
 
-                $guia = $prefix . $nuevoConsecutivo;
+                $guia = $prefix.$nuevoConsecutivo;
             }
 
             $dataSolicitud = request()->only([
@@ -1999,11 +2005,11 @@ class SolicitudController extends Controller
             if ($request->wantsJson()) {
                 return response()->json([
                     'message' => 'Solicitud creada correctamente',
-                    'guia' => $guia
+                    'guia' => $guia,
                 ], 201);
             }
 
-            return back()->with('success', 'Solicitud creada correctamente. Guía: ' . ($guia ?? 'N/A'));
+            return back()->with('success', 'Solicitud creada correctamente. Guía: '.($guia ?? 'N/A'));
         } catch (\Exception $e) {
             \Log::error('Error al crear solicitud: '.$e->getMessage());
 
@@ -2065,10 +2071,10 @@ class SolicitudController extends Controller
                 // Solo actualizar 'registrado' si se esta modificando el campo 'costo'
                 if ($request->name === 'costo') {
                     $updateData['registrado'] = $usuarioSesion;
-                    
+
                     // También actualizar el campo costo_flete en la tabla estatus
                     $solicitudData = DB::table('solicitudes')->where('id', $request->pk)->first();
-                    
+
                     if ($solicitudData) {
                         $cliente = $solicitudData->cliente;
                         $excluidos = [
@@ -2078,10 +2084,10 @@ class SolicitudController extends Controller
                             'ASAP CONCEPTOS PROMOCIONALES DE MARKETING SAS',
                             'SIMONIZ SA',
                             'GRUPO LOGISTICO ESPECIALIZADO',
-                            'AUTOMOTORES COMERCIALES AUTOCOM S.A'
+                            'AUTOMOTORES COMERCIALES AUTOCOM S.A',
                         ];
-                        
-                        if (!in_array($cliente, $excluidos)) {
+
+                        if (! in_array($cliente, $excluidos)) {
                             // Cliente NO excluido: actualizar directamente por id
                             DB::table('estatus')
                                 ->where('id', $request->pk)
@@ -2091,7 +2097,7 @@ class SolicitudController extends Controller
                             $minGuia = DB::table('estatus')
                                 ->where('id', $request->pk)
                                 ->min('guia');
-                            
+
                             if ($minGuia) {
                                 DB::table('estatus')
                                     ->where('id', $request->pk)
@@ -2190,7 +2196,7 @@ class SolicitudController extends Controller
                 \Illuminate\Support\Facades\Http::withToken($whapiToken)
                     ->post($whapiUrl, [
                         'typing_time' => 0,
-                        'to' => '573174428909',                        
+                        'to' => '573174428909',
                         'body' => $mensaje,
                     ]);
             }
@@ -2676,7 +2682,7 @@ class SolicitudController extends Controller
     {
         if ($request->ajax()) {
             $solicitud = DB::table('solicitudes')->where('id', $id)->first();
-            if ($solicitud && !$solicitud->avalado && !is_null($solicitud->soporte)) {
+            if ($solicitud && ! $solicitud->avalado && ! is_null($solicitud->soporte)) {
                 DB::table('solicitudes')
                     ->where('id', $id)
                     ->update([
@@ -2706,6 +2712,7 @@ class SolicitudController extends Controller
                         ->where('id', $id)
                         ->update([
                             'verificado' => true,
+                            'fecver' => \Carbon\Carbon::now()->format('Y-m-d'),
                             'fecha_envio' => \Carbon\Carbon::now(),
                         ]);
 
@@ -2720,6 +2727,7 @@ class SolicitudController extends Controller
 
         return response()->json(['success' => false, 'message' => 'Peticion inv├ílida']);
     }
+
     private function obtenerSiguienteConsecutivo($menu)
     {
         $fecha = Carbon::now('America/Bogota')->toDateString();
