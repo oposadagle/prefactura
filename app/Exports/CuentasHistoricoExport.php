@@ -13,6 +13,7 @@ class CuentasHistoricoExport implements FromCollection, WithHeadings, WithMappin
     {
         return DB::table('cuentas')
             ->select(
+                'guia',
                 'razon',
                 'id',
                 'fecver',
@@ -40,6 +41,7 @@ class CuentasHistoricoExport implements FromCollection, WithHeadings, WithMappin
     public function headings(): array
     {
         return [
+            'GUIA',
             'MANIFIESTO',
             'ID',
             'FECHA ENVIO',
@@ -75,6 +77,7 @@ class CuentasHistoricoExport implements FromCollection, WithHeadings, WithMappin
         $total = $base - ($reteica + $retefuente);
 
         return [
+            $diario->guia,
             $diario->razon,
             $diario->id,
             $diario->fecver,

@@ -172,6 +172,7 @@
                                         <input class="form-check-input" type="checkbox" id="selectAll">
                                     </th>
                                 @endcan
+                                <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">GUIA</th>
                                 <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">MANIFIESTO</th>
                                 <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">ID</th>
                                 <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">FECHA ENVIO</th>
@@ -204,6 +205,9 @@
                                                 value="{{ $diario->id }}">
                                         </td>
                                     @endcan
+                                    <td class="celdas"
+                                        style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-weight: bold;color: #021526;">
+                                        {{ $diario->guia }}</td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;font-weight: bold;color: #021526;">
                                         {{ $diario->razon }}</td>
