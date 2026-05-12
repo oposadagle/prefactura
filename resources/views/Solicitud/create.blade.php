@@ -284,8 +284,8 @@
                                         <option>Juan Medina</option>
                                         <option>Luis Diaz</option>
                                         <option>Maicol Palomino</option>
+                                        <option>Mariana Quintero</option>
                                         <option>Martha Duarte</option>
-                                        <option>Paulina Lucero</option>
                                         <option>Ricardo Trujillo</option>
                                     </select>
                                     <label for="ejecutivo">Ejecutivo de cuenta</label>
