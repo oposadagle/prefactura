@@ -88,7 +88,7 @@ class SolicitudController extends Controller
         }
 
         if ($request != null) {
-            $filtros = ['cliente', 'states', 'radicado', 'paytype', 'fecha_cargue', 'fecha_descargue', 'placa', 'razon', 'sucursal', 'tipo_trayecto', 'cuenta_de_cobro'];
+            $filtros = ['cliente', 'states', 'radicado', 'paytype', 'fecha_cargue', 'fecha_descargue', 'placa', 'razon', 'sucursal', 'tipo_trayecto', 'cuenta_de_cobro', 'modalidad'];
 
             foreach ($filtros as $filtro) {
                 if (isset($request[$filtro])) {
@@ -2025,7 +2025,7 @@ class SolicitudController extends Controller
 
     public function store2(Request $request)
     {
-        $data = $request->only('cliente', 'states', 'radicado', 'paytype', 'fecha_cargue', 'fecha_descargue', 'placa', 'razon', 'sucursal', 'tipo_trayecto', 'cuenta_de_cobro');
+        $data = $request->only('cliente', 'states', 'radicado', 'paytype', 'fecha_cargue', 'fecha_descargue', 'placa', 'razon', 'sucursal', 'tipo_trayecto', 'cuenta_de_cobro', 'modalidad');
 
         return redirect()->route('solicitud.index')->with('data', $data);
     }

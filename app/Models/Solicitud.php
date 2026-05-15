@@ -101,7 +101,8 @@ class Solicitud extends Model
         'peso',
         'valor_declarado',
         'enviado',
-        'confirmado'
+        'confirmado',
+        'modalidad'
     ];
 
     protected static function booted()

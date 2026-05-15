@@ -436,6 +436,37 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-lg-2 col-md-3 col-sm-4 mx-1" style="width:180px">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg" stroke="#FF2029">
+                                            <g id="SVGRepo_bgCarrier" stroke-width="0" />
+                                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <g id="SVGRepo_iconCarrier">
+                                                <path
+                                                    d="M15 4.00098C18.1143 4.01009 19.7653 4.10853 20.8284 5.17162C22 6.34319 22 8.22881 22 12C22 15.7713 22 17.6569 20.8284 18.8285C19.6569 20 17.7712 20 14 20H10C6.22876 20 4.34315 20 3.17157 18.8285C2 17.6569 2 15.7713 2 12C2 8.22881 2 6.34319 3.17157 5.17162C4.23467 4.10853 5.8857 4.01009 9 4.00098"
+                                                    stroke="#FF2029" stroke-width="1.6320000000000001"
+                                                    stroke-linecap="round" />
+                                                <path d="M12 5L12 3" stroke="#FF2029"
+                                                    stroke-width="1.6320000000000001" stroke-linecap="round" />
+                                                <path d="M8 10.5H16" stroke="#FF2029"
+                                                    stroke-width="1.6320000000000001" stroke-linecap="round" />
+                                                <path d="M8 14H13.5" stroke="#FF2029"
+                                                    stroke-width="1.6320000000000001" stroke-linecap="round" />
+                                            </g>
+                                        </svg>
+                                    </span>
+                                    <select class="form-select" autocomplete="off" name="modalidad"
+                                        style="font-size: 11px">
+                                        <option selected disabled>MODALIDAD</option>
+                                        <option value="DIRECTO">DIRECTO</option>
+                                        <option value="MULTIPARADA NACIONAL">MULTIPARADA NACIONAL</option>
+                                        <option value="VIAJE REDONDO">VIAJE REDONDO</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="col-lg-2 col-md-3 col-sm-4 mx-1" style="width:50px">
                                 <button type="submit" class="mb-3 btn btn-primary">Filtrar</button>
                             </div>
@@ -542,6 +573,7 @@
                             <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">TIPO CARROCERIA</th>
                             <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">EJECUTIVO</th>
                             <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">PLACA</th>
+                            <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">MODALIDAD</th>
                             <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">FECHA/HORA PLACA</th>
                             <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">CLASE</th>
                             <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">MODELO</th>
@@ -1107,6 +1139,19 @@
                                             $claseBoton = $diario->placa ? 'btn btn-warning py-0 px-2' : '';
                                         @endphp
                                         <a href="#" class="{{ $claseBoton }}">{{ $diario->placa }}</a>
+                                    @endcan
+                                </td>
+                                <td class="celdas"
+                                    style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                    @can('placa')
+                                        <a href="#" class="editable" data-type="select" data-name="modalidad"
+                                            data-pk="{{ $diario->id }}"
+                                            data-source='[{"value":"DIRECTO","text":"DIRECTO"},{"value":"MULTIPARADA NACIONAL","text":"MULTIPARADA NACIONAL"},{"value":"VIAJE REDONDO","text":"VIAJE REDONDO"}]'
+                                            style="font-weight:500;font-size:10px;">
+                                            {{ $diario->modalidad }}
+                                        </a>
+                                    @else
+                                        {{ $diario->modalidad }}
                                     @endcan
                                 </td>
                                 <td class="celdas"
