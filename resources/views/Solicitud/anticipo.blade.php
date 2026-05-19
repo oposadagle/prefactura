@@ -225,7 +225,7 @@
                                 <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">RECIBIDO CUMPLIDO
                                 </th>
                                 <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">TIPO PAGO</th>
-                                <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">FECHA ENVIO</th>
+                                <!-- <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">FECHA ENVIO</th> -->
                                 <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">FECHA ENVIO CUMPLIDO</th>
                                 <th class="celdas" style="color: #F3F8FF;border: 1px solid #0c213a;">FECHA TENTATIVA
                                 </th>
@@ -494,10 +494,10 @@
                                         @endphp
                                         <span class="{{ $estadoClase }}">{{ $diario->tipo_pago }}</span>
                                     </td>
-                                    <td class="celdas"
+                                    <!-- <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         <span>{{ $diario->fecha_envio }}</span>
-                                    </td>
+                                    </td> -->
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         <span>{{ $diario->fenv_cumplido }}</span>
