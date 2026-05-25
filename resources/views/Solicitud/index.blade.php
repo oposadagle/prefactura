@@ -563,10 +563,10 @@
                             <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">▼ HORA</th>
                             <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">FINALIZAR ◄</th>
                             <th class="celdas" style="color: #FF5580;border: 1px solid #0c213a;">⛔ CANCELAR</th>
-                            <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">REGIONAL</th>
                             @can('cierres')
                                 <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">☑️ CERRAR</th>
                             @endcan
+                            <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">REGIONAL</th>
                             <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">ORIGEN</th>
                             <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">DESTINO</th>
                             <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">TIPO TRAYECTO</th>
@@ -1056,10 +1056,6 @@
                                     @endcan
                                 </td>
 
-                                <td class="celdas"
-                                    style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                    {{ $diario->regional }}</td>
-
                                 @can('cierres')
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
@@ -1068,6 +1064,10 @@
                                                 class="fas fa-angle-double-right" style="color: white"></i></a>
                                     </td>
                                 @endcan
+
+                                <td class="celdas"
+                                    style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                    {{ $diario->regional }}</td>
 
                                 @can('fechas')
                                     <td class="celdas"
