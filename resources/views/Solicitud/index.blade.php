@@ -1123,22 +1123,22 @@
                                     style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                     @can('placa')
                                         @php
-                                            $claseBoton = $diario->placa ? 'btn btn-warning py-0 px-2' : '';
+                                            $estiloPlaca = $diario->placa ? 'color: black; font-weight: bold; text-decoration: none;' : '';
                                         @endphp
                                         @if ($diario->enviado == 'NO')
-                                            <a href="#" class="editable {{ $claseBoton }}" data-type="select"
+                                            <a href="#" class="editable" style="{{ $estiloPlaca }}" data-type="select"
                                                 data-name="placa" data-pk="{{ $diario->id }}"
                                                 data-source='@json($placas)'>
                                                 {{ $diario->placa }}
                                             </a>
                                         @else
-                                            <a href="#" class="{{ $claseBoton }}">{{ $diario->placa }}</a>
+                                            <span style="{{ $estiloPlaca }}">{{ $diario->placa }}</span>
                                         @endif
                                     @else
                                         @php
-                                            $claseBoton = $diario->placa ? 'btn btn-warning py-0 px-2' : '';
+                                            $estiloPlaca = $diario->placa ? 'color: black; font-weight: bold;' : '';
                                         @endphp
-                                        <a href="#" class="{{ $claseBoton }}">{{ $diario->placa }}</a>
+                                        <span style="{{ $estiloPlaca }}">{{ $diario->placa }}</span>
                                     @endcan
                                 </td>
                                 <td class="celdas"

@@ -18,6 +18,7 @@ class Solicitud extends Model
         'hora_cargue',
         'fecha_descargue',
         'hora_descargue',
+        'regional',
         'cliente',
         'origen',
         'destino',

@@ -1867,6 +1867,7 @@ class SolicitudController extends Controller
                     }
                 },
             ],
+            'regional' => 'required',
             'cliente' => 'required',
             'origen' => 'required',
             'destino' => 'required',
@@ -1887,6 +1888,7 @@ class SolicitudController extends Controller
             'hora_cargue.required' => 'La hora de cargue es requerida',
             'fecha_descargue.required' => 'La fecha de descargue es requerida',
             'hora_descargue.required' => 'La hora de descargue es requerida',
+            'regional.required' => 'La regional es requerida',
             'cliente.required' => 'El cliente es requerido',
             'origen.required' => 'El origen es requerido',
             'destino.required' => 'El destino es requerido',
@@ -1964,6 +1966,7 @@ class SolicitudController extends Controller
                 'hora_cargue',
                 'fecha_descargue',
                 'hora_descargue',
+                'regional',
                 'cliente',
                 'origen',
                 'destino',

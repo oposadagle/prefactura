@@ -130,7 +130,21 @@
                     <div class="container">
                         <div class="row gx-1 justify-content-between">
 
-                            <div class="col-lg-2 col-md-12">
+                            <div class="col-lg-2 col-md-6">
+                                <div class="form-floating mb-3">
+                                    <select class="form-select" id="regional" name="regional" autocomplete="off"
+                                        aria-label="Floating label select example" required>
+                                        <option selected disabled>Seleccionar</option>
+                                        <option>BARRANQUILLA</option>
+                                        <option>BOGOTA</option>
+                                        <option>CALI</option>
+                                        <option>MEDELLIN</option>
+                                    </select>
+                                    <label for="regional">Regional</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
                                     <select class="form-select" id="cliente" name="cliente" autocomplete="off"
                                         aria-label="Floating label select example">
@@ -171,7 +185,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-2 col-md-3">
+                            <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
                                     <select class="form-select" id="tipo_trayecto" name="tipo_trayecto"
                                         autocomplete="off" aria-label="Floating label select example">
@@ -181,9 +195,16 @@
                                         <option>MUNICIPAL</option>
                                         <option>TRAYECTO ESPECIAL</option>
                                     </select>
-                                    <label for="ejecutivo">Tipo de trayecto</label>
+                                    <label for="tipo_trayecto">Tipo de trayecto</label>
                                 </div>
                             </div>
+
+                        </div>
+                    </div>
+
+                    <!--container 3-->
+                    <div class="container">
+                        <div class="row gx-1 justify-content-between py-4">
 
                             <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
@@ -198,15 +219,7 @@
                                 </div>
                             </div>
 
-                        </div>
-                    </div>
-
-                    <br>
-                    <!--container 3-->
-                    <div class="container">
-                        <div class="row gx-1 justify-content-between">
-
-                            <div class="col-lg-2 col-md-3">
+                            <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
                                     <select class="form-select" id="carroceria" name="carroceria" autocomplete="off"
                                         aria-label="Floating label select example">
@@ -217,15 +230,15 @@
                                         <option>PLANCHON</option>
                                         <option>PORTACONTENEDOR</option>
                                     </select>
-                                    <label for="ejecutivo">Tipo de carrocería</label>
+                                    <label for="carroceria">Tipo de carrocería</label>
                                 </div>
                             </div>
 
-                            <div class="col-lg-2 col-md-12">
+                            <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="documento_cliente"
                                         name="documento_cliente">
-                                    <label for="cliente">Documento cliente</label>
+                                    <label for="documento_cliente">Documento cliente</label>
                                 </div>
                             </div>
 
@@ -233,36 +246,35 @@
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="destinatario"
                                         name="destinatario">
-                                    <label for="cliente">Destinatario</label>
+                                    <label for="destinatario">Destinatario</label>
                                 </div>
                             </div>
 
                             <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="direccion" name="direccion">
-                                    <label for="cliente">Direccion</label>
+                                    <label for="direccion">Direccion</label>
                                 </div>
                             </div>
-
-                            <div class="col-lg-2 col-md-3">
-                                <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="piezas" name="piezas">
-                                    <label for="cliente">Piezas</label>
-                                </div>
-                            </div>
-
-
 
                         </div>
                     </div>
 
+                    <!--container 4-->
                     <div class="container">
-                        <div class="row gx-1 justify-content-between py-4">
+                        <div class="row gx-1 justify-content-between">
+
+                            <div class="col-lg-2 col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="piezas" name="piezas">
+                                    <label for="piezas">Piezas</label>
+                                </div>
+                            </div>
 
                             <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="peso" name="peso">
-                                    <label for="cliente">Peso (Kg)</label>
+                                    <label for="peso">Peso (Kg)</label>
                                 </div>
                             </div>
 
@@ -270,9 +282,10 @@
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="valor_declarado"
                                         name="valor_declarado">
-                                    <label for="ejecutivo">$ Valor declarado</label>
+                                    <label for="valor_declarado">$ Valor declarado</label>
                                 </div>
                             </div>
+
                             <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
                                     <select class="form-select" id="ejecutivo" name="ejecutivo" autocomplete="off"
@@ -292,15 +305,20 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-5 col-md-6">
+                            <div class="col-lg-2 col-md-6">
                                 <div class="form-floating mb-3">
-                                    <textarea name="observaciones" id="textarea" class="form-control" maxlength="255" rows="4"
-                                        autocomplete="off" placeholder="This textarea has a limit of 225 chars."></textarea>
-                                    <label for="fecha_solicitud">Observaciones</label>
+                                    <textarea name="observaciones" id="textarea" class="form-control" maxlength="255"
+                                        autocomplete="off"></textarea>
+                                    <label for="observaciones">Observaciones</label>
                                 </div>
                             </div>
 
-                            <div class="col-lg-12 col-md-6 pt-4">
+                        </div>
+                    </div>
+
+                    <div class="container">
+                        <div class="row gx-1 justify-content-between py-4">
+                            <div class="col-lg-12 col-md-6">
                                 <div class="button-items" style="text-align: right">
                                     <button type="submit" class="btn btn-outline-primary py-2"><i
                                             class="mdi mdi-content-save-all me-2"></i>Guardar</button>
@@ -309,7 +327,6 @@
                                             class="mdi mdi-backspace me-2"></i>Cancelar</a>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
