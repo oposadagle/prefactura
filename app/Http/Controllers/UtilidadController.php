@@ -68,13 +68,11 @@ class UtilidadController extends Controller
         $months = DB::table('masas')->select('MES as month')->where('AÑO', $year)->distinct()->orderBy('month', 'asc')->pluck('month');
 
         // Consultar los datos para la tabla y los selects
-        $operadores = DB::table('masas')->select('TRANSPORTADORA')->distinct()->where('AÑO', $year)->where('MES', $month)->orderBy('TRANSPORTADORA')->get();
+        $regionales = DB::table('masas')->select('REGIONAL')->distinct()->where('AÑO', $year)->where('MES', $month)->orderBy('REGIONAL')->get();
         $clientes = DB::table('masas')->select('CLIENTE')->distinct()->where('AÑO', $year)->where('MES', $month)->orderBy('CLIENTE')->get();
-        $origenes = DB::table('masas')->select('ORIGEN')->distinct()->where('AÑO', $year)->where('MES', $month)->orderBy('ORIGEN')->get();
-        $destinos = DB::table('masas')->select('DESTINO')->distinct()->where('AÑO', $year)->where('MES', $month)->orderBy('DESTINO')->get();
-        $utiles = DB::table('masas')->where('AÑO', $year)->where('MES', $month)->orderBy('TRANSPORTADORA')->get();
+        $utiles = DB::table('masas')->where('AÑO', $year)->where('MES', $month)->orderBy('CLIENTE')->get();
 
-        return view('Utilidad.indice', compact('utiles', 'operadores', 'clientes', 'origenes', 'destinos', 'years', 'months', 'year', 'month'));
+        return view('Utilidad.indice', compact('utiles', 'regionales', 'clientes', 'years', 'months', 'year', 'month'));
     }
 
     public function informe()

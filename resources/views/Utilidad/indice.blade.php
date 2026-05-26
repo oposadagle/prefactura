@@ -86,22 +86,11 @@
                         <select class="form-select mx-2 py-0" style="width: 110px;background-color:#F4F5F7;"
                             id="columnSelect" autocomplete="off">
                             <option selected disabled hidden>filtros</option>
-                            <option value="1">operador</option>
-                            <option value="2">cliente</option>
-                            <option value="3">origen</option>
-                            <option value="4">destino</option>                            
+                            <option value="1">cliente</option>
+                            <option value="2">regional</option>                            
                         </select>
 
                         <input class="form-control mx-2" type="text" id="searchBox" autocomplete="off">
-                        <select id="operadorSelect" class="form-control mx-2" autocomplete="off"
-                            style="display: none;">
-                            <option value="">Seleccionar operador</option>
-                            @foreach ($operadores as $operador)
-                                <option value="{{ $operador->TRANSPORTADORA }}">{{ $operador->TRANSPORTADORA }}
-                                </option>
-                            @endforeach
-                        </select>
-
                         <div id="clienteFilter" style="display: none;">
                             <input type="text" id="searchClientes" placeholder="Buscar clientes..."
                                 autocomplete="off" style="margin-bottom: 10px; width: 100%;">
@@ -122,19 +111,11 @@
                             </div>
                         </div>
 
-                        <select id="origenSelect" class="form-control mx-2" autocomplete="off"
+                        <select id="regionalSelect" class="form-control mx-2" autocomplete="off"
                             style="display: none;">
-                            <option value="">Seleccionar origen</option>
-                            @foreach ($origenes as $origen)
-                                <option value="{{ $origen->ORIGEN }}">{{ $origen->ORIGEN }}</option>
-                            @endforeach
-                        </select>
-
-                        <select id="destinoSelect" class="form-control mx-2" autocomplete="off"
-                            style="display: none;">
-                            <option value="">Seleccionar destino</option>
-                            @foreach ($destinos as $destino)
-                                <option value="{{ $destino->DESTINO }}">{{ $destino->DESTINO }}</option>
+                            <option value="">Seleccionar regional</option>
+                            @foreach ($regionales as $regional)
+                                <option value="{{ $regional->REGIONAL }}">{{ $regional->REGIONAL }}</option>
                             @endforeach
                         </select>
 
@@ -151,10 +132,8 @@
                                 @else
                                     <th class="      " style="color: #FFF;border: 1px solid #FFF;">N° SERVICIOS</th>
                                 @endif
-                                <th class="celdas" style="color: #FFF;border: 1px solid #FFF;">OPERADOR</th>
                                 <th class="      " style="color: #FFF;border: 1px solid #FFF;">CLIENTE</th>
-                                <th class="celdas" style="color: #FFF;border: 1px solid #FFF;">ORIGEN</th>
-                                <th class="celdas" style="color: #FFF;border: 1px solid #FFF;">DESTINO</th>
+                                <th class="celdas" style="color: #FFF;border: 1px solid #FFF;">REGIONAL</th>
                                 <th class="      " style="color: #FFF;border: 1px solid #FFF;">TOTAL GLE</th>
                                 <th class="      " style="color: #FFF;border: 1px solid #FFF;">TOTAL PROVEEDOR</th>
                                 <th class="      " style="color: #FFF;border: 1px solid #FFF;">UTILIDAD</th>
@@ -165,13 +144,9 @@
                                 <tr style="text-align: center;">
                                     <td class="celdas" style="border: 1px solid #9FAACC;">{{ $util->CANTIDAD_GUIAS }}
                                     </td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;">{{ $util->TRANSPORTADORA }}
-                                    </td>
                                     <td class="      " style="border: 1px solid #9FAACC;">{{ $util->CLIENTE }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;">
-                                        {{ strToUpper($util->ORIGEN) }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;">
-                                        {{ strToUpper($util->DESTINO) }}</td>
+                                        {{ $util->REGIONAL }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;">
                                         {{ number_format($util->TOTAL_GLE, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;">
@@ -287,10 +262,10 @@
                 // Filtrar en la tabla
                 if (selectedClients.length > 0) {
                     var regex = selectedClients.join(
-                        '|'); // Crear una expresión regular con los clientes seleccionados
-                    table.column(2).search(regex, true, false).draw(); // Aplicar filtro a la columna CLIENTE
+                        '|');
+                    table.column(1).search(regex, true, false).draw();
                 } else {
-                    table.column(2).search('').draw(); // Mostrar todos los datos si no hay clientes seleccionados
+                    table.column(1).search('').draw();
                 }
 
                 updateSums(); // Actualizar las sumas y el gráfico
@@ -394,8 +369,8 @@
                     var row = this.node(); // Obtiene el nodo de la fila actual
 
                     // Obtiene los valores de las columnas TOTAL_GLE (7) y TOTAL_PROVEEDOR (8)
-                    var gleValue = cleanNumber($(row).find('td:eq(5)').text());
-                    var proveedorValue = cleanNumber($(row).find('td:eq(6)').text());
+                    var gleValue = cleanNumber($(row).find('td:eq(3)').text());
+                    var proveedorValue = cleanNumber($(row).find('td:eq(4)').text());
                     var guiasValue = cleanNumber($(row).find('td:eq(0)').text());
 
                     // Suma los valores obtenidos
@@ -438,30 +413,21 @@
                 var selectedColumn = $(this).val();
 
                 $('#searchBox').hide();
-                $('#operadorSelect').hide();
                 $('#clienteFilter').hide();
                 $('#searchClientes').hide();
                 $('#selectAllClientes').hide();
                 $('#clienteCheckboxList').hide();
-                $('#origenSelect').hide();
-                $('#destinoSelect').hide();
-                $('#trayectoSelect').hide();
+                $('#regionalSelect').hide();
 
                 switch (selectedColumn) {
-                    case '1': // TRANSPORTADORA
-                        $('#operadorSelect').show();
-                        break;
-                    case '2': // CLIENTE
+                    case '1': // CLIENTE
                         $('#clienteFilter').show();
                         $('#searchClientes').show();
                         $('#selectAllClientes').show();
                         $('#clienteCheckboxList').show();
                         break;
-                    case '3': // ORIGEN
-                        $('#origenSelect').show();
-                        break;
-                    case '4': // DESTINO
-                        $('#destinoSelect').show();
+                    case '2': // REGIONAL
+                        $('#regionalSelect').show();
                         break;
                     default:
                         $('#searchBox').show();
@@ -481,23 +447,13 @@
             });
 
             // Eventos para búsqueda con select
-            $('#operadorSelect').on('change', function() {
-                var selectedColumn = 1; // Columna TRANSPORTADORA
-                searchColumn(selectedColumn, this.value);
-            });
-
             $('#clienteFilter').on('change', function() {
-                var selectedColumn = 2; // Columna CLIENTE
+                var selectedColumn = 1;
                 searchColumn(selectedColumn, this.value);
             });
 
-            $('#origenSelect').on('change', function() {
-                var selectedColumn = 3; // Columna ORIGEN
-                searchColumn(selectedColumn, this.value);
-            });
-
-            $('#destinoSelect').on('change', function() {
-                var selectedColumn = 4; // Columna DESTINO
+            $('#regionalSelect').on('change', function() {
+                var selectedColumn = 2;
                 searchColumn(selectedColumn, this.value);
             });
 
