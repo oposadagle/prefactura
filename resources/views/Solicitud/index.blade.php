@@ -741,12 +741,29 @@
                                             }
 
                                             // Lógica para dinamizar paytype de acuerdo a la hora y trayecto
-                                            $fuentePago = $medios;
                                             // $actual viene del controlador as Carbon::now('America/Bogota')
-                                            if ($actual->hour >= 17 && $diario->tipo_trayecto == 'NACIONAL') {
+                                            $horaActual = $actual->hour;
+
+                                            if ($horaActual >= 17) {
+                                                // Después de las 16:00 hasta las 23:59
                                                 $fuentePago = [
+                                                    ['value' => 'AM. ANTICIPAR', 'text' => 'AM. ANTICIPAR'],
+                                                    ['value' => 'CONTADO AM.', 'text' => 'CONTADO AM.'],
                                                     ['value' => 'ANTICIPO NOCHE', 'text' => 'ANTICIPO NOCHE'],
                                                 ];
+                                            } else {
+                                                // Entre 00:00 y 16:00: todas las opciones + ANTICIPO NOCHE
+                                                $fuentePago = $medios;
+                                                $yaExiste = false;
+                                                foreach ($fuentePago as $opt) {
+                                                    if ($opt['value'] === 'ANTICIPO NOCHE') {
+                                                        $yaExiste = true;
+                                                        break;
+                                                    }
+                                                }
+                                                if (!$yaExiste) {
+                                                    $fuentePago[] = ['value' => 'ANTICIPO NOCHE', 'text' => 'ANTICIPO NOCHE'];
+                                                }
                                             }
                                         @endphp
                                         @if ($diario->enviado == 'NO')
@@ -1065,9 +1082,25 @@
                                     </td>
                                 @endcan
 
-                                <td class="celdas"
-                                    style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                    {{ $diario->regional }}</td>
+                                @php
+                                    $usuariosEditables = ['david.molina@glecolombia.com', 'magaly.gil@glecolombia.com'];
+                                    $puedeEditarRegional = in_array(Auth::user()->email, $usuariosEditables);
+                                @endphp
+
+                                @if ($puedeEditarRegional)
+                                    <td class="celdas"
+                                        style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        <a href="#" class="editable" data-type="select" data-name="regional"
+                                            data-pk="{{ $diario->id }}" data-source='@json($regionales)'
+                                            style="font-weight:500;font-size:10px;">
+                                            {{ $diario->regional }}
+                                        </a>
+                                    </td>
+                                @else
+                                    <td class="celdas"
+                                        style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        {{ $diario->regional }}</td>
+                                @endif
 
                                 @can('fechas')
                                     <td class="celdas"

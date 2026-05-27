@@ -62,6 +62,12 @@ class SolicitudController extends Controller
         $types = $tipos->map(function ($tipo) {
             return ['value' => $tipo->tipo, 'text' => $tipo->tipo];
         });
+        $regionales = [
+            ['value' => 'BARRANQUILLA', 'text' => 'BARRANQUILLA'],
+            ['value' => 'BOGOTA', 'text' => 'BOGOTA'],
+            ['value' => 'CALI', 'text' => 'CALI'],
+            ['value' => 'MEDELLIN', 'text' => 'MEDELLIN'],
+        ];
 
         // Filtros
         $request = session('data');
@@ -115,7 +121,7 @@ class SolicitudController extends Controller
         $diarias = $query->orderBy('fecha_cargue', 'desc')->paginate(100);
         $festivos = DB::table('festivos')->pluck('festivo')->toArray();
 
-        return view('Solicitud.index', compact('vehiculos', 'placas', 'medios', 'diarias', 'userName', 'actual', 'clientes', 'estados', 'radicados', 'pagos', 'cargues', 'descargues', 'matriculas', 'manifiestos', 'sucursales', 'tipos', 'types', 'municipios', 'places', 'ciudades', 'trayectos', 'licencias', 'festivos'));
+        return view('Solicitud.index', compact('vehiculos', 'placas', 'medios', 'diarias', 'userName', 'actual', 'clientes', 'estados', 'radicados', 'pagos', 'cargues', 'descargues', 'matriculas', 'manifiestos', 'sucursales', 'tipos', 'types', 'municipios', 'places', 'ciudades', 'trayectos', 'licencias', 'festivos', 'regionales'));
     }
 
     public function trafico()
