@@ -15,15 +15,15 @@ class EnviarWhatsAppPago implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 3;
-    public $backoff = 30;
+    public $timeout = 600;
 
-    protected string $telefono;
-    protected string $mensaje;
+    protected array $mensajes;
+    protected int $sleepSegundos;
 
-    public function __construct(string $telefono, string $mensaje)
+    public function __construct(array $mensajes, int $sleepSegundos = 20)
     {
-        $this->telefono = $telefono;
-        $this->mensaje = $mensaje;
+        $this->mensajes = $mensajes;
+        $this->sleepSegundos = $sleepSegundos;
     }
 
     public function handle(): void
@@ -39,16 +39,32 @@ class EnviarWhatsAppPago implements ShouldQueue
             return;
         }
 
-        $response = Http::withToken($whapiToken)
-            ->timeout(30)
-            ->post($whapiUrl, [
-                'typing_time' => 0,
-                'to' => $this->telefono,
-                'body' => $this->mensaje,
-            ]);
+        $total = count($this->mensajes);
+        Log::info("WhatsApp: enviando lote de {$total} mensajes");
 
-        if ($response->failed()) {
-            Log::warning("Fallo WhatsApp a {$this->telefono}: " . $response->body());
+        foreach ($this->mensajes as $index => $dato) {
+            $telefono = $dato['telefono'];
+            $mensaje = $dato['mensaje'];
+
+            $response = Http::withToken($whapiToken)
+                ->timeout(30)
+                ->post($whapiUrl, [
+                    'typing_time' => 0,
+                    'to' => $telefono,
+                    'body' => $mensaje,
+                ]);
+
+            if ($response->failed()) {
+                Log::warning("Fallo WhatsApp a {$telefono}: " . $response->body());
+            } else {
+                Log::info("WhatsApp enviado a {$telefono} ({$index}/{$total})");
+            }
+
+            if ($index < $total - 1) {
+                sleep($this->sleepSegundos);
+            }
         }
+
+        Log::info("WhatsApp: lote de {$total} mensajes completado");
     }
 }

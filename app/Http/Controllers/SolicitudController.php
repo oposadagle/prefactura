@@ -287,11 +287,9 @@ class SolicitudController extends Controller
                 'confirmado' => 'SI',
             ]);
 
-            // Dispatch WhatsApp messages via queue with staggered delay
+            // Dispatch WhatsApp messages via single job with internal sleep
             $peticiones = DB::table('peticiones')->whereIn('id', $ids)->get();
-            $lote = 0;
-            $porLote = 3;
-            $segundosEntreLotes = 20;
+            $mensajes = [];
 
             foreach ($peticiones as $p) {
                 if (empty($p->tpagant)) {
@@ -324,9 +322,11 @@ class SolicitudController extends Controller
                                '...no responder este mensaje...';
                 }
 
-                $delay = intdiv($lote, $porLote) * $segundosEntreLotes;
-                EnviarWhatsAppPago::dispatch($telefono, $mensaje)->delay(now()->addSeconds($delay));
-                $lote++;
+                $mensajes[] = ['telefono' => $telefono, 'mensaje' => $mensaje];
+            }
+
+            if (! empty($mensajes)) {
+                EnviarWhatsAppPago::dispatch($mensajes, 20);
             }
 
             return response()->json([
@@ -468,11 +468,9 @@ class SolicitudController extends Controller
                 'userpago' => auth()->user()->name,
             ]);
 
-            // Dispatch WhatsApp messages via queue with staggered delay
+            // Dispatch WhatsApp messages via single job with internal sleep
             $peticiones = DB::table('peticiones')->whereIn('id', $ids)->get();
-            $lote = 0;
-            $porLote = 3;
-            $segundosEntreLotes = 20;
+            $mensajes = [];
 
             foreach ($peticiones as $p) {
                 if (empty($p->tpagsal)) {
@@ -508,9 +506,11 @@ class SolicitudController extends Controller
                            "VALOR_SALDO: {$val_saldototal}\n\n".
                            '...no responder este mensaje...';
 
-                $delay = intdiv($lote, $porLote) * $segundosEntreLotes;
-                EnviarWhatsAppPago::dispatch($telefono, $mensaje)->delay(now()->addSeconds($delay));
-                $lote++;
+                $mensajes[] = ['telefono' => $telefono, 'mensaje' => $mensaje];
+            }
+
+            if (! empty($mensajes)) {
+                EnviarWhatsAppPago::dispatch($mensajes, 20);
             }
 
             return response()->json([
@@ -545,11 +545,9 @@ class SolicitudController extends Controller
                 'userpaga' => auth()->user()->name,
             ]);
 
-            // Dispatch WhatsApp messages via queue with staggered delay
+            // Dispatch WhatsApp messages via single job with internal sleep
             $peticiones = DB::table('peticiones')->whereIn('id', $ids)->get();
-            $lote = 0;
-            $porLote = 3;
-            $segundosEntreLotes = 20;
+            $mensajes = [];
 
             foreach ($peticiones as $p) {
                 if (empty($p->tpagcon)) {
@@ -587,9 +585,11 @@ class SolicitudController extends Controller
                            "VALOR TOTAL: {$val_total}\n\n".
                            '...no responder este mensaje...';
 
-                $delay = intdiv($lote, $porLote) * $segundosEntreLotes;
-                EnviarWhatsAppPago::dispatch($telefono, $mensaje)->delay(now()->addSeconds($delay));
-                $lote++;
+                $mensajes[] = ['telefono' => $telefono, 'mensaje' => $mensaje];
+            }
+
+            if (! empty($mensajes)) {
+                EnviarWhatsAppPago::dispatch($mensajes, 20);
             }
 
             return response()->json([
