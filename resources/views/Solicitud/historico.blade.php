@@ -113,6 +113,33 @@
                         </thead>
                         <tbody style="font-size: 12px;font-family: Titillium Web;">
                             @foreach ($diarias as $diario)
+                                @php
+                                    $fechaDescargueParsed = $diario->fecha_descargue
+                                        ? \Carbon\Carbon::parse($diario->fecha_descargue)
+                                        : null;
+                                    $diasLimiteEdicion = $diario->cliente === 'SIMONIZ SA' ? 5 : 3;
+
+                                    $dentroDelPlazoEdicion = true;
+                                    if ($fechaDescargueParsed) {
+                                        $fechaAux = $fechaDescargueParsed->copy();
+                                        $contadorHabiles = 0;
+                                        while ($contadorHabiles < $diasLimiteEdicion) {
+                                            $fechaAux->addDay();
+                                            if (
+                                                !$fechaAux->isWeekend() &&
+                                                !in_array($fechaAux->toDateString(), $festivos)
+                                            ) {
+                                                $contadorHabiles++;
+                                            }
+                                        }
+                                        $fechaLimiteEdicion = $fechaAux->endOfDay();
+                                        $dentroDelPlazoEdicion = \Carbon\Carbon::now()->lessThanOrEqualTo(
+                                            $fechaLimiteEdicion,
+                                        );
+                                    }
+
+                                    $puedeAprobar = $dentroDelPlazoEdicion && $diario->soporte && !$diario->avalado;
+                                @endphp
                                 <tr style="text-align: center">
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->id }}</td>
                                     <td class="celdas" hidden style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ \Carbon\Carbon::parse($diario->fecha_solicitud)->format('Y-m-d') }}</td>
@@ -194,9 +221,24 @@
                                                 <i class="fas fa-check"></i>
                                             </button>
                                         @else
-                                            <button type="button" class="btn btn-warning btn-xs disabled" style="width: 100%; pointer-events: none;">
-                                                <i class="fas fa-minus"></i>
-                                            </button>
+                                            @can('verificar')
+                                                @if ($puedeAprobar)
+                                                    <button type="button" class="btn btn-warning btn-xs btn-aprobar"
+                                                        data-id="{{ $diario->id }}" style="width: 100%;">
+                                                        <i class="fas fa-minus"></i>
+                                                    </button>
+                                                @else
+                                                    <button type="button" class="btn btn-warning btn-xs disabled"
+                                                        style="width: 100%; pointer-events: none;">
+                                                        <i class="fas fa-minus"></i>
+                                                    </button>
+                                                @endif
+                                            @else
+                                                <button type="button" class="btn btn-warning btn-xs disabled"
+                                                    style="width: 100%; pointer-events: none;">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                            @endcan
                                         @endif
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
@@ -204,10 +246,22 @@
                                             <button type="button" class="btn btn-success btn-xs disabled" style="width: 100%; pointer-events: none;">
                                                 <i class="fas fa-check"></i>
                                             </button>
-                                        @else
+                                        @elseif(!$diario->avalado)
                                             <button type="button" class="btn btn-secondary btn-xs disabled" style="width: 100%; pointer-events: none;">
                                                 <i class="fas fa-minus"></i>
                                             </button>
+                                        @else
+                                            @can('validar')
+                                                <button type="button" class="btn btn-warning btn-xs btn-verificar"
+                                                    data-id="{{ $diario->id }}" style="width: 100%;">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                            @else
+                                                <button type="button" class="btn btn-warning btn-xs disabled"
+                                                    style="width: 100%; pointer-events: none;">
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+                                            @endcan
                                         @endif
                                     </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->asignado }}</td>
@@ -240,5 +294,121 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function() {
+        $('.btn-aprobar').on('click', function(e) {
+            e.preventDefault();
+            var button = $(this);
+            var id = button.data('id');
+            var token = "{{ csrf_token() }}";
+
+            Swal.fire({
+                title: '¿Aprobar solicitud?',
+                text: "Esta acción no se puede deshacer.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, aprobar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/solicitud/' + id + '/aprobar',
+                        type: 'PUT',
+                        data: {
+                            _token: token
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                button.removeClass('btn-warning').addClass(
+                                    'btn-success disabled').css(
+                                    'pointer-events', 'none');
+                                button.find('i').removeClass('fa-minus').addClass(
+                                    'fa-check');
+                                button.off('click');
+                                Swal.fire(
+                                    'Aprobado!',
+                                    'La solicitud ha sido aprobada.',
+                                    'success'
+                                );
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    response.message ||
+                                    'No se pudo aprobar la solicitud.',
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function() {
+                            Swal.fire(
+                                'Error!',
+                                'Ocurrió un error en el servidor.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+
+        $(document).on('click', '.btn-verificar', function() {
+            var diarioId = $(this).data('id');
+            var button = $(this);
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, validar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/solicitud/' + diarioId + '/verificar',
+                        type: 'PUT',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire(
+                                    '¡Verificado!',
+                                    'La solicitud ha sido verificada.',
+                                    'success'
+                                ).then(() => {
+                                    button.removeClass('btn-warning btn-verificar')
+                                        .addClass('btn-success disabled').prop(
+                                            'disabled', true).css('pointer-events',
+                                            'none');
+                                    button.find('i').removeClass('fa-minus').addClass(
+                                        'fa-check');
+                                });
+                            } else {
+                                Swal.fire(
+                                    'Error',
+                                    response.message,
+                                    'error'
+                                );
+                            }
+                        },
+                        error: function() {
+                            Swal.fire(
+                                'Error!',
+                                'Ocurrió un error en el servidor.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
 
 <x-footer />

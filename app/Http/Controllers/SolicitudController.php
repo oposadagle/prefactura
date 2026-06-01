@@ -1192,7 +1192,9 @@ class SolicitudController extends Controller
             ->pluck('month')
             ->map(fn ($m) => (int) $m);
 
-        return view('Solicitud.historico', compact('diarias', 'years', 'months', 'year', 'month'));
+        $festivos = DB::table('festivos')->pluck('festivo')->toArray();
+
+        return view('Solicitud.historico', compact('diarias', 'years', 'months', 'year', 'month', 'festivos'));
     }
 
     public function prefactura(Request $request)
