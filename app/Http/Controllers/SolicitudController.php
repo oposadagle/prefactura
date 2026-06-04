@@ -1172,12 +1172,20 @@ class SolicitudController extends Controller
 
         $incluidos = ['Servicio finalizado', 'Servicio cancelado'];
 
-        $diarias = DB::table('peticiones')
+        $query = DB::table('peticiones')
             ->whereIn('states', $incluidos)
             ->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year])
-            ->whereRaw('EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?', [$month])
-            ->orderBy('fecha_cargue', 'desc')
-            ->get();
+            ->whereRaw('EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?', [$month]);
+
+        // Filtro cuenta de cobro
+        $cuentaDeCobro = $request->input('cuenta_de_cobro');
+        if ($cuentaDeCobro == 'SI') {
+            $query->whereNotNull('soporte');
+        } elseif ($cuentaDeCobro == 'NO') {
+            $query->whereNull('soporte');
+        }
+
+        $diarias = $query->orderBy('fecha_cargue', 'desc')->get();
 
         $years = DB::table('peticiones')
             ->selectRaw('DISTINCT EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year')
@@ -2748,20 +2756,24 @@ class SolicitudController extends Controller
 
     public function testWhatsApp()
     {
-        $telefono = '573192997239';
         $whapiToken = env('WHAPI_TOKEN');
-        $whapiUrl = rtrim(env('WHAPI_API_URL', 'https://gate.whapi.cloud/messages/text'), '/');
-        if (! str_ends_with($whapiUrl, '/messages/text')) {
-            $whapiUrl .= '/messages/text';
-        }
-
-        $resultados = [];
+        $whapiBaseUrl = rtrim(env('WHAPI_API_URL', 'https://gate.whapi.cloud'), '/');
+        $whapiUrl = $whapiBaseUrl . '/messages/text';
 
         if (! $whapiToken) {
             return response()->json(['error' => 'WHAPI_TOKEN no configurado'], 500);
         }
 
-        // Mensaje 1: Anticipo (pago completo)
+        $telefono = '573192997239';
+
+        // Mensaje simple de prueba primero
+        $msgSimple = "Prueba de conexion desde sistema GLE - " . now()->format('H:i:s');
+        $rSimple = Http::withToken($whapiToken)->timeout(30)->post($whapiUrl, ['typing_time' => 0, 'to' => $telefono, 'body' => $msgSimple]);
+        $simpleResult = $rSimple->json();
+
+        sleep(5);
+
+        // Mensaje 1: Anticipo
         $msgAnticipo = "Estimado proveedor, GLE Colombia SAS informa que inicio un proceso de pago por concepto del anticipo correspondiente al manifiesto: TEST-001\n\n".
                        "RESUMEN\n".
                        "reteica: 10.000\n".
@@ -2771,9 +2783,9 @@ class SolicitudController extends Controller
                        '...no responder este mensaje...';
 
         $r1 = Http::withToken($whapiToken)->timeout(30)->post($whapiUrl, ['typing_time' => 0, 'to' => $telefono, 'body' => $msgAnticipo]);
-        $resultados['anticipo'] = ['status' => $r1->status(), 'ok' => $r1->successful()];
+        $resultados['anticipo'] = ['status' => $r1->status(), 'ok' => $r1->successful(), 'response' => $r1->json()];
 
-        sleep(2);
+        sleep(5);
 
         // Mensaje 2: Saldo
         $msgSaldo = "Estimado proveedor, GLE Colombia SAS informa que inicio un proceso de pago por concepto del saldo correspondiente al manifiesto: TEST-002\n\n".
@@ -2789,9 +2801,9 @@ class SolicitudController extends Controller
                     '...no responder este mensaje...';
 
         $r2 = Http::withToken($whapiToken)->timeout(30)->post($whapiUrl, ['typing_time' => 0, 'to' => $telefono, 'body' => $msgSaldo]);
-        $resultados['saldo'] = ['status' => $r2->status(), 'ok' => $r2->successful()];
+        $resultados['saldo'] = ['status' => $r2->status(), 'ok' => $r2->successful(), 'response' => $r2->json()];
 
-        sleep(2);
+        sleep(5);
 
         // Mensaje 3: Cuenta de cobro
         $msgCuenta = "Estimado proveedor, GLE Colombia SAS informa que inicio un proceso de pago por concepto de la cuenta de cobro relacionado al manifiesto: TEST-003\n\n".
@@ -2806,12 +2818,14 @@ class SolicitudController extends Controller
                      '...no responder este mensaje...';
 
         $r3 = Http::withToken($whapiToken)->timeout(30)->post($whapiUrl, ['typing_time' => 0, 'to' => $telefono, 'body' => $msgCuenta]);
-        $resultados['cuenta_cobro'] = ['status' => $r3->status(), 'ok' => $r3->successful()];
+        $resultados['cuenta_cobro'] = ['status' => $r3->status(), 'ok' => $r3->successful(), 'response' => $r3->json()];
 
         return response()->json([
+            'url_usada' => $whapiUrl,
             'telefono' => $telefono,
+            'prueba_simple' => ['status' => $rSimple->status(), 'ok' => $rSimple->successful(), 'response' => $simpleResult],
             'resultados' => $resultados,
-            'todos_ok' => $r1->successful() && $r2->successful() && $r3->successful(),
+            'todos_ok' => $rSimple->successful() && $r1->successful() && $r2->successful() && $r3->successful(),
         ]);
     }
 }

@@ -29,10 +29,8 @@ class EnviarWhatsAppPago implements ShouldQueue
     public function handle(): void
     {
         $whapiToken = env('WHAPI_TOKEN');
-        $whapiUrl = rtrim(env('WHAPI_API_URL', 'https://gate.whapi.cloud/messages/text'), '/');
-        if (! str_ends_with($whapiUrl, '/messages/text')) {
-            $whapiUrl .= '/messages/text';
-        }
+        $whapiBaseUrl = rtrim(env('WHAPI_API_URL', 'https://gate.whapi.cloud'), '/');
+        $whapiUrl = $whapiBaseUrl . '/messages/text';
 
         if (! $whapiToken) {
             Log::warning('WHAPI_TOKEN no configurado');
