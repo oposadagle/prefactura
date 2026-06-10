@@ -140,4 +140,4 @@ Route::post('/bancos', [BancoController::class, 'store'])->name('banco.store');
 Route::delete('/bancos/{id}', [BancoController::class, 'destroy'])->name('banco.destroy');
 Route::resource('datos-bancarios', DatosBancariosController::class)->except(['show']);
 Route::resource('centro-costo', CentroCostoController::class)->except(['show']);
-Route::get('/testWhatsApp', [SolicitudController::class, 'testWhatsApp'])->name('test.whatsapp');
+Route::get('/testSms', [SolicitudController::class, 'testSms'])->name('test.sms');

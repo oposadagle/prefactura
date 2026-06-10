@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\EnviarWhatsAppPago;
+use App\Jobs\EnviarSmsPago;
+use App\Services\InfobipSmsService;
 use App\Exports\CuentasHistoricoExport;
 use App\Exports\CuentasPendientesExport;
 use App\Exports\DiariasExport;
@@ -326,7 +327,7 @@ class SolicitudController extends Controller
             }
 
             if (! empty($mensajes)) {
-                EnviarWhatsAppPago::dispatch($mensajes, 20);
+                EnviarSmsPago::dispatch($mensajes, 3);
             }
 
             return response()->json([
@@ -510,7 +511,7 @@ class SolicitudController extends Controller
             }
 
             if (! empty($mensajes)) {
-                EnviarWhatsAppPago::dispatch($mensajes, 20);
+                EnviarSmsPago::dispatch($mensajes, 3);
             }
 
             return response()->json([
@@ -589,7 +590,7 @@ class SolicitudController extends Controller
             }
 
             if (! empty($mensajes)) {
-                EnviarWhatsAppPago::dispatch($mensajes, 20);
+                EnviarSmsPago::dispatch($mensajes, 3);
             }
 
             return response()->json([
@@ -2169,27 +2170,13 @@ class SolicitudController extends Controller
                 ->where('id', $request->pk)
                 ->update(['soporte' => $request->soporte]);
 
-            // Dispatch WhatsApp notification
-            $whapiToken = env('WHAPI_TOKEN');
-            $whapiUrl = rtrim(env('WHAPI_API_URL', 'https://gate.whapi.cloud/messages/text'), '/');
-            if (! str_ends_with($whapiUrl, '/messages/text')) {
-                $whapiUrl .= '/messages/text';
-            }
+            // Dispatch SMS notification
+            $smsService = new InfobipSmsService();
+            $mensaje = "Hola Magaly, Se acaba de cargar informacion correspondiente a una cuenta de cobro para el id {$request->pk}. Queda pendiente de tu aprobacion. Atentamente, Sistema de notificaciones GLE";
 
-            if ($whapiToken && $whapiUrl) {
-                $mensaje = "Hola Magaly,\n".
-                           "Se acaba de cargar informacion correspondiente a una cuenta de cobro para el id {$request->pk}.\n".
-                           "Queda pendiente de tu aprobacion.\n\n".
-                           "Atentamente,\n".
-                           'Sistema de notificaciones GLE';
-
-                // Enviar mensaje hacia WhatsApp
-                \Illuminate\Support\Facades\Http::withToken($whapiToken)
-                    ->post($whapiUrl, [
-                        'typing_time' => 0,
-                        'to' => '573174428909',
-                        'body' => $mensaje,
-                    ]);
+            $resultado = $smsService->send('573174428909', $mensaje);
+            if (! $resultado['success']) {
+                Log::warning('Fallo SMS uploadSoporte: ' . ($resultado['error'] ?? 'Error desconocido'));
             }
 
             return response()->json(['success' => true]);
@@ -2754,78 +2741,30 @@ class SolicitudController extends Controller
         });
     }
 
-    public function testWhatsApp()
+    public function testSms()
     {
-        $whapiToken = env('WHAPI_TOKEN');
-        $whapiBaseUrl = rtrim(env('WHAPI_API_URL', 'https://gate.whapi.cloud'), '/');
-        $whapiUrl = $whapiBaseUrl . '/messages/text';
-
-        if (! $whapiToken) {
-            return response()->json(['error' => 'WHAPI_TOKEN no configurado'], 500);
-        }
-
+        $smsService = new InfobipSmsService();
         $telefono = '573192997239';
 
-        // Mensaje simple de prueba primero
-        $msgSimple = "Prueba de conexion desde sistema GLE - " . now()->format('H:i:s');
-        $rSimple = Http::withToken($whapiToken)->timeout(30)->post($whapiUrl, ['typing_time' => 0, 'to' => $telefono, 'body' => $msgSimple]);
-        $simpleResult = $rSimple->json();
+        $msgSimple = "Prueba SMS desde sistema GLE - " . now()->format('H:i:s');
+        $resultado = $smsService->send($telefono, $msgSimple);
 
-        sleep(5);
+        $msgAnticipo = "Estimado proveedor, GLE Colombia SAS informa que inicio un proceso de pago por concepto del anticipo correspondiente al manifiesto: TEST-001. RESUMEN: reteica: 10.000, retefuente: 50.000, seguro: 20.000, valor pagado: 500.000";
+        $resultadoAnticipo = $smsService->send($telefono, $msgAnticipo);
 
-        // Mensaje 1: Anticipo
-        $msgAnticipo = "Estimado proveedor, GLE Colombia SAS informa que inicio un proceso de pago por concepto del anticipo correspondiente al manifiesto: TEST-001\n\n".
-                       "RESUMEN\n".
-                       "reteica: 10.000\n".
-                       "retefuente: 50.000\n".
-                       "seguro: 20.000\n".
-                       "valor pagado: 500.000\n\n".
-                       '...no responder este mensaje...';
+        $msgSaldo = "Estimado proveedor, GLE Colombia SAS informa que inicio un proceso de pago por concepto del saldo correspondiente al manifiesto: TEST-002. RESUMEN: COSTO: 1.000.000, ANTICIPO: 500.000, EXTRA: 100.000, RETEFUENTE: 50.000, RETEICA: 10.000, SEGURO: 20.000, OTRAS DEDUCCIONES: 30.000, VALOR_SALDO: 490.000";
+        $resultadoSaldo = $smsService->send($telefono, $msgSaldo);
 
-        $r1 = Http::withToken($whapiToken)->timeout(30)->post($whapiUrl, ['typing_time' => 0, 'to' => $telefono, 'body' => $msgAnticipo]);
-        $resultados['anticipo'] = ['status' => $r1->status(), 'ok' => $r1->successful(), 'response' => $r1->json()];
-
-        sleep(5);
-
-        // Mensaje 2: Saldo
-        $msgSaldo = "Estimado proveedor, GLE Colombia SAS informa que inicio un proceso de pago por concepto del saldo correspondiente al manifiesto: TEST-002\n\n".
-                    "RESUMEN:\n".
-                    "COSTO: 1.000.000\n".
-                    "ANTICIPO: 500.000\n".
-                    "EXTRA: 100.000\n".
-                    "RETEFUENTE: 50.000\n".
-                    "RETEICA: 10.000\n".
-                    "SEGURO: 20.000\n".
-                    "OTRAS DEDUCCIONES: 30.000\n".
-                    "VALOR_SALDO: 490.000\n\n".
-                    '...no responder este mensaje...';
-
-        $r2 = Http::withToken($whapiToken)->timeout(30)->post($whapiUrl, ['typing_time' => 0, 'to' => $telefono, 'body' => $msgSaldo]);
-        $resultados['saldo'] = ['status' => $r2->status(), 'ok' => $r2->successful(), 'response' => $r2->json()];
-
-        sleep(5);
-
-        // Mensaje 3: Cuenta de cobro
-        $msgCuenta = "Estimado proveedor, GLE Colombia SAS informa que inicio un proceso de pago por concepto de la cuenta de cobro relacionado al manifiesto: TEST-003\n\n".
-                     "RESUMEN\n".
-                     "CARGUE 1: 300.000\n".
-                     "CARGUE 2: 200.000\n".
-                     "STANDBY: 50.000\n".
-                     "COSTO DESPLAZAMIENTO: 100.000\n".
-                     "RETEICA: 10.000\n".
-                     "RETEFUENTE: 50.000\n".
-                     "VALOR TOTAL: 590.000\n\n".
-                     '...no responder este mensaje...';
-
-        $r3 = Http::withToken($whapiToken)->timeout(30)->post($whapiUrl, ['typing_time' => 0, 'to' => $telefono, 'body' => $msgCuenta]);
-        $resultados['cuenta_cobro'] = ['status' => $r3->status(), 'ok' => $r3->successful(), 'response' => $r3->json()];
+        $msgCuenta = "Estimado proveedor, GLE Colombia SAS informa que inicio un proceso de pago por concepto de la cuenta de cobro relacionado al manifiesto: TEST-003. RESUMEN: CARGUE 1: 300.000, CARGUE 2: 200.000, STANDBY: 50.000, COSTO DESPLAZAMIENTO: 100.000, RETEICA: 10.000, RETEFUENTE: 50.000, VALOR TOTAL: 590.000";
+        $resultadoCuenta = $smsService->send($telefono, $msgCuenta);
 
         return response()->json([
-            'url_usada' => $whapiUrl,
             'telefono' => $telefono,
-            'prueba_simple' => ['status' => $rSimple->status(), 'ok' => $rSimple->successful(), 'response' => $simpleResult],
-            'resultados' => $resultados,
-            'todos_ok' => $rSimple->successful() && $r1->successful() && $r2->successful() && $r3->successful(),
+            'prueba_simple' => $resultado,
+            'anticipo' => $resultadoAnticipo,
+            'saldo' => $resultadoSaldo,
+            'cuenta_cobro' => $resultadoCuenta,
+            'todos_ok' => $resultado['success'] && $resultadoAnticipo['success'] && $resultadoSaldo['success'] && $resultadoCuenta['success'],
         ]);
     }
 }

@@ -150,41 +150,16 @@ class VehiculoController extends Controller
 
             DB::table('vehiculos')->insert($dataVehiculo);
 
-            // Dispatch WhatsApp messages via Whapi
-            $whapiToken = config('services.whapi.token');
-            $whapiUrl = rtrim(config('services.whapi.api_url', 'https://gate.whapi.cloud/messages/text'), '/');
-            
-            \Illuminate\Support\Facades\Log::info('Revisión WHAPI:', [
-                'token_configurado' => !empty($whapiToken) ? 'SI' : 'NO',
-                'url' => $whapiUrl
-            ]);
+            // Dispatch SMS notifications
+            $smsService = new \App\Services\InfobipSmsService();
+            $numeros = ['573148289419', '573116335766'];
+            $placa = $request->input('placa');
+            $mensaje = "Buen dia, Se acaba de crear un nuevo vehiculo con placa {$placa}. Por favor revisar en la opcion Datos bancarios del sistema. Atentamente, Sistema de notificaciones GLE";
 
-            if (!str_ends_with($whapiUrl, '/messages/text')) {
-                $whapiUrl .= '/messages/text';
-            }
-
-            if ($whapiToken && $whapiUrl) {
-                $numeros = ['573148289419', '573116335766'];                
-                
-                \Illuminate\Support\Facades\Log::info('Iniciando envío de WhatsApp a los números: ' . implode(', ', $numeros));
-                $placa = $request->input('placa');
-                $mensaje = "Buen día,\n\n" .
-                           "Se acaba de crear un nuevo vehiculo con placa {$placa}.\n" .
-                           "Por favor revisar en la opción Datos bancarios del sistema.\n\n" .
-                           "Atentamente,\n" .
-                           "Sistema de notificaciones GLE";
-
-                foreach ($numeros as $telefono) {
-                    $response = \Illuminate\Support\Facades\Http::withToken($whapiToken)
-                        ->post($whapiUrl, [
-                            'typing_time' => 0,
-                            'to' => $telefono,
-                            'body' => $mensaje
-                        ]);
-
-                    if ($response->failed()) {
-                        \Illuminate\Support\Facades\Log::warning("Fallo al enviar notificación de vehículo a {$telefono}. Placa: {$placa}. Respuesta: " . $response->body());
-                    }
+            foreach ($numeros as $telefono) {
+                $resultado = $smsService->send($telefono, $mensaje);
+                if (! $resultado['success']) {
+                    \Illuminate\Support\Facades\Log::warning("Fallo SMS vehiculo a {$telefono}. Placa: {$placa}. Error: " . ($resultado['error'] ?? 'Desconocido'));
                 }
             }
 
