@@ -1576,7 +1576,6 @@ class SolicitudController extends Controller
 
     public function procesarAnticipos(Request $request)
     {
-        // Validar archivo
         $fields = [
             'archivo' => 'required|max:10000|mimes:xlsx',
         ];
@@ -1585,32 +1584,39 @@ class SolicitudController extends Controller
         ];
         $this->validate($request, $fields, $message);
 
-        // Leer archivo Excel
         $archivo = $request->file('archivo');
-        $datosArchivo = Excel::toArray([], $archivo);
-        $filasEstatus = array_slice($datosArchivo[0], 1); // Omitir encabezado
+        $rutaTemporal = $archivo->getPathname();
 
-        // Inicializar contador
+        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        $reader->setReadDataOnly(true);
+
+        $readFilter = new class implements \PhpOffice\PhpSpreadsheet\Reader\IReadFilter {
+            public function readCell($columnAddress, $row, $worksheetName = '')
+            {
+                return in_array($columnAddress, ['A', 'B', 'C']);
+            }
+        };
+        $reader->setReadFilter($readFilter);
+
+        $spreadsheet = $reader->load($rutaTemporal);
+        $hoja = $spreadsheet->getActiveSheet();
+        $iterator = $hoja->getRowIterator(2);
+
         $cantidad = 0;
 
-        // Recorrer filas del archivo
-        foreach ($filasEstatus as $fila) {
-            // Evitar filas vac├¡as o incompletas
-            if (empty($fila[0])) {
-                continue; // Saltar si no hay "razon"
+        foreach ($iterator as $fila) {
+            $razon = trim((string) $hoja->getCell('A' . $fila->getRowIndex())->getValue());
+            $recibido_cumplido = trim((string) $hoja->getCell('B' . $fila->getRowIndex())->getValue());
+            $fecha_envio = trim((string) $hoja->getCell('C' . $fila->getRowIndex())->getValue());
+
+            if ($razon === '') {
+                continue;
             }
 
-            // Asignar variables con control de ├¡ndices
-            $razon = trim($fila[0] ?? '');
-            $recibido_cumplido = trim($fila[1] ?? '');
-            $fecha_envio = trim($fila[2] ?? '');
-
-            // Validar que al menos uno de los campos tenga valor
             if ($recibido_cumplido === '' && $fecha_envio === '') {
                 continue;
             }
 
-            // Construir array de actualizacion din├ímicamente
             $camposActualizar = [
                 'updated_at' => now(),
             ];
@@ -1622,8 +1628,7 @@ class SolicitudController extends Controller
                 $camposActualizar['fenv_cumplido'] = $fecha_envio;
             }
 
-            // Solo actualizar si hay al menos un campo para modificar
-            if (count($camposActualizar) > 1) { // >1 porque 'updated_at' siempre est├í
+            if (count($camposActualizar) > 1) {
                 $updated = DB::table('solicitudes')
                     ->where('razon', $razon)
                     ->update($camposActualizar);
@@ -1632,14 +1637,11 @@ class SolicitudController extends Controller
                     $cantidad++;
                 }
             }
-
-            // Si se actualizo algo, incrementar contador
-            if ($updated) {
-                $cantidad++;
-            }
         }
 
-        // Retornar con mensaje y cantidad
+        $spreadsheet->disconnectWorksheets();
+        unset($spreadsheet);
+
         return back()
             ->with('success', 'Datos actualizados correctamente')
             ->with('cantidad', $cantidad);
