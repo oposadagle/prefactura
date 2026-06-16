@@ -1587,7 +1587,7 @@ class SolicitudController extends Controller
         $archivo = $request->file('archivo');
         $rutaTemporal = $archivo->getPathname();
 
-        $xlsx = \SimpleXLSX::parse($rutaTemporal);
+        $xlsx = \Shuchkin\SimpleXLSX::parse($rutaTemporal);
         if (!$xlsx) {
             return back()->withErrors(['archivo' => 'No se pudo leer el archivo']);
         }
