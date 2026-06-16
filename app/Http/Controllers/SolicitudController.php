@@ -1587,27 +1587,23 @@ class SolicitudController extends Controller
         $archivo = $request->file('archivo');
         $rutaTemporal = $archivo->getPathname();
 
-        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
-        $reader->setReadDataOnly(true);
-
-        $readFilter = new class implements \PhpOffice\PhpSpreadsheet\Reader\IReadFilter {
-            public function readCell($columnAddress, $row, $worksheetName = '')
-            {
-                return in_array($columnAddress, ['A', 'B', 'C']);
-            }
-        };
-        $reader->setReadFilter($readFilter);
-
-        $spreadsheet = $reader->load($rutaTemporal);
-        $hoja = $spreadsheet->getActiveSheet();
-        $iterator = $hoja->getRowIterator(2);
+        $xlsx = \SimpleXLSX::parse($rutaTemporal);
+        if (!$xlsx) {
+            return back()->withErrors(['archivo' => 'No se pudo leer el archivo']);
+        }
 
         $cantidad = 0;
+        $esPrimeraFila = true;
 
-        foreach ($iterator as $fila) {
-            $razon = trim((string) $hoja->getCell('A' . $fila->getRowIndex())->getValue());
-            $recibido_cumplido = trim((string) $hoja->getCell('B' . $fila->getRowIndex())->getValue());
-            $fecha_envio = trim((string) $hoja->getCell('C' . $fila->getRowIndex())->getValue());
+        foreach ($xlsx->rows() as $fila) {
+            if ($esPrimeraFila) {
+                $esPrimeraFila = false;
+                continue;
+            }
+
+            $razon = trim((string) ($fila[0] ?? ''));
+            $recibido_cumplido = trim((string) ($fila[1] ?? ''));
+            $fecha_envio = trim((string) ($fila[2] ?? ''));
 
             if ($razon === '') {
                 continue;
@@ -1639,8 +1635,7 @@ class SolicitudController extends Controller
             }
         }
 
-        $spreadsheet->disconnectWorksheets();
-        unset($spreadsheet);
+        unset($xlsx);
 
         return back()
             ->with('success', 'Datos actualizados correctamente')
