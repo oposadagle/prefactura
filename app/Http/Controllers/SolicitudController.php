@@ -288,12 +288,15 @@ class SolicitudController extends Controller
                 'confirmado' => 'SI',
             ]);
 
-            // Dispatch WhatsApp messages via single job with internal sleep
+            // Dispatch SMS messages via single job with internal sleep
             $peticiones = DB::table('peticiones')->whereIn('id', $ids)->get();
+            Log::info("confirmarAnticipos: IDs recibidos=" . json_encode($ids) . ", peticiones encontradas=" . $peticiones->count());
+            
             $mensajes = [];
 
             foreach ($peticiones as $p) {
                 if (empty($p->tpagant)) {
+                    Log::warning("confirmarAnticipos: peticion ID={$p->id} tiene tpagant vacio");
                     continue;
                 }
 
@@ -302,6 +305,7 @@ class SolicitudController extends Controller
                     $telefono = '57'.$telefono;
                 }
                 $telefono = str_replace('+', '', $telefono);
+                Log::info("confirmarAnticipos: peticion ID={$p->id}, telefono={$telefono}");
 
                 $val_reteica = number_format(floatval($p->reteica), 0, ',', '.');
                 $val_retefuente = number_format(floatval($p->retefuente), 0, ',', '.');
@@ -327,7 +331,10 @@ class SolicitudController extends Controller
             }
 
             if (! empty($mensajes)) {
+                Log::info("confirmarAnticipos: enviando " . count($mensajes) . " mensajes al job");
                 EnviarSmsPago::dispatch($mensajes, 3);
+            } else {
+                Log::warning("confirmarAnticipos: no se generaron mensajes para enviar");
             }
 
             return response()->json([
@@ -469,12 +476,15 @@ class SolicitudController extends Controller
                 'userpago' => auth()->user()->name,
             ]);
 
-            // Dispatch WhatsApp messages via single job with internal sleep
+            // Dispatch SMS messages via single job with internal sleep
             $peticiones = DB::table('peticiones')->whereIn('id', $ids)->get();
+            Log::info("pagarSaldos: IDs recibidos=" . json_encode($ids) . ", peticiones encontradas=" . $peticiones->count());
+            
             $mensajes = [];
 
             foreach ($peticiones as $p) {
                 if (empty($p->tpagsal)) {
+                    Log::warning("pagarSaldos: peticion ID={$p->id} tiene tpagsal vacio");
                     continue;
                 }
 
@@ -483,6 +493,7 @@ class SolicitudController extends Controller
                     $telefono = '57'.$telefono;
                 }
                 $telefono = str_replace('+', '', $telefono);
+                Log::info("pagarSaldos: peticion ID={$p->id}, telefono={$telefono}");
 
                 $saldo_total = floatval($p->valor_saldo) - floatval($p->deducciones);
 
@@ -511,7 +522,10 @@ class SolicitudController extends Controller
             }
 
             if (! empty($mensajes)) {
+                Log::info("pagarSaldos: enviando " . count($mensajes) . " mensajes al job");
                 EnviarSmsPago::dispatch($mensajes, 3);
+            } else {
+                Log::warning("pagarSaldos: no se generaron mensajes para enviar");
             }
 
             return response()->json([
@@ -546,12 +560,15 @@ class SolicitudController extends Controller
                 'userpaga' => auth()->user()->name,
             ]);
 
-            // Dispatch WhatsApp messages via single job with internal sleep
+            // Dispatch SMS messages via single job with internal sleep
             $peticiones = DB::table('peticiones')->whereIn('id', $ids)->get();
+            Log::info("pagarCuentas: IDs recibidos=" . json_encode($ids) . ", peticiones encontradas=" . $peticiones->count());
+            
             $mensajes = [];
 
             foreach ($peticiones as $p) {
                 if (empty($p->tpagcon)) {
+                    Log::warning("pagarCuentas: peticion ID={$p->id} tiene tpagcon vacio");
                     continue;
                 }
 
@@ -560,6 +577,7 @@ class SolicitudController extends Controller
                     $telefono = '57'.$telefono;
                 }
                 $telefono = str_replace('+', '', $telefono);
+                Log::info("pagarCuentas: peticion ID={$p->id}, telefono={$telefono}");
 
                 $val_cargaone = number_format(floatval($p->cargaone ?? 0), 0, ',', '.');
                 $val_cargatwo = number_format(floatval($p->cargatwo ?? 0), 0, ',', '.');
@@ -590,7 +608,10 @@ class SolicitudController extends Controller
             }
 
             if (! empty($mensajes)) {
+                Log::info("pagarCuentas: enviando " . count($mensajes) . " mensajes al job");
                 EnviarSmsPago::dispatch($mensajes, 3);
+            } else {
+                Log::warning("pagarCuentas: no se generaron mensajes para enviar");
             }
 
             return response()->json([
@@ -2762,6 +2783,161 @@ class SolicitudController extends Controller
             'saldo' => $resultadoSaldo,
             'cuenta_cobro' => $resultadoCuenta,
             'todos_ok' => $resultado['success'] && $resultadoAnticipo['success'] && $resultadoSaldo['success'] && $resultadoCuenta['success'],
+        ]);
+    }
+
+    public function enviarPedidoAuto(Request $request, $id)
+    {
+        if (!$request->ajax()) {
+            return response()->json(['success' => false, 'message' => 'Petición inválida'], 400);
+        }
+
+        $datapi = DB::table('datapi')->where('id', $id)->first();
+
+        if (!$datapi) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontraron datos en datapi para el ID ' . $id,
+            ], 404);
+        }
+
+        $payload = [
+            'tipo_solicitud' => (int) $datapi->tipo_solicitud,
+            'cliente_id' => (int) $datapi->cliente_id,
+            'sede_cliente_id' => null,
+            'division_id' => null,
+            'plataforma_id' => 18,
+            'cantidad_vehiculos' => 1,
+            'responsable_cargue' => 1,
+            'responsable_descargue' => 2,
+            'responsable_seguro' => null,
+            'referencia_cliente' => null,
+            'transportadora_id' => null,
+            'costo_compra' => null,
+            'observacion' => 'Solicitud creada por API',
+            'servicios' => [
+                'cargue' => false,
+                'descargue' => false,
+                'entrada' => false,
+                'auxiliar' => [
+                    'aplica' => false,
+                    'cantidad' => null,
+                    'tipo_servicio_id' => null,
+                    'proveedor' => null,
+                    'observacion' => null,
+                ],
+                'escolta' => [
+                    'aplica' => false,
+                    'cantidad' => null,
+                    'tipo_servicio_id' => null,
+                    'proveedor' => null,
+                    'observacion' => null,
+                ],
+                'acompanamiento' => [
+                    'aplica' => false,
+                    'cantidad' => null,
+                    'tipo_servicio_id' => null,
+                    'proveedor' => null,
+                    'observacion' => null,
+                ],
+                'parada' => [
+                    'aplica' => false,
+                    'cantidad' => null,
+                    'tipo_servicio_id' => null,
+                    'observacion' => null,
+                ],
+                'standby' => [
+                    'aplica' => false,
+                    'cantidad' => null,
+                    'observacion' => null,
+                ],
+            ],
+            'detalles' => [
+                [
+                    'tipo_operacion' => 'G',
+                    'tipo_empaque_id' => 4,
+                    'naturaleza_id' => 1,
+                    'descripcion_producto' => 'Mercancia general',
+                    'tipo_producto_id' => 3435,
+                    'cantidad' => (int) $datapi->cantidad,
+                    'unidad_id' => 1,
+                    'unidad_servicio' => 1,
+                    'cantidad_unidades' => 0,
+                    'valor_declarado' => (int) $datapi->valor_declarado,
+                    'remitente_id' => null,
+                    'sede_remitente_id' => null,
+                    'destinatario_id' => null,
+                    'sede_destinatario_id' => null,
+                    'ciudad_origen_id' => (int) $datapi->ciudad_origen_id,
+                    'ciudad_destino_id' => (int) $datapi->ciudad_destino_id,
+                    'ruta_id' => null,
+                    'tipo_vehiculo_id' => null,
+                    'clase_vehiculo_id' => null,
+                    'tipo_carroceria_id' => null,
+                    'cantidad_vehiculos' => 1,
+                    'fecha_cargue' => $datapi->fecha_cargue,
+                    'hora_cargue' => $datapi->hora_cargue,
+                    'tiempo_cargue' => 4,
+                    'contacto_cargue' => null,
+                    'celular_cargue' => null,
+                    'observacion_cargue' => null,
+                    'fecha_descargue' => $datapi->fecha_descargue,
+                    'hora_descargue' => $datapi->hora_descargue,
+                    'tiempo_descargue' => 4,
+                    'contacto_descargue' => null,
+                    'celular_descargue' => null,
+                    'observacion_descargue' => null,
+                    'tipo_tarifa' => null,
+                    'tarifa_id' => null,
+                    'tarifa' => null,
+                    'contenedor' => [
+                        'devuelve_contenedor' => null,
+                        'patio_id' => null,
+                        'bl' => null,
+                        'booking' => null,
+                        'tipo_contenedor_id' => null,
+                        'tamano' => null,
+                        'naviera_id' => null,
+                        'peso_vacio' => null,
+                    ],
+                ],
+            ],
+        ];
+
+        Log::info('NMV API Payload para ID ' . $id, $payload);
+
+        $nmvService = new \App\Services\NmvApiService();
+        $resultado = $nmvService->crearSolicitud($payload);
+
+        if (!$resultado['success']) {
+            return response()->json([
+                'success' => false,
+                'message' => $resultado['message'],
+            ], 500);
+        }
+
+        $solicitud = $resultado['data']['solicitud'] ?? null;
+        $pedidoNumero = $solicitud ? substr($solicitud, -5) : null;
+
+        if (!$pedidoNumero) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se pudo extraer el número de pedido de la respuesta.',
+            ], 500);
+        }
+
+        DB::table('solicitudes')
+            ->where('id', $id)
+            ->update([
+                'retorno' => $pedidoNumero,
+                'pedido_auto' => true,
+            ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Pedido creado correctamente.',
+            'pedido' => $pedidoNumero,
+            'solicitud_completa' => $solicitud,
         ]);
     }
 }

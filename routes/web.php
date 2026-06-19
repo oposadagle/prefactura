@@ -80,6 +80,7 @@ Route::put('/solicitud/{id}/aprobar', [SolicitudController::class, 'aprobar'])->
 Route::put('/solicitud/{id}/rechazar', [SolicitudController::class, 'rechazar'])->name('solicitud.rechazar');
 Route::put('/solicitud/{id}/verificar', [SolicitudController::class, 'verificar'])->name('solicitud.verificar');
 Route::get('/solicitudes/toggle-trafico/{id}', [SolicitudController::class, 'toggleTrafico'])->name('solicitudes.toggleTrafico');
+Route::post('/solicitud/pedido-auto/{id}', [SolicitudController::class, 'enviarPedidoAuto'])->name('solicitud.pedidoAuto');
 Route::get('/trafico', [SolicitudController::class, 'trafico'])->name('solicitud.trafico');
 Route::get('/sac', [SolicitudController::class, 'sac'])->name('solicitud.sac');
 Route::get('/anticipo', [SolicitudController::class, 'anticipo'])->name('solicitud.anticipo');

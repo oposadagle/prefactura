@@ -548,6 +548,7 @@
                             <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">CONDICION DE PAGO
                             </th>
                             <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">SUCURSAL</th>
+                            <th class="celdas" style="color: #FF55BB;border: 1px solid #0c213a;">PEDIDO_AUTO</th>
                             <th class="celdas" style="color: #FF55BB;border: 1px solid #0c213a;">PEDIDO</th>
                             <th class="celdas" style="color: #FF55BB;border: 1px solid #0c213a;">REMESA</th>
                             <th class="celdas" style="color: #FF55BB;border: 1px solid #0c213a;">MANIFIESTO</th>
@@ -825,13 +826,50 @@
                                 <td class="celdas"
                                     style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                     @can('remesa')
-                                        <a href="#" class="editable" data-type="text" data-name="retorno"
-                                            data-pk="{{ $diario->id }}">
-                                            {{ strToUpper($diario->retorno) }}
-                                        </a>
+                                        @if ($diario->pedido_auto ?? false)
+                                            <button class="btn btn-icon-square-xs py-0 my-0 btn-pedido-auto"
+                                                data-id="{{ $diario->id }}"
+                                                style="background-color: #28a745; cursor: not-allowed;"
+                                                disabled>
+                                                <i class="fas fa-check" style="color: white"></i>
+                                            </button>
+                                        @else
+                                            <button class="btn btn-icon-square-xs py-0 my-0 btn-pedido-auto"
+                                                data-id="{{ $diario->id }}"
+                                                style="background-color: #ffc107;">
+                                                <i class="fas fa-paper-plane" style="color: white"></i>
+                                            </button>
+                                        @endif
                                     @else
-                                        {{ strToUpper($diario->retorno) }}
+                                        @if ($diario->pedido_auto ?? false)
+                                            <button class="btn btn-icon-square-xs py-0 my-0"
+                                                style="background-color: #28a745; cursor: not-allowed;"
+                                                disabled>
+                                                <i class="fas fa-check" style="color: white"></i>
+                                            </button>
+                                        @else
+                                            <button class="btn btn-icon-square-xs py-0 my-0"
+                                                style="background-color: #e0e0e0; cursor: not-allowed;"
+                                                disabled>
+                                                <i class="fas fa-paper-plane" style="color: #999"></i>
+                                            </button>
+                                        @endif
                                     @endcan
+                                </td>
+                                <td class="celdas"
+                                    style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                    @if ($diario->pedido_auto ?? false)
+                                        {{ strToUpper($diario->retorno) }}
+                                    @else
+                                        @can('remesa')
+                                            <a href="#" class="editable" data-type="text" data-name="retorno"
+                                                data-pk="{{ $diario->id }}">
+                                                {{ strToUpper($diario->retorno) }}
+                                            </a>
+                                        @else
+                                            {{ strToUpper($diario->retorno) }}
+                                        @endcan
+                                    @endif
                                 </td>
                                 <td class="celdas"
                                     style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
@@ -2419,6 +2457,75 @@
                 },
                 error: function() {
                     Swal.fire('Error', 'Ocurrió un error en el servidor.', 'error');
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('.btn-pedido-auto').on('click', function(e) {
+            e.preventDefault();
+            var btn = $(this);
+            var id = btn.data('id');
+
+            if (btn.prop('disabled')) {
+                return;
+            }
+
+            Swal.fire({
+                title: '¿Crear pedido automático?',
+                text: 'Se enviará la solicitud a la API NMV y se actualizará el campo PEDIDO.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, crear',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    btn.prop('disabled', true);
+                    btn.css('background-color', '#6c757d');
+                    btn.find('i').removeClass('fa-paper-plane').addClass('fa-spinner fa-spin');
+
+                    $.ajax({
+                        url: '/solicitud/pedido-auto/' + id,
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                btn.css('background-color', '#28a745');
+                                btn.find('i').removeClass('fa-spinner fa-spin').addClass('fa-check');
+
+                                var pedidoCell = btn.closest('tr').find('td').eq(btn.closest('td').index() + 1);
+                                pedidoCell.html(response.pedido);
+
+                                Swal.fire(
+                                    '¡Pedido creado!',
+                                    'Pedido: ' + response.pedido,
+                                    'success'
+                                );
+                            } else {
+                                btn.prop('disabled', false);
+                                btn.css('background-color', '#ffc107');
+                                btn.find('i').removeClass('fa-spinner fa-spin').addClass('fa-paper-plane');
+                                Swal.fire('Error', response.message || 'No se pudo crear el pedido.', 'error');
+                            }
+                        },
+                        error: function(xhr) {
+                            btn.prop('disabled', false);
+                            btn.css('background-color', '#ffc107');
+                            btn.find('i').removeClass('fa-spinner fa-spin').addClass('fa-paper-plane');
+                            var msg = 'Ocurrió un error en el servidor.';
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                msg = xhr.responseJSON.message;
+                            }
+                            Swal.fire('Error', msg, 'error');
+                        }
+                    });
                 }
             });
         });

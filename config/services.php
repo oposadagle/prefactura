@@ -42,4 +42,10 @@ return [
         'sender' => env('INFOBIP_SENDER'),
     ],
 
+    'nmv' => [
+        'api_url' => env('NMV_API_URL', 'https://testmasivo.nmv.app/api'),
+        'username' => env('NMV_API_USERNAME'),
+        'password' => env('NMV_API_PASSWORD'),
+    ],
+
 ];
