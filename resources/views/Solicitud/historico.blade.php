@@ -158,7 +158,7 @@
                                     }
 
                                     $puedeAprobar = $dentroDelPlazoEdicion && $diario->soporte && !$diario->avalado;
-                                    $puedeEditarFinancieros = $dentroDelPlazoEdicion && !$diario->avalado;
+                                    $puedeEditarFinancieros = $dentroDelPlazoEdicion && !$diario->avalado && strToUpper($diario->states) !== 'SERVICIO CANCELADO';
                                 @endphp
                                 <tr style="text-align: center">
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->id }}</td>
@@ -557,38 +557,6 @@
             });
         });
 
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        });
-        $('.editabler').editable({
-            url: "/solicitud/update",
-            type: 'text',
-            emptytext: 'Sin asignar',
-            inputclass: 'editable-costo',
-            success: function(response, newValue) {
-                if (response.success) {
-                    $(this).text(formatNumber(newValue));
-                }
-            },
-            display: function(value, sourceData) {
-                $(this).text(formatNumber(value));
-            }
-        });
-        function formatNumber(value) {
-            value = value.replace(/\D/g, '');
-            return Number(value).toLocaleString('es');
-        }
-        $(document).on('input', '.editable-costo', function() {
-            let value = $(this).val().replace(/\D/g, '');
-            value = Number(value).toLocaleString('es');
-            $(this).val(value);
-        });
-        $(document).on('shown', '.editable', function(e, editable) {
-            $('.editable-costo').trigger('input');
-        });
-
         $(document).on('change', '.soporte-upload', function() {
             var input = this;
             var pk = $(this).data('pk');
@@ -605,6 +573,20 @@
 
             if (file.size > 2 * 1024 * 1024) {
                 Swal.fire('Error', 'El archivo no debe superar los 2MB.', 'error');
+                $(input).val('');
+                return;
+            }
+
+            // Validar que al menos 1 de los 4 campos financieros sea > 0
+            var row = $('a.editabler[data-pk="' + pk + '"]').closest('tr');
+            var parseNum = function(name) {
+                var text = row.find('a[data-name="' + name + '"]').text().trim();
+                if (!text || text === 'Sin asignar') return 0;
+                return parseFloat(text.replace(/\./g, '').replace(/,/g, '.')) || 0;
+            };
+            var total = parseNum('cargaone') + parseNum('cargatwo') + parseNum('standby') + parseNum('costo_desplazamiento');
+            if (total <= 0) {
+                Swal.fire('Error', 'Debe ingresar al menos un valor en los campos de cargue, descargue, standby o desplazamiento antes de cargar el soporte.', 'error');
                 $(input).val('');
                 return;
             }
@@ -637,17 +619,53 @@
                                 'El soporte ha sido cargado correctamente.',
                                 'success');
                         } else {
-                            Swal.fire('Error', 'No se pudo guardar el soporte.',
+                            Swal.fire('Error', response.message || 'No se pudo guardar el soporte.',
                                 'error');
                         }
                     },
-                    error: function() {
-                        Swal.fire('Error', 'Ocurrió un error en el servidor.', 'error');
+                    error: function(xhr) {
+                        var msg = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Ocurrió un error en el servidor.';
+                        Swal.fire('Error', msg, 'error');
                     }
                 });
             };
             reader.readAsDataURL(file);
         });
+    });
+</script>
+
+<script>
+    $.fn.editable.defaults.mode = "inline";
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    });
+    $('.editabler').editable({
+        url: "/solicitud/update",
+        type: 'text',
+        emptytext: 'Sin asignar',
+        inputclass: 'editable-costo',
+        success: function(response, newValue) {
+            if (response.success) {
+                $(this).text(formatNumber(newValue));
+            }
+        },
+        display: function(value, sourceData) {
+            $(this).text(formatNumber(value));
+        }
+    });
+    function formatNumber(value) {
+        value = value.replace(/\D/g, '');
+        return Number(value).toLocaleString('es');
+    }
+    $(document).on('input', '.editable-costo', function() {
+        let value = $(this).val().replace(/\D/g, '');
+        value = Number(value).toLocaleString('es');
+        $(this).val(value);
+    });
+    $(document).on('shown', '.editable', function(e, editable) {
+        $('.editable-costo').trigger('input');
     });
 </script>
 

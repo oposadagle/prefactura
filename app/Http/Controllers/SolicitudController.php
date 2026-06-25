@@ -2184,6 +2184,24 @@ class SolicitudController extends Controller
                 'soporte' => 'required|string',
             ]);
 
+            $solicitud = DB::table('solicitudes')->where('id', $request->pk)->first();
+
+            if (! $solicitud) {
+                return response()->json(['success' => false, 'message' => 'Solicitud no encontrada.'], 404);
+            }
+
+            $cargaone = floatval($solicitud->cargaone ?? 0);
+            $cargatwo = floatval($solicitud->cargatwo ?? 0);
+            $standby = floatval($solicitud->standby ?? 0);
+            $desplazamiento = floatval($solicitud->costo_desplazamiento ?? 0);
+
+            if (($cargaone + $cargatwo + $standby + $desplazamiento) <= 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No se puede cargar el soporte. Al menos uno de los campos (cargue, descargue, standby o desplazamiento) debe ser mayor a 0.',
+                ], 422);
+            }
+
             DB::table('solicitudes')
                 ->where('id', $request->pk)
                 ->update(['soporte' => $request->soporte]);

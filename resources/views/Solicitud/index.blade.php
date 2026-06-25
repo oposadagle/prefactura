@@ -2391,6 +2391,20 @@
                 return;
             }
 
+            // Validar que al menos 1 de los 4 campos financieros sea > 0
+            var row = $('a.editabler[data-pk="' + pk + '"]').closest('tr');
+            var parseNum = function(name) {
+                var text = row.find('a[data-name="' + name + '"]').text().trim();
+                if (!text || text === 'Sin asignar') return 0;
+                return parseFloat(text.replace(/\./g, '').replace(/,/g, '.')) || 0;
+            };
+            var total = parseNum('cargaone') + parseNum('cargatwo') + parseNum('standby') + parseNum('costo_desplazamiento');
+            if (total <= 0) {
+                Swal.fire('Error', 'Debe ingresar al menos un valor en los campos de cargue, descargue, standby o desplazamiento antes de cargar el soporte.', 'error');
+                $(input).val('');
+                return;
+            }
+
             var reader = new FileReader();
             reader.onload = function(e) {
                 var base64 = e.target.result;
@@ -2419,12 +2433,13 @@
                                 'El soporte ha sido cargado correctamente.',
                                 'success');
                         } else {
-                            Swal.fire('Error', 'No se pudo guardar el soporte.',
+                            Swal.fire('Error', response.message || 'No se pudo guardar el soporte.',
                                 'error');
                         }
                     },
-                    error: function() {
-                        Swal.fire('Error', 'Ocurrió un error en el servidor.', 'error');
+                    error: function(xhr) {
+                        var msg = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Ocurrió un error en el servidor.';
+                        Swal.fire('Error', msg, 'error');
                     }
                 });
             };
