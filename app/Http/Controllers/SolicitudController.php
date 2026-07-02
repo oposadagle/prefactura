@@ -1846,7 +1846,17 @@ class SolicitudController extends Controller
 
         $fields = [
             'fecha_solicitud' => 'required',
-            'fecha_cargue' => 'required|date|after_or_equal:today',
+            'fecha_cargue' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    $timezone = 'America/Bogota';
+                    $today = Carbon::now($timezone)->toDateString();
+                    if ($value < $today) {
+                        $fail('La fecha de cargue debe ser igual o posterior a la fecha actual.');
+                    }
+                },
+            ],
             'hora_cargue' => [
                 'required',
                 function ($attribute, $value, $fail) use ($request) {
