@@ -292,6 +292,7 @@
                                         aria-label="Floating label select example">
                                         <option selected disabled>Seleccionar</option>
                                         <option>Derney Santana</option>
+                                        <option>Diana Quintero</option>
                                         <option>GLE</option>
                                         <option>Jessica Motta</option>
                                         <option>Juan Medina</option>
