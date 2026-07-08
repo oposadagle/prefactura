@@ -157,7 +157,7 @@
                                         );
                                     }
 
-                                    $puedeAprobar = $dentroDelPlazoEdicion && $diario->soporte && !$diario->avalado;
+                                    $puedeAprobar = $diario->soporte && !$diario->avalado;
                                     $puedeEditarFinancieros = $dentroDelPlazoEdicion && !$diario->avalado && strToUpper($diario->states) !== 'SERVICIO CANCELADO';
                                 @endphp
                                 <tr style="text-align: center">
