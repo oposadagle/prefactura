@@ -1411,7 +1411,8 @@ class SolicitudController extends Controller
             'SIMONIZ SA',
             'GRUPO LOGISTICO ESPECIALIZADO',
             'AUTOMOTORES COMERCIALES AUTOCOM S.A',
-            'DISCOLPARTES S.A.S.'
+            'DISCOLPARTES S.A.S.',
+            'DISTRIBUIDORA TOYOTA SAS'
         ];
 
         // Primero definir la función de limpieza fuera del scope
@@ -1942,7 +1943,8 @@ class SolicitudController extends Controller
                 'SIMONIZ SA',
                 'GRUPO LOGISTICO ESPECIALIZADO',
                 'AUTOMOTORES COMERCIALES AUTOCOM S.A',
-                'DISCOLPARTES S.A.S.'
+                'DISCOLPARTES S.A.S.',
+                'DISTRIBUIDORA TOYOTA SAS'
             ];
 
             $guia = null;
@@ -2104,7 +2106,8 @@ class SolicitudController extends Controller
                             'SIMONIZ SA',
                             'GRUPO LOGISTICO ESPECIALIZADO',
                             'AUTOMOTORES COMERCIALES AUTOCOM S.A',
-                            'DISCOLPARTES S.A.S.'
+                            'DISCOLPARTES S.A.S.',
+                            'DISTRIBUIDORA TOYOTA SAS'
                         ];
 
                         if (! in_array($cliente, $excluidos)) {
