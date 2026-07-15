@@ -73,7 +73,7 @@ C<x-header />
                     <div class="container">
                         <div class="row gx-1 justify-content-between">
 
-                            <div class="col-lg-3 col-md-12">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
                                     <select class="form-select" id="CLIENTE" name="cliente" autocomplete="off"
                                         aria-label="Floating label select example">
@@ -86,7 +86,7 @@ C<x-header />
                                 </div>
                             </div>
 
-                            <div class="col-lg-3 col-md-3">                                
+                            <div class="col-lg-3 col-md-6">                                
                                 <div class="form-floating mb-3 mx-3">
                                     <input type="datetime-local" class="form-control" id="datetime" name="fecha_solicitud" autocomplete="off">
                                     <label for="ejecutivo">Fecha de solicitud</label>
@@ -129,7 +129,7 @@ C<x-header />
                     <div class="container">
                         <div class="row gx-1 justify-content-between">
 
-                            <div class="col-lg-3 col-md-3">                                
+                            <div class="col-lg-3 col-md-6">                                
                                 <div class="form-floating mb-3 mx-3">
                                     <select class="form-select" id="tipo_trayecto" name="trayecto" autocomplete="off"
                                         aria-label="Floating label select example">
@@ -147,25 +147,21 @@ C<x-header />
                                 </div>
                             </div>
 
-                            <div class="col-lg-3 col-md-3">                                
+                            <div class="col-lg-3 col-md-6">                                
                                 <div class="form-floating mb-3 mx-3">
                                     <select class="form-select" id="TIPO_VEHICULO" name="tipo_vehiculo" autocomplete="off"
                                         aria-label="Floating label select example">
                                         <option selected disabled>Seleccionar</option>
-                                        <option>PATINETA 9 A 15_CONTENEDOR</option>
-                                        <option>PATINETA 9 A 18_FURGONADO</option>
-                                        <option>PATINETA PODEROSA_CONTENEDOR</option>
-                                        <option>PATINETA PODEROSA_FURGON,CARROZADO,PLANCHON</option>
-                                        <option>TRACTOMULA_CONTENEDOR_DOS EJES</option>
-                                        <option>TRACTOMULA_CARRROZADO,PLANCHON_DOS EJES</option>
-                                        <option>TRACTOMULA_CONTENEDOR_TRES EJES</option>
-                                        <option>TRACTOMULA_CARROZADO,PLANCHON_TRES EJES</option>
-                                        <option>CARRY</option>
-                                        <option>NHR</option>
-                                        <option>NKR</option>
-                                        <option>SENCILLO</option>
-                                        <option>TURBO</option>
-                                        <option>TURBO SENCILLO</option>
+                                        <option value="VAN 300">VAN 300</option>
+                                        <option value="NHR">NHR</option>
+                                        <option value="TURBO">TURBO</option>
+                                        <option value="TBS PBV 8,000 A 9,000">TBS PBV 8,000 A 9,000</option>
+                                        <option value="TBS PBV 9,000 A 10,500">TBS PBV 9,000 A 10,500</option>
+                                        <option value="SENCILLO PBV Mas de 10,500kg">SENCILLO PBV Mas de 10,500kg</option>
+                                        <option value="TRACTOCAMIÓN 2S2 10 TN">TRACTOCAMIÓN 2S2 10 TN</option>
+                                        <option value="TRACTOCAMIÓN 2S2 11 A 15 TN">TRACTOCAMIÓN 2S2 11 A 15 TN</option>
+                                        <option value="TRACTOCAMIÓN 2S3  EJE 21 TN">TRACTOCAMIÓN 2S3  EJE 21 TN</option>
+                                        <option value="TRACTOMULA TRES EJES">TRACTOMULA TRES EJES</option>
                                     </select>
                                     <label for="ejecutivo">Tipo de vehiculo</label>
                                 </div>
@@ -173,17 +169,17 @@ C<x-header />
 
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
-                                    <input type="text" class="form-control" id="CAPACIDAD" name="capacidad" autocomplete="off">
+                                    <input type="text" class="form-control" id="CAPACIDAD" name="capacidad" autocomplete="off" readonly>
                                     <label for="cliente">Capacidad de carga (Kg)</label>                                    
                                 </div>
                             </div>
 
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
-                                    <input type="text" class="form-control" id="SISETAC" name="sisetac" autocomplete="off">
-                                    <label for="sisetac">Sisetac ($)</label>                                    
+                                    <input type="text" class="form-control" id="COSTO" name="costo" autocomplete="off">
+                                    <label for="cliente">Base cotización ($)</label>                                    
                                 </div>
-                            </div>                                                       
+                            </div> 
 
                         </div>
                     </div>
@@ -192,13 +188,6 @@ C<x-header />
                     <!--container 3-->
                     <div class="container">
                         <div class="row gx-1 justify-content-between">
-
-                            <div class="col-lg-3 col-md-6">
-                                <div class="form-floating mb-3 mx-3">
-                                    <input type="text" class="form-control" id="COSTO" name="costo" autocomplete="off">
-                                    <label for="cliente">Base cotización ($)</label>                                    
-                                </div>
-                            </div> 
 
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
@@ -214,7 +203,7 @@ C<x-header />
                                 </div>
                             </div>
 
-                            <div class="col-lg-3 col-md-3">                                
+                            <div class="col-lg-3 col-md-6">                                
                                 <div class="form-floating mb-3 mx-3">
                                     <select class="form-select" id="TIPO_CARROCERIA" name="tipo_carroceria" autocomplete="off"
                                         aria-label="Floating label select example">
@@ -228,7 +217,23 @@ C<x-header />
                                     </select>
                                     <label for="ejecutivo">Tipo de carroceria</label>
                                 </div>
-                            </div>                                                     
+                            </div>
+
+                            <div class="col-lg-3 col-md-6">                                
+                                <div class="form-floating mb-3 mx-3">
+                                    <select class="form-select" id="RESPONSABLE" name="responsable" autocomplete="off"
+                                        aria-label="Floating label select example">
+                                        <option selected disabled>Seleccionar</option>
+                                        <option>MASIVOS BOGOTA</option>
+                                        <option>MASIVOS CALI</option>
+                                        <option>MASIVOS MEDELLIN</option>
+                                        <option>MASIVOS COSTA</option>
+                                        <option>OPERACIONES</option>
+                                        <option>INTERNACIONAL</option>
+                                    </select>
+                                    <label for="ejecutivo">Responsable</label>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
@@ -236,47 +241,17 @@ C<x-header />
                     <br>
                     <!--container 4-->
                     <div class="container">
-                        <div class="row gx-1 justify-content-between">                            
-
-                            <div class="col-lg-3 col-md-3">                                
-                                <div class="form-floating mb-3 mx-3">
-                                    <select class="form-select" id="ESTADO_COTIZACION" name="estado_cotizacion" autocomplete="off"
-                                        aria-label="Floating label select example">
-                                        <option selected disabled>Seleccionar</option>
-                                        <option>APROBADO</option>
-                                        <option>COMERCIAL</option>
-                                        <option>COTIZACION</option>                                        
-                                        <option>NO APROBADO</option>
-                                    </select>
-                                    <label for="ejecutivo">Estado de cotizacion</label>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-3 col-md-3">                                
-                                <div class="form-floating mb-3 mx-3">
-                                    <select class="form-select" id="RESPONSABLE" name="responsable" autocomplete="off"
-                                        aria-label="Floating label select example">
-                                        <option selected disabled>Seleccionar</option>
-                                        <option>MASIVOS CALI</option>
-                                        <option>MASIVOS BOGOTA</option>
-                                        <option>MASIVOS COSTA</option>
-                                        <option>MASIVOS MEDELLIN</option>
-                                        <option>PROVEEDOR HUMADEA</option>
-                                        <option>PROVEEDOR LOGYSTEEL</option>
-                                        <option>PROVEEDOR LINKARGA</option>
-                                    </select>
-                                    <label for="ejecutivo">Responsable</label>
-                                </div>
-                            </div>
+                        <div class="row gx-1 justify-content-between">
 
                             <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
-                                    <input type="number" min="0" class="form-control" id="COSTO_ADICIONAL" name="costo_adicional" autocomplete="off">
+                                    <input type="text" class="form-control" id="COSTO_ADICIONAL" name="costo_adicional_display" autocomplete="off">
+                                    <input type="hidden" id="COSTO_ADICIONAL_REAL" name="costo_adicional">
                                     <label for="cliente">Otros costos</label>                                    
                                 </div>
                             </div>
 
-                            <div class="col-lg-3 col-md-3">                                
+                            <div class="col-lg-3 col-md-6">                                
                                 <div class="form-floating mb-3 mx-3">
                                     <select class="form-select" id="QUIEN_SOLICITA" name="quien_solicita" autocomplete="off"
                                         aria-label="Floating label select example">
@@ -298,6 +273,7 @@ C<x-header />
                                         <option>LILIANA SANCHEZ / BOGOTA / COMERCIAL</option>
                                         <option>LINA GIRALDO / BOGOTA / OPERACIONES</option>
                                         <option>MAGALY GIL / BOGOTA / MASIVOS</option>
+                                        <option>MARIANA / BOGOTA / MASIVOS</option>
                                         <option>MAICOL PALOMINO / BARRANQUILLA / MASIVOS</option>
                                         <option>MARTHA DUARTE / BOGOTA / MASIVOS</option>
                                         <option>MASIVOS / BOGOTA / MASIVOS</option>
@@ -321,7 +297,7 @@ C<x-header />
                                 </div>
                             </div> 
                             
-                            <div class="col-lg-3 col-md-6 mt-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
                                     <select class="form-select" id="CANAL" name="canal" autocomplete="off">
                                         <option selected disabled>Seleccionar</option>
@@ -332,26 +308,33 @@ C<x-header />
                                 </div>
                             </div>
 
-                            <div class="col-lg-3 col-md-6 mt-4">
+                            <div class="col-lg-3 col-md-6">
                                 <div class="form-floating mb-3 mx-3">
                                     <select class="form-select" id="TIPO_COT" name="tipo" autocomplete="off">
                                         <option selected disabled>Seleccionar</option>
-                                        <option value="ARCHIVO CONSOLIDADO">ARCHIVO CONSOLIDADO</option>
                                         <option value="MULTIPARADA">MULTIPARADA</option>
-                                        <option value="RUTA LOGICA">RUTA LOGICA</option>
-                                        <option value="UNO A UNO">UNO A UNO</option>
+                                        <option value="PUNTO A PUNTO">PUNTO A PUNTO</option>
+                                        <option value="RUTA DISTRIBUCIÓN">RUTA DISTRIBUCIÓN</option>
                                     </select>
                                     <label for="TIPO_COT">Tipo de cotización</label>
                                 </div>
                             </div>
 
-                            <div class="col-lg-6 col-md-12 mt-4">
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <!--container 5 - Observaciones-->
+                    <div class="container">
+                        <div class="row gx-1 justify-content-between">
+
+                            <div class="col-lg-6 col-md-12">
                                 <div class="form-floating mb-3 mx-3">
                                     <input type="text" class="form-control" id="OBSERVACIONES" name="observaciones" autocomplete="off">
                                     <label for="OBSERVACIONES">Observaciones</label>                                    
                                 </div>
                             </div>
-
 
                         </div>
                     </div>
@@ -498,6 +481,26 @@ C<x-header />
             });
         }
 
+        const capacidadMap = {
+            'VAN 300': 600,
+            'NHR': 2500,
+            'TURBO': 4500,
+            'TBS PBV 8,000 A 9,000': 5000,
+            'TBS PBV 9,000 A 10,500': 6500,
+            'SENCILLO PBV Mas de 10,500kg': 8500,
+            'TRACTOCAMIÓN 2S2 10 TN': 10000,
+            'TRACTOCAMIÓN 2S2 11 A 15 TN': 15000,
+            'TRACTOCAMIÓN 2S3  EJE 21 TN': 21000,
+            'TRACTOMULA TRES EJES': 30000
+        };
+
+        document.getElementById('TIPO_VEHICULO').addEventListener('change', function() {
+            const capacidad = capacidadMap[this.value];
+            if (capacidad) {
+                document.getElementById('CAPACIDAD').value = capacidad.toLocaleString('es');
+            }
+        });
+
         document.getElementById('CAPACIDAD').addEventListener('input', function (e) {
             let value = e.target.value.replace(/\D/g, '');
             value = Number(value).toLocaleString('es');
@@ -508,15 +511,16 @@ C<x-header />
             value = Number(value).toLocaleString('es');
             e.target.value = value;
         });
-        document.getElementById('SISETAC').addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
-            value = Number(value).toLocaleString('es');
-            e.target.value = value;
-        });
         document.getElementById('COSTO_NEGOCIO').addEventListener('input', function (e) {
             let value = e.target.value.replace(/\D/g, '');
             value = Number(value).toLocaleString('es');
             e.target.value = value;
+        });
+
+        document.getElementById('COSTO_ADICIONAL').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            document.getElementById('COSTO_ADICIONAL_REAL').value = value;
+            e.target.value = value ? Number(value).toLocaleString('es') : '';
         });
     });
 </script>

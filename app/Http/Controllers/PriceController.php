@@ -30,7 +30,6 @@ class PriceController extends Controller
         $request->merge([
             'capacidad' => str_replace('.', '', $request->input('capacidad')),
             'costo' => str_replace('.', '', $request->input('costo')),
-            'sisetac'=> str_replace('.', '', $request->input('sisetac')),
             'costo_negocio' => str_replace('.', '', $request->input('costo_negocio'))
         ]);
         $fields = [
@@ -41,13 +40,10 @@ class PriceController extends Controller
             'trayecto' => 'required',            
             'tipo_vehiculo' => 'required',
             'capacidad' => 'required|numeric|min:500|max:32000',
-            'sisetac'=> 'required|numeric',
             'costo' => 'required|numeric',            
             'puntos' => 'required|numeric',
             'costo_negocio' => 'required|numeric',
-            //'codigo_seguimiento' => 'required|numeric',
             'tipo_carroceria' => 'required',
-            'estado_cotizacion' => 'required',
             'responsable' => 'required',
             'costo_adicional' => 'required|numeric',
             'quien_solicita' => 'required',
@@ -74,6 +70,8 @@ class PriceController extends Controller
             $dataPrice = request()->except(['_token']);
             $dataPrice['created_at'] = Carbon::now();
             $dataPrice['updated_at'] = Carbon::now();
+            $dataPrice['sisetac'] = $dataPrice['sisetac'] ?? 0;
+            $dataPrice['estado_cotizacion'] = $dataPrice['estado_cotizacion'] ?? 'COTIZACION';
             DB::table('prices')->insert($dataPrice);
 
             if ($request->wantsJson()) {
