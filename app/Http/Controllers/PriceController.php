@@ -11,10 +11,18 @@ use Illuminate\Http\Request;
 
 class PriceController extends Controller
 {    
-    public function index()
+    public function index(Request $request)
     {
-        $diarias = DB::table('prices')->orderBy('id','asc')->get();
-        return view('Price.index', compact('diarias'));
+        $year = $request->input('year', Carbon::now()->year);
+        $month = $request->input('month', Carbon::now()->month);
+        
+        $diarias = DB::table('prices')
+            ->whereYear('fecha_solicitud', $year)
+            ->whereMonth('fecha_solicitud', $month)
+            ->orderBy('id','asc')
+            ->get();
+            
+        return view('Price.index', compact('diarias', 'year', 'month'));
     }
 
     public function create()
@@ -118,25 +126,15 @@ class PriceController extends Controller
 
     public function prices(Request $request)
     {
-        $monthYear = $request->input('month_year'); // Formato esperado: YYYY-MM
+        $year = $request->input('year');
+        $month = $request->input('month');
 
-        // Validar que el formato sea correcto
-        if (!preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $monthYear)) {
-            return redirect()->back()->withErrors(['month_year' => 'Formato de mes y año inválido']);
+        if (!$year || !$month || !is_numeric($year) || !is_numeric($month) || $month < 1 || $month > 12) {
+            return redirect()->back()->withErrors(['date' => 'Debe seleccionar año y mes válidos']);
         }
     
-        // Separar año y mes
-        [$year, $month] = explode('-', $monthYear);
-    
-        // Verificar que los valores sean válidos
-        if (!checkdate($month, 1, $year)) {
-            return redirect()->back()->withErrors(['month_year' => 'Fecha inválida']);
-        }
-    
-        // Generar el nombre del archivo dinámicamente
         $filename = 'cotizaciones_' . $year . '_' . str_pad($month, 2, '0', STR_PAD_LEFT) . '.xlsx';
     
-        // Descargar el archivo usando los parámetros
         return Excel::download(new PricesExport($year, $month), $filename);
     }
 

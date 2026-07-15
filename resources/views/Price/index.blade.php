@@ -14,43 +14,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center m-2">
                 <div class="d-flex">
-                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px"
-                        height="24px" viewBox="0 0 24 24" version="1.1">
-                        <g id="surface1">
-                            <path
-                                style=" stroke:none;fill-rule:nonzero;fill:rgb(100%,75.686275%,5.098039%);fill-opacity:1;"
-                                d="M 22.667969 2 C 22.667969 1.632812 22.371094 1.332031 22 1.332031 L 2 1.332031 C 1.632812 1.332031 1.332031 1.628906 1.332031 2 L 1.332031 4.851562 L 22.667969 4.851562 Z M 22.667969 2 " />
-                            <path style=" stroke:none;fill-rule:nonzero;fill:rgb(100%,100%,100%);fill-opacity:1;"
-                                d="M 9.566406 22.664062 L 22 22.664062 C 22.367188 22.664062 22.667969 22.367188 22.667969 21.996094 L 22.667969 6.1875 L 9.566406 6.1875 Z M 9.566406 22.664062 " />
-                            <path
-                                style=" stroke:none;fill-rule:nonzero;fill:rgb(33.72549%,67.45098%,87.843137%);fill-opacity:1;"
-                                d="M 1.332031 6.1875 L 1.332031 21.996094 C 1.332031 22.363281 1.628906 22.664062 2 22.664062 L 9.566406 22.664062 L 9.566406 6.1875 Z M 1.332031 6.1875 " />
-                            <path
-                                style=" stroke:none;fill-rule:nonzero;fill:rgb(9.803922%,30.980392%,50.980392%);fill-opacity:1;"
-                                d="M 22 0 L 2 0 C 0.898438 0 0.00390625 0.898438 0.00390625 2 L 0.00390625 21.996094 C 0.00390625 23.101562 0.898438 24 2 24 L 22 24 C 23.101562 24 23.996094 23.101562 23.996094 22 L 23.996094 2 C 23.996094 0.898438 23.101562 0 22 0 Z M 22.667969 21.996094 C 22.667969 22.363281 22.371094 22.664062 22 22.664062 L 2 22.664062 C 1.632812 22.664062 1.332031 22.367188 1.332031 21.996094 L 1.332031 6.1875 L 22.667969 6.1875 Z M 1.332031 2 C 1.332031 1.632812 1.628906 1.332031 2 1.332031 L 22 1.332031 C 22.367188 1.332031 22.667969 1.628906 22.667969 2 L 22.667969 4.851562 L 1.332031 4.851562 Z M 1.332031 2 " />
-                            <path
-                                style=" stroke:none;fill-rule:nonzero;fill:rgb(9.803922%,30.980392%,50.980392%);fill-opacity:1;"
-                                d="M 5.738281 16.425781 L 3.976562 16.425781 C 3.609375 16.425781 3.308594 16.71875 3.308594 17.09375 C 3.308594 17.460938 3.605469 17.761719 3.976562 17.761719 L 4.894531 17.761719 L 4.894531 18.195312 C 4.894531 18.5625 5.191406 18.863281 5.5625 18.863281 C 5.933594 18.863281 6.230469 18.566406 6.230469 18.195312 L 6.230469 17.695312 C 7.136719 17.476562 7.820312 16.65625 7.820312 15.683594 C 7.820312 14.542969 6.890625 13.609375 5.738281 13.609375 L 5.390625 13.613281 C 4.980469 13.613281 4.648438 13.28125 4.648438 12.871094 C 4.648438 12.460938 4.980469 12.128906 5.390625 12.128906 L 7.15625 12.128906 C 7.523438 12.128906 7.824219 11.832031 7.824219 11.460938 C 7.824219 11.09375 7.527344 10.792969 7.15625 10.792969 L 6.238281 10.792969 L 6.238281 10.359375 C 6.238281 9.992188 5.941406 9.691406 5.570312 9.691406 C 5.203125 9.691406 4.902344 9.988281 4.902344 10.359375 L 4.902344 10.855469 C 3.996094 11.078125 3.3125 11.894531 3.3125 12.867188 C 3.3125 14.007812 4.242188 14.941406 5.390625 14.941406 L 5.738281 14.9375 C 6.152344 14.9375 6.484375 15.269531 6.484375 15.679688 C 6.484375 16.09375 6.148438 16.425781 5.738281 16.425781 Z M 5.738281 16.425781 " />
-                            <path
-                                style=" stroke:none;fill-rule:nonzero;fill:rgb(9.803922%,30.980392%,50.980392%);fill-opacity:1;"
-                                d="M 15.578125 2.550781 L 14.328125 2.550781 C 13.960938 2.550781 13.660156 2.84375 13.660156 3.21875 C 13.660156 3.585938 13.957031 3.882812 14.328125 3.882812 L 15.578125 3.882812 C 15.945312 3.882812 16.246094 3.589844 16.246094 3.21875 C 16.242188 2.847656 15.945312 2.550781 15.578125 2.550781 Z M 15.578125 2.550781 " />
-                            <path
-                                style=" stroke:none;fill-rule:nonzero;fill:rgb(9.803922%,30.980392%,50.980392%);fill-opacity:1;"
-                                d="M 20.433594 2.550781 L 19.183594 2.550781 C 18.816406 2.550781 18.515625 2.84375 18.515625 3.21875 C 18.515625 3.585938 18.8125 3.882812 19.183594 3.882812 L 20.433594 3.882812 C 20.800781 3.882812 21.101562 3.589844 21.101562 3.21875 C 21.097656 2.847656 20.800781 2.550781 20.433594 2.550781 Z M 20.433594 2.550781 " />
-                            <path
-                                style=" stroke:none;fill-rule:nonzero;fill:rgb(9.803922%,30.980392%,50.980392%);fill-opacity:1;"
-                                d="M 11.734375 9.71875 L 20.492188 9.71875 C 20.859375 9.71875 21.160156 9.421875 21.160156 9.050781 C 21.160156 8.683594 20.863281 8.382812 20.492188 8.382812 L 11.734375 8.382812 C 11.367188 8.382812 11.066406 8.679688 11.066406 9.050781 C 11.0625 9.417969 11.367188 9.71875 11.734375 9.71875 Z M 11.734375 9.71875 " />
-                            <path
-                                style=" stroke:none;fill-rule:nonzero;fill:rgb(9.803922%,30.980392%,50.980392%);fill-opacity:1;"
-                                d="M 11.734375 13.257812 L 20.492188 13.257812 C 20.859375 13.257812 21.160156 12.960938 21.160156 12.589844 C 21.160156 12.21875 20.863281 11.921875 20.492188 11.921875 L 11.734375 11.921875 C 11.367188 11.921875 11.066406 12.21875 11.066406 12.589844 C 11.066406 12.960938 11.367188 13.257812 11.734375 13.257812 Z M 11.734375 13.257812 " />
-                            <path
-                                style=" stroke:none;fill-rule:nonzero;fill:rgb(9.803922%,30.980392%,50.980392%);fill-opacity:1;"
-                                d="M 11.734375 16.804688 L 20.492188 16.804688 C 20.859375 16.804688 21.160156 16.507812 21.160156 16.136719 C 21.160156 15.765625 20.863281 15.46875 20.492188 15.46875 L 11.734375 15.46875 C 11.367188 15.46875 11.066406 15.765625 11.066406 16.136719 C 11.066406 16.507812 11.367188 16.804688 11.734375 16.804688 Z M 11.734375 16.804688 " />
-                            <path
-                                style=" stroke:none;fill-rule:nonzero;fill:rgb(9.803922%,30.980392%,50.980392%);fill-opacity:1;"
-                                d="M 11.734375 20.347656 L 16.953125 20.347656 C 17.320312 20.347656 17.621094 20.050781 17.621094 19.679688 C 17.621094 19.3125 17.324219 19.011719 16.953125 19.011719 L 11.734375 19.011719 C 11.367188 19.011719 11.066406 19.308594 11.066406 19.679688 C 11.0625 20.046875 11.367188 20.347656 11.734375 20.347656 Z M 11.734375 20.347656 " />
-                        </g>
-                    </svg>
+                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 505 505" xml:space="preserve" width="24px" height="24px" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle style="fill:#FE252D;" cx="252.5" cy="252.5" r="252.5"></circle> <path style="fill:#FFD05B;" d="M410.5,114.6h-316c-2.2,0-4,1.8-4,4v74.7c0,2.2,1.8,4,4,4h316c2.2,0,4-1.8,4-4v-74.7 C414.5,116.4,412.7,114.6,410.5,114.6z"></path> <rect x="108.8" y="135" style="fill:#324A5E;" width="287.5" height="42"></rect> <polygon style="fill:#EDF2F2;" points="161.4,389.9 162.5,389.9 174.9,377.5 187.3,389.9 188.4,389.9 200.7,377.5 213.1,389.9 214.2,389.9 226.6,377.5 239,389.9 240.1,389.9 252.5,377.5 264.9,389.9 266,389.9 278.4,377.5 290.8,389.9 291.9,389.9 304.3,377.5 316.6,389.9 317.7,389.9 330.1,377.5 342.5,389.9 343.6,389.9 356,377.5 365.3,386.7 365.3,156 139.7,156 139.7,386.7 149,377.5 "></polygon> <g> <rect x="177.1" y="213.4" style="fill:#4CDBC4;" width="150.9" height="14"></rect> <rect x="177.1" y="257" style="fill:#4CDBC4;" width="150.9" height="14"></rect> <rect x="177.1" y="300.5" style="fill:#4CDBC4;" width="90.6" height="14"></rect> </g> </g></svg>
                     <h4 class="card-title" style="margin-left: 10px;">LISTA DE COTIZACIONES</h4>
                 </div>
 
@@ -72,29 +36,21 @@
                         12 => 'Diciembre',
                     ];
 
-                    // Obtener los últimos 12 meses desde la fecha actual
-                    $last12Months = collect();
-                    $currentDate = Carbon::now();
-
-                    for ($i = 0; $i < 12; $i++) {
-                        $last12Months->push([
-                            'month' => $currentDate->month,
-                            'year' => $currentDate->year,
-                            'label' => $months[$currentDate->month] . ' ' . $currentDate->year,
-                        ]);
-                        $currentDate->subMonth();
-                    }
+                    $currentYear = Carbon::now()->year;
+                    $years = [$currentYear, $currentYear - 1, $currentYear - 2];
                 @endphp
 
-                <form action="{{ route('price.prices') }}" method="GET" class="d-flex">
-                    <select class="form-select" aria-label="Default select example" name="month_year" id="month_year">
-                        @foreach ($last12Months as $monthData)
-                            <option value="{{ $monthData['year'] }}-{{ $monthData['month'] }}">
-                                {{ $monthData['label'] }}
-                            </option>
+                <form action="{{ route('price.prices') }}" method="GET" class="d-flex" id="downloadForm">
+                    <select class="form-select" name="year" id="year_select" style="margin-right: 10px;" required>
+                        <option value="" disabled>Año</option>
+                        @foreach ($years as $y)
+                            <option value="{{ $y }}" {{ $year == $y ? 'selected' : '' }}>{{ $y }}</option>
                         @endforeach
                     </select>
-                    <button type="submit" class="btn btn-outline-primary d-flex"
+                    <select class="form-select" name="month" id="month_select" required>
+                        <option value="" disabled>Mes</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary d-flex" id="download_btn"
                         style="margin-left:10px;font-size: 12px;font-family: Titillium Web;font-weight: 700;">
                         <svg style="margin-right: 6px;" width="16" height="16" viewBox="0 0 32 32"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -349,6 +305,65 @@
     function confirmDelete() {
         return confirm('¿Estás seguro de que deseas eliminar este registro?');
     }
+</script>
+
+<script>
+    const months = {
+        1: 'Enero',
+        2: 'Febrero',
+        3: 'Marzo',
+        4: 'Abril',
+        5: 'Mayo',
+        6: 'Junio',
+        7: 'Julio',
+        8: 'Agosto',
+        9: 'Septiembre',
+        10: 'Octubre',
+        11: 'Noviembre',
+        12: 'Diciembre'
+    };
+
+    const yearSelect = document.getElementById('year_select');
+    const monthSelect = document.getElementById('month_select');
+    const selectedYear = {{ $year }};
+    const selectedMonth = {{ $month }};
+
+    function populateMonths(year, preselectMonth) {
+        monthSelect.innerHTML = '<option value="" disabled>Mes</option>';
+        
+        const currentYear = new Date().getFullYear();
+        const currentMonth = new Date().getMonth() + 1;
+        const maxMonth = (parseInt(year) === currentYear) ? currentMonth : 12;
+        
+        for (let i = 1; i <= maxMonth; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = months[i];
+            if (i === preselectMonth) {
+                option.selected = true;
+            }
+            monthSelect.appendChild(option);
+        }
+    }
+
+    populateMonths(selectedYear, selectedMonth);
+
+    yearSelect.addEventListener('change', function() {
+        const currentMonth = new Date().getMonth() + 1;
+        const currentYear = new Date().getFullYear();
+        const newYear = parseInt(this.value);
+        let newMonth = selectedMonth;
+        
+        if (newYear === currentYear && newMonth > currentMonth) {
+            newMonth = currentMonth;
+        }
+        
+        window.location.href = '{{ url("price") }}?year=' + newYear + '&month=' + newMonth;
+    });
+
+    monthSelect.addEventListener('change', function() {
+        window.location.href = '{{ url("price") }}?year=' + yearSelect.value + '&month=' + this.value;
+    });
 </script>
 
 
