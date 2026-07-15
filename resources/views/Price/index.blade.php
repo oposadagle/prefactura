@@ -150,9 +150,6 @@
                                 </th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">CANAL</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">TIPO</th>
-                                <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">ESTADO COTIZACION
-                                </th>
-                                <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">RESPUESTA</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">QUIEN SOLICITA</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">TRAYECTO</th>
                                 <th class="celdas" style="color: #C4F4FF;border: 1px solid #0C213A;">ORIGEN</th>
@@ -203,81 +200,11 @@
                                         {{ $diario->fecha_solicitud }}</td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        @can('edita.cotizacion')
-                                            <a href="#" class="editable" data-type="select" data-name="canal"
-                                                data-pk="{{ $diario->id }}"
-                                                data-source='[{"value":"CORREO","text":"CORREO"},{"value":"WHATSAPP","text":"WHATSAPP"}]'>
-                                                {{ $diario->canal }}
-                                            </a>
-                                        @else
-                                            {{ $diario->canal }}
-                                        @endcan
+                                        {{ $diario->canal }}
                                     </td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        @can('edita.cotizacion')
-                                            <a href="#" class="editable" data-type="select" data-name="tipo"
-                                                data-pk="{{ $diario->id }}"
-                                                data-source='[{"value":"ARCHIVO CONSOLIDADO","text":"ARCHIVO CONSOLIDADO"},{"value":"RUTA LOGICA","text":"RUTA LOGICA"},{"value":"UNO A UNO","text":"UNO A UNO"},{"value":"MULTIPARADA","text":"MULTIPARADA"}]'>
-                                                {{ $diario->tipo }}
-                                            </a>
-                                        @else
-                                            {{ $diario->tipo }}
-                                        @endcan
-                                    </td>
-                                    @can('edita.cotizacion')
-                                        <td class="celdas"
-                                            style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            @php
-                                                $estadoClase = '';
-                                                if ($diario->estado_cotizacion == 'COTIZACION') {
-                                                    $estadoClase = 'badge bg-info';
-                                                }
-                                                if ($diario->estado_cotizacion == 'APROBADO') {
-                                                    $estadoClase = 'badge bg-success';
-                                                }
-                                                if ($diario->estado_cotizacion == 'COMERCIAL') {
-                                                    $estadoClase = 'badge bg-secondary';
-                                                }
-                                                if ($diario->estado_cotizacion == 'NO APROBADO') {
-                                                    $estadoClase = 'badge bg-danger';
-                                                }
-                                            @endphp
-                                            <a href="#" class="editable {{ $estadoClase }}" data-type="select"
-                                                data-name="estado_cotizacion" data-pk="{{ $diario->id }}"
-                                                data-source='[{"value":"APROBADO","text":"APROBADO"},{"value":"COMERCIAL","text":"COMERCIAL"},{"value":"COTIZACION","text":"COTIZACION"},{"value":"NO APROBADO","text":"NO APROBADO"}]'>
-                                                {{ $diario->estado_cotizacion }}
-                                            </a>
-                                        </td>
-                                    @else
-                                        {{-- <td class="celdas"
-                                            style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            {{ $diario->codigo_seguimiento }}</td> --}}
-                                        <td class="celdas"
-                                            style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            {{ $diario->estado_cotizacion }}
-                                        </td>
-                                    @endcan
-                                    <td class="celdas"
-                                        style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        @can('edita.cotizacion')
-                                            <a href="#" class="editable" data-type="text" data-name="respuesta"
-                                                data-pk="{{ $diario->id }}" data-value="{{ $diario->respuesta }}">
-                                                {{ Str::limit($diario->respuesta, 15, '...') }}
-                                            </a>
-                                            @if (strlen($diario->respuesta) > 15)
-                                                <button class="btn btn-sm btn-link p-0 toggle-btn"
-                                                    onclick="toggleRespuesta(this)"
-                                                    data-full="{{ $diario->respuesta }}">+</button>
-                                            @endif
-                                        @else
-                                            <span>{{ Str::limit($diario->respuesta, 15, '...') }}</span>
-                                            @if (strlen($diario->respuesta) > 15)
-                                                <button class="btn btn-sm btn-link p-0 toggle-btn"
-                                                    onclick="toggleRespuesta(this)"
-                                                    data-full="{{ $diario->respuesta }}">+</button>
-                                            @endif
-                                        @endcan
+                                        {{ $diario->tipo }}
                                     </td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
@@ -291,70 +218,19 @@
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         {{ strToUpper($diario->destino) }}</td>
+                                    <td class="celdas"
+                                        style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        {{ $diario->tipo_vehiculo }}</td>
+                                    <td class="celdas"
+                                        style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        {{ $diario->tipo_carroceria }}</td>
+                                    <td class="      "
+                                        style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        {{ number_format($diario->capacidad, 0, ',', '.') }}</td>
                                     @can('edita.cotizacion')
                                         <td class="celdas"
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            <a href="#" class="editable" data-type="select"
-                                                data-name="tipo_vehiculo" data-pk="{{ $diario->id }}"
-                                                data-source='[
-                                    	{"value":"PATINETA 9 A 15_CONTENEDOR","text":"PATINETA 9 A 15_CONTENEDOR"},
-                                    	{"value":"PATINETA 9 A 18_FURGONADO","text":"PATINETA 9 A 18_FURGONADO"},
-                                    	{"value":"PATINETA PODEROSA_CONTENEDOR","text":"PATINETA PODEROSA_CONTENEDOR"},
-                                    	{"value":"PATINETA PODEROSA_FURGON,CARROZADO,PLANCHON","text":"PATINETA PODEROSA_FURGON,CARROZADO,PLANCHON"},
-                                    	{"value":"TRACTOMULA_CONTENEDOR_DOS EJES","text":"TRACTOMULA_CONTENEDOR_DOS EJES"},
-                                    	{"value":"TRACTOMULA_CARRROZADO,PLANCHON_DOS EJES","text":"TRACTOMULA_CARRROZADO,PLANCHON_DOS EJES"},
-                                    	{"value":"TRACTOMULA_CONTENEDOR_TRES EJES","text":"TRACTOMULA_CONTENEDOR_TRES EJES"},
-                                    	{"value":"TRACTOMULA_CARROZADO,PLANCHON_TRES EJES","text":"TRACTOMULA_CARROZADO,PLANCHON_TRES EJES"},
-                                    	{"value":"CARRY","text":"CARRY"},
-                                    	{"value":"NHR","text":"NHR"},
-                                    	{"value":"NKR","text":"NKR"},
-                                    	{"value":"SENCILLO","text":"SENCILLO"},
-                                    	{"value":"TURBO","text":"TURBO"},
-                                    	{"value":"TURBO SENCILLO","text":"TURBO SENCILLO"}
-                                    	]'>
-                                                {{ $diario->tipo_vehiculo }}
-                                            </a>
-                                        </td>
-                                        <td class="celdas"
-                                            style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            <a href="#" class="editable" data-type="select"
-                                                data-name="tipo_carroceria" data-pk="{{ $diario->id }}"
-                                                data-source='[
-                                    	{"value":"FURGONADO","text":"FURGONADO"},
-                                    	{"value":"CARROZADO","text":"CARROZADO"},
-                                    	{"value":"PLANCHON","text":"PLANCHON"},
-                                    	{"value":"PANEL","text":"PANEL"},
-                                    	{"value":"PORTACONTENEDOR - 20","text":"PORTACONTENEDOR - 20"},
-                                    	{"value":"PORTACONTENEDOR - 40","text":"PORTACONTENEDOR - 40"}
-                                    	]'>
-                                                {{ $diario->tipo_carroceria }}
-                                            </a>
-                                        </td>
-                                        <td class="celdas"
-                                            style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            <a href="#" class="editable" data-type="text" data-name="capacidad"
-                                                data-pk="{{ $diario->id }}">
-                                                {{ number_format($diario->capacidad, 0, ',', '.') }}
-                                            </a>
-                                        </td>
-                                    @else
-                                        <td class="celdas"
-                                            style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            {{ $diario->tipo_vehiculo }}</td>
-                                        <td class="celdas"
-                                            style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            {{ $diario->tipo_carroceria }}</td>
-                                        <td class="      "
-                                            style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            {{ number_format($diario->capacidad, 0, ',', '.') }}</td>
-                                    @endcan
-                                    @can('edita.cotizacion')
-                                        <td class="celdas"
-                                            style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            <a href="#" class="editable" data-type="text" data-name="sisetac"
-                                                data-pk="{{ $diario->id }}">
-                                                {{ number_format($diario->sisetac, 0, ',', '.') }}
-                                            </a>
+                                            {{ number_format($diario->sisetac, 0, ',', '.') }}
                                         </td>
                                     @endcan
                                     @can('ver.base')
@@ -366,26 +242,17 @@
                                     @can('edicion')
                                         <td class="celdas"
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            <a href="#" class="editable" data-type="text" data-name="costo"
-                                                data-pk="{{ $diario->id }}">
-                                                {{ number_format($diario->costo, 0, ',', '.') }}
-                                            </a>
+                                            {{ number_format($diario->costo, 0, ',', '.') }}
                                         </td>
                                     @endcan
                                     @can('edicion')
                                         <td class="celdas"
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            <a href="#" class="editable" data-type="text"
-                                                data-name="costo_negocio" data-pk="{{ $diario->id }}">
-                                                {{ number_format($diario->costo_negocio, 0, ',', '.') }}
-                                            </a>
+                                            {{ number_format($diario->costo_negocio, 0, ',', '.') }}
                                         </td>
                                         <td class="celdas"
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            <a href="#" class="editable" data-type="text"
-                                                data-name="costo_adicional" data-pk="{{ $diario->id }}">
-                                                {{ number_format($diario->costo_adicional, 0, ',', '.') }}
-                                            </a>
+                                            {{ number_format($diario->costo_adicional, 0, ',', '.') }}
                                         </td>
                                     @else
                                         <td class="celdas"
@@ -408,17 +275,11 @@
                                     @can('edita.cotizacion')
                                         <td class="celdas"
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            <a href="#" class="editable" data-type="text" data-name="puntos"
-                                                data-pk="{{ $diario->id }}">
-                                                {{ $diario->puntos }}
-                                            </a>
+                                            {{ $diario->puntos }}
                                         </td>
                                         <td class="celdas"
                                             style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                            <a href="#" class="editable" data-type="text"
-                                                data-name="observaciones" data-pk="{{ $diario->id }}">
-                                                {{ $diario->observaciones }}
-                                            </a>
+                                            {{ $diario->observaciones }}
                                         </td>
                                     @else
                                         <td class="celdas"
@@ -477,45 +338,9 @@
 </div>
 
 <script>
-    $.fn.editable.defaults.mode = "inline";
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        }
-    });
-    $('.editable').editable({
-        url: "/price/update",
-        type: 'text',
-        emptytext: 'sin datos',
-        method: 'PUT',
-        params: function(params) {
-            params._method = 'PUT';
-            return params;
-        },
-        success: function(response, newValue) {
-            if (response.success) {
-                if ($(this).data('name') === 'respuesta') {
-                    const btn = $(this).siblings('.toggle-btn');
-                    btn.attr('data-full', newValue);
-                    const isExpanded = btn.attr('data-expanded') === 'true';
-                    if (!isExpanded) {
-                        $(this).text(newValue.substring(0, 15) + (newValue.length > 15 ? '...' : ''));
-                    } else {
-                        $(this).text(newValue);
-                    }
-
-                    if (newValue.length <= 15) {
-                        btn.hide();
-                    } else {
-                        btn.show();
-                    }
-                } else {
-                    $(this).text(newValue);
-                }
-            } else {
-
-                alert(response.message);
-            }
         }
     });
 </script>
@@ -523,26 +348,6 @@
 <script>
     function confirmDelete() {
         return confirm('¿Estás seguro de que deseas eliminar este registro?');
-    }
-
-    window.toggleRespuesta = function(btn) {
-        const container = btn.parentElement;
-        const txtNode = container.children[0]; // anchor o span
-        const fullText = btn.getAttribute('data-full');
-        const isExpanded = btn.getAttribute('data-expanded') === 'true';
-
-        if (isExpanded) {
-            // Contraer
-            txtNode.innerText = fullText.substring(0, 15) + (fullText.length > 15 ? '...' : '');
-            btn.innerText = '+';
-            btn.setAttribute('data-expanded', 'false');
-        } else {
-            // Expandir
-            txtNode.innerText = fullText;
-            btn.innerText = ' -';
-            btn.setAttribute('data-expanded', 'true');
-        }
-
     }
 </script>
 
