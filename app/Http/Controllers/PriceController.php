@@ -75,7 +75,7 @@ class PriceController extends Controller
         }
 
         try {
-            $dataPrice = request()->except(['_token']);
+            $dataPrice = request()->except(['_token', 'costo_adicional_display']);
             $dataPrice['created_at'] = Carbon::now();
             $dataPrice['updated_at'] = Carbon::now();
             $dataPrice['sisetac'] = $dataPrice['sisetac'] ?? 0;
