@@ -157,8 +157,15 @@
                                         );
                                     }
 
-                                    $puedeAprobar = $diario->soporte && !$diario->avalado;
+                                    $cargaoneVal = floatval($diario->cargaone ?? 0);
+                                    $cargatwoVal = floatval($diario->cargatwo ?? 0);
+                                    $standbyVal = floatval($diario->standby ?? 0);
+                                    $desplazamientoVal = floatval($diario->costo_desplazamiento ?? 0);
+                                    $tieneCamposFinancieros = ($cargaoneVal + $cargatwoVal + $standbyVal + $desplazamientoVal) > 0;
+                                    $tieneSoporte = !is_null($diario->soporte);
+                                    $puedeAprobar = $tieneCamposFinancieros && $tieneSoporte && !$diario->avalado;
                                     $puedeEditarFinancieros = $dentroDelPlazoEdicion && !$diario->avalado && strToUpper($diario->states) !== 'SERVICIO CANCELADO';
+                                    $puedeVerificarRegistro = $tieneCamposFinancieros && $tieneSoporte && $diario->avalado;
                                 @endphp
                                 <tr style="text-align: center">
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->id }}</td>
@@ -323,7 +330,7 @@
                                     </td>
                                     @can('verificar')
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        @if (!$diario->avalado && !is_null($diario->soporte))
+                                        @if ($tieneCamposFinancieros && $tieneSoporte && !$diario->avalado)
                                             <button type="button" class="btn btn-danger btn-xs btn-rechazar"
                                                 data-id="{{ $diario->id }}" style="width: 100%;">
                                                 <i class="fas fa-times"></i>
@@ -342,6 +349,10 @@
                                                 <i class="fas fa-check"></i>
                                             </button>
                                         @elseif(!$diario->avalado)
+                                            <button type="button" class="btn btn-secondary btn-xs disabled" style="width: 100%; pointer-events: none;">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                        @elseif(!$puedeVerificarRegistro)
                                             <button type="button" class="btn btn-secondary btn-xs disabled" style="width: 100%; pointer-events: none;">
                                                 <i class="fas fa-minus"></i>
                                             </button>

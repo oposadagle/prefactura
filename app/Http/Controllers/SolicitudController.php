@@ -2685,6 +2685,25 @@ class SolicitudController extends Controller
             $solicitud = DB::table('solicitudes')->where('id', $id)->first();
             if ($solicitud) {
                 if (! $solicitud->avalado) {
+                    $cargaone = floatval($solicitud->cargaone ?? 0);
+                    $cargatwo = floatval($solicitud->cargatwo ?? 0);
+                    $standby = floatval($solicitud->standby ?? 0);
+                    $desplazamiento = floatval($solicitud->costo_desplazamiento ?? 0);
+
+                    if (($cargaone + $cargatwo + $standby + $desplazamiento) <= 0) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'No se puede aprobar. Al menos uno de los campos (cargue, descargue, standby o desplazamiento) debe ser mayor a 0.',
+                        ], 422);
+                    }
+
+                    if (is_null($solicitud->soporte)) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'No se puede aprobar. El soporte es obligatorio.',
+                        ], 422);
+                    }
+
                     DB::table('solicitudes')
                         ->where('id', $id)
                         ->update([
@@ -2735,6 +2754,25 @@ class SolicitudController extends Controller
             $solicitud = DB::table('solicitudes')->where('id', $id)->first();
             if ($solicitud) {
                 if (! $solicitud->verificado) {
+                    $cargaone = floatval($solicitud->cargaone ?? 0);
+                    $cargatwo = floatval($solicitud->cargatwo ?? 0);
+                    $standby = floatval($solicitud->standby ?? 0);
+                    $desplazamiento = floatval($solicitud->costo_desplazamiento ?? 0);
+
+                    if (($cargaone + $cargatwo + $standby + $desplazamiento) <= 0) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'No se puede verificar. Al menos uno de los campos (cargue, descargue, standby o desplazamiento) debe ser mayor a 0.',
+                        ], 422);
+                    }
+
+                    if (is_null($solicitud->soporte)) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'No se puede verificar. El soporte es obligatorio.',
+                        ], 422);
+                    }
+
                     DB::table('solicitudes')
                         ->where('id', $id)
                         ->update([
