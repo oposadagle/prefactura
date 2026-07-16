@@ -160,8 +160,11 @@ C<x-header />
                                         <option value="SENCILLO PBV Mas de 10,500kg">SENCILLO PBV Mas de 10,500kg</option>
                                         <option value="TRACTOCAMIÓN 2S2 10 TN">TRACTOCAMIÓN 2S2 10 TN</option>
                                         <option value="TRACTOCAMIÓN 2S2 11 A 15 TN">TRACTOCAMIÓN 2S2 11 A 15 TN</option>
-                                        <option value="TRACTOCAMIÓN 2S3  EJE 21 TN">TRACTOCAMIÓN 2S3  EJE 21 TN</option>
-                                        <option value="TRACTOMULA TRES EJES">TRACTOMULA TRES EJES</option>
+                                        <option value="TRACTOCAMIÓN 2S2 11 A 17 TN">TRACTOCAMIÓN 2S2 11 A 17 TN</option>
+                                        <option value="TRACTOCAMIÓN 2S3 EJE 19 A 21 TN">TRACTOCAMIÓN 2S3 EJE 19 A 21 TN</option>
+                                        <option value="TRACTOCAMIÓN 2S3 EJE 19 A 25 TN">TRACTOCAMIÓN 2S3 EJE 19 A 25 TN</option>
+                                        <option value="TRACTOMULA TRES EJES 26 a 30 TN">TRACTOMULA TRES EJES 26 a 30 TN</option>
+                                        <option value="TRACTOMULA TRES EJES 27 a 33 TN">TRACTOMULA TRES EJES 27 a 33 TN</option>
                                     </select>
                                     <label for="ejecutivo">Tipo de vehiculo</label>
                                 </div>
@@ -490,8 +493,11 @@ C<x-header />
             'SENCILLO PBV Mas de 10,500kg': 8500,
             'TRACTOCAMIÓN 2S2 10 TN': 10000,
             'TRACTOCAMIÓN 2S2 11 A 15 TN': 15000,
-            'TRACTOCAMIÓN 2S3  EJE 21 TN': 21000,
-            'TRACTOMULA TRES EJES': 30000
+            'TRACTOCAMIÓN 2S2 11 A 17 TN': 17000,
+            'TRACTOCAMIÓN 2S3 EJE 19 A 21 TN': 21000,
+            'TRACTOCAMIÓN 2S3 EJE 19 A 25 TN': 25000,
+            'TRACTOMULA TRES EJES 26 a 30 TN': 30000,
+            'TRACTOMULA TRES EJES 27 a 33 TN': 33000
         };
 
         document.getElementById('TIPO_VEHICULO').addEventListener('change', function() {

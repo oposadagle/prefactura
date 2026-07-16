@@ -47,7 +47,7 @@ class PriceController extends Controller
             'destino' => 'required',
             'trayecto' => 'required',            
             'tipo_vehiculo' => 'required',
-            'capacidad' => 'required|numeric|min:500|max:32000',
+            'capacidad' => 'required|numeric|min:500|max:33000',
             'costo' => 'required|numeric',            
             'puntos' => 'required|numeric',
             'costo_negocio' => 'required|numeric',
