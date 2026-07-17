@@ -112,6 +112,7 @@
                                 <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">CENTRO DE COSTO</th>
                                 <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">RETEICA</th>
                                 <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">RETEFUENTE</th>
+                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">FOPAT</th>
                                 <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">SEGURO</th>
                                 <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">VALOR A PAGAR</th>                               
                                 {{-- <th class="celdas" style="color: #E4FF30;border: 1px solid #0c213a;">CONFIRMAR</th> --}}
@@ -186,6 +187,7 @@
 
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->reteica, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->retefuente, 0, ',', '.') }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->fopat, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->seguro, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->valor_a_pagar, 0, ',', '.') }}</td>
 
