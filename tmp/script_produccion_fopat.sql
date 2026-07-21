@@ -1,3 +1,16 @@
+-- ============================================================
+-- SCRIPT PRODUCCION - Agregar campo FOPAT a vista peticiones
+-- FOPAT = 0.1% del COSTO (solo desde 2026-07-17 en adelante)
+-- SOLO aplica para vehiculos con especificacion >= 7000
+-- VALOR_A_PAGAR descuenta FOPAT cuando pago_completo = 'SI'
+-- ============================================================
+
+-- PASO 1: Eliminar vistas dependientes
+DROP VIEW IF EXISTS adelantos;
+DROP VIEW IF EXISTS cuentas;
+DROP VIEW IF EXISTS peticiones;
+
+-- PASO 2: Recrear vista peticiones con FOPAT
 -- Script para agregar campo FOPAT y modificar VALOR_A_PAGAR en la vista peticiones
 -- FOPAT = 0.1% del COSTO
 -- VALOR_A_PAGAR (pago_completo = 'SI') ahora resta FOPAT tambien
@@ -589,3 +602,47 @@ CREATE VIEW peticiones AS
     modalidad,
     regional
    FROM calculo_valor_saldo;
+
+
+-- PASO 3: Recrear vistas dependientes
+CREATE VIEW adelantos AS
+SELECT id,
+    razon AS mlog,
+    EXTRACT(year FROM fecha_cargue) AS anio,
+    EXTRACT(month FROM fecha_cargue) AS mes,
+    anticipo,
+    saldo_final,
+    estado_anticipo,
+    estado_saldo,
+    estado_pago,
+    fecha_envio
+   FROM peticiones
+  WHERE (paytype::text = ANY (ARRAY['PM. ANTICIPAR'::character varying::text, 'AM. ANTICIPAR'::character varying::text, 'CONTADO'::character varying::text, 'CONTADO AM.'::character varying::text, 'CONTADO PM.'::character varying::text])) AND fecha_cargue >= '2024-10-01'::date AND razon::text ~~ 'MLOG%'::text;;
+
+CREATE VIEW cuentas AS
+SELECT a.id,
+    a.guia,
+    b.verificado,
+    b.pagada,
+    b.fecha_envio,
+    b.placa,
+    b.cargaone,
+    b.cargatwo,
+    b.standby,
+    b.costo_desplazamiento,
+    c.ica,
+    c.pagcon,
+    c.cpagcon,
+    c.tpagcon,
+    b.cliente,
+    b.soporte,
+    b.avalado,
+    b.pagado,
+    b.razon,
+    c.asociado,
+    b.fecver
+   FROM estatos o
+     LEFT JOIN estatus a ON o.ide = a.ide
+     LEFT JOIN solicitudes b ON a.id = b.id
+     LEFT JOIN peticiones c ON a.id = c.id
+  WHERE b.soporte IS NOT NULL;;
