@@ -13,8 +13,6 @@ return new class extends Migration
         DB::statement('CREATE INDEX IF NOT EXISTS idx_estatus_id ON estatus(id)');
         DB::statement('CREATE INDEX IF NOT EXISTS idx_vehiculos_placa ON vehiculos(placa)');
         DB::statement('CREATE INDEX IF NOT EXISTS idx_clientesa_nombre ON clientesa(nombre)');
-        DB::statement('CREATE INDEX IF NOT EXISTS idx_verificados_ide ON verificados(ide)');
-        DB::statement('CREATE INDEX IF NOT EXISTS idx_estatos_ide ON estatos(ide)');
     }
 
     public function down(): void
@@ -23,7 +21,5 @@ return new class extends Migration
         DB::statement('DROP INDEX IF EXISTS idx_estatus_id');
         DB::statement('DROP INDEX IF EXISTS idx_vehiculos_placa');
         DB::statement('DROP INDEX IF EXISTS idx_clientesa_nombre');
-        DB::statement('DROP INDEX IF EXISTS idx_verificados_ide');
-        DB::statement('DROP INDEX IF EXISTS idx_estatos_ide');
     }
 };
