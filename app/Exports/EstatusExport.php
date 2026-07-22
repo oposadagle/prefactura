@@ -3,14 +3,14 @@
 namespace App\Exports;
 
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\WithMapping;
 
-class EstatusExport implements FromCollection, WithHeadings
+class EstatusExport implements FromQuery, WithHeadings, WithMapping
 {
-    /**
-     * @return \Illuminate\Support\Collection
-     */
+    use Exportable;
 
     protected $year;
     protected $month;
@@ -21,9 +21,8 @@ class EstatusExport implements FromCollection, WithHeadings
         $this->month = $month;
     }
 
-    public function collection()
+    public function query()
     {
-        $currentYear = date('Y');
         return DB::table('infoestatus')
             ->select(
                 'id',
@@ -108,8 +107,97 @@ class EstatusExport implements FromCollection, WithHeadings
             ->when($this->month !== 'todos', function ($query) {
                 return $query->whereMonth('fecha_cargue', $this->month);
             })
-            ->get();
+            ->orderBy('id');
     }
+
+    public function map($record): array
+    {
+        return [
+            $record->id,
+            $record->guia,
+            $record->razon,
+            $record->remesa,
+            $record->radicado,
+            $record->nit,
+            $record->fecha_solicitud,
+            $record->cliente,
+            $record->origen,
+            $record->destino_final,
+            $record->documento_cliente,
+            $record->destinatario,
+            $record->direccion,
+            $record->piezas,
+            $record->peso,
+            $record->valor_declarado,
+            $record->tipo_vehiculo,
+            $record->carroceria,
+            $record->placa,
+            $record->conductor,
+            $record->asociado,
+            $record->proveedores,
+            $record->fecha_cargue,
+            $record->causal_mas,
+            $record->tipo_servicio,
+            $record->nota_servicio,
+            $record->costo_flete,
+            $record->desconductor,
+            $record->monto_costo,
+            $record->costo_seguro,
+            $record->costo_tiposerv,
+            $record->pcyd,
+            $record->costo_cardes,
+            $record->paux,
+            $record->costo_auxiliar,
+            $record->psby,
+            $record->costo_standby,
+            $record->pmtc,
+            $record->costo_montacarga,
+            $record->pesc,
+            $record->costo_escolta,
+            $record->pcas,
+            $record->costo_cs,
+            $record->pmon,
+            $record->costo_monitoreo,
+            $record->pesg,
+            $record->costo_estudio,
+            $record->costo_ampoliza,
+            $record->sobrecosto_op,
+            $record->seguros,
+            $record->costo_total,
+            $record->valor_cliente,
+            $record->monto_seguro,
+            $record->seguro_03,
+            $record->valor_sobrecosto,
+            $record->valor_servicios,
+            $record->valor_cobrar,
+            $record->utilidad,
+            $record->rentabilidad,
+            $record->facturar,
+            $record->plfpli,
+            $record->carnote,
+            $record->dcf,
+            $record->dts,
+            $record->dcyd,
+            $record->dpaux,
+            $record->dpsby,
+            $record->dpmtc,
+            $record->dpesc,
+            $record->dpcas,
+            $record->dpmon,
+            $record->dpesg,
+            $record->dst,
+            $record->egreso_anticipo,
+            $record->egreso_saldo,
+            $record->fecha_saldo,
+            $record->ffacturar
+        ];
+    }
+
+    public function batchSize(): int
+    {
+        return 500;
+    }
+
     public function headings(): array
     {
         return [
