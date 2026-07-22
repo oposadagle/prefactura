@@ -1229,7 +1229,6 @@ class SolicitudController extends Controller
 
     public function prefactura(Request $request)
     {
-        // ├Ültimo a├▒o/mes disponibles (PostgreSQL)
         $ultimoRegistro = DB::table('infoestatus')
             ->selectRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year, EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month')
             ->orderBy('fecha_cargue', 'desc')
@@ -1241,10 +1240,12 @@ class SolicitudController extends Controller
         $year = (int) $request->input('year', $defaultYear);
         $month = (int) $request->input('month', $defaultMonth);
 
+        $startDate = sprintf('%04d-%02d-01', $year, $month);
+        $endDate = date('Y-m-t', strtotime($startDate));
+
         $diarias = DB::table('infoestatus')
             ->where('facturar', 'SI')
-            ->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year])
-            ->whereRaw('EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?', [$month])
+            ->whereBetween('fecha_cargue', [$startDate, $endDate])
             ->orderBy('fecha_cargue', 'desc')
             ->get();
 
@@ -1256,12 +1257,11 @@ class SolicitudController extends Controller
 
         $months = DB::table('infoestatus')
             ->selectRaw('DISTINCT EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month')
-            ->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year])
+            ->whereBetween('fecha_cargue', [sprintf('%04d-01-01', $year), sprintf('%04d-12-31', $year)])
             ->orderBy('month', 'asc')
             ->pluck('month')
             ->map(fn ($m) => (int) $m);
 
-        // Obtener todas las combinaciones disponibles para el selector de descarga
         $fechasDisponibles = DB::table('infoestatus')
             ->selectRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) as year, EXTRACT(MONTH FROM fecha_cargue::timestamp) as month')
             ->distinct()
