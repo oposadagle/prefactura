@@ -46,33 +46,37 @@ class UtilidadController extends Controller
 
     public function indice(Request $request)
     {
-        // Obtener el último año y mes disponibles en la tabla `masa`
-        $ultimoRegistro = DB::table('masas')
+        $ultimoRegistro = DB::table('masas_mat')
             ->select('AÑO', 'MES')
             ->orderBy('AÑO', 'desc')
             ->orderBy('MES', 'desc')
             ->first();
 
-        // Valores predeterminados basados en el último registro
         $defaultYear = $ultimoRegistro->AÑO ?? Carbon::now()->year;
         $defaultMonth = $ultimoRegistro->MES ?? Carbon::now()->month;
 
-        // Obtener el año y mes desde la solicitud o usar los valores predeterminados
         $year = $request->input('year', $defaultYear);
         $month = $request->input('month', $defaultMonth);
 
-        // Obtener años disponibles en la tabla `masa`
-        $years = DB::table('masas')->select('AÑO as year')->distinct()->orderBy('year', 'desc')->pluck('year');
+        $years = DB::table('masas_mat')->select('AÑO as year')->distinct()->orderBy('year', 'desc')->pluck('year');
+        $months = DB::table('masas_mat')->select('MES as month')->where('AÑO', $year)->distinct()->orderBy('month', 'asc')->pluck('month');
 
-        // Obtener meses disponibles para el año seleccionado
-        $months = DB::table('masas')->select('MES as month')->where('AÑO', $year)->distinct()->orderBy('month', 'asc')->pluck('month');
-
-        // Consultar los datos para la tabla y los selects
-        $regionales = DB::table('masas')->select('REGIONAL')->distinct()->where('AÑO', $year)->where('MES', $month)->orderBy('REGIONAL')->get();
-        $clientes = DB::table('masas')->select('CLIENTE')->distinct()->where('AÑO', $year)->where('MES', $month)->orderBy('CLIENTE')->get();
-        $utiles = DB::table('masas')->where('AÑO', $year)->where('MES', $month)->orderBy('CLIENTE')->get();
+        $regionales = DB::table('masas_mat')->select('REGIONAL')->distinct()->where('AÑO', $year)->where('MES', $month)->orderBy('REGIONAL')->get();
+        $clientes = DB::table('masas_mat')->select('CLIENTE')->distinct()->where('AÑO', $year)->where('MES', $month)->orderBy('CLIENTE')->get();
+        $utiles = DB::table('masas_mat')->where('AÑO', $year)->where('MES', $month)->orderBy('CLIENTE')->get();
 
         return view('Utilidad.indice', compact('utiles', 'regionales', 'clientes', 'years', 'months', 'year', 'month'));
+    }
+
+    public function refrescarVistas()
+    {
+        try {
+            DB::statement('REFRESH MATERIALIZED VIEW CONCURRENTLY masas_mat');
+            DB::statement('REFRESH MATERIALIZED VIEW CONCURRENTLY utiles_mat');
+            return response()->json(['success' => true, 'message' => 'Datos actualizados correctamente']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     public function informe()

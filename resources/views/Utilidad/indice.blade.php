@@ -60,10 +60,16 @@
     <div class="col-lg-8">
         <div class="card">
             <div class="card-header">
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex">
-                        <h4 class="card-title pt-1">Reporte detallado</h4>
-                        <form method="GET" action="{{ route('utilidad.indice') }}" class="d-flex">
+        <div class="d-flex justify-content-between">
+            <div class="d-flex">
+                <h4 class="card-title pt-1">Reporte detallado</h4>
+                <button id="btnRefrescar" class="btn btn-sm btn-outline-primary ms-2" style="font-size: 11px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                    </svg>
+                    Tiempo real
+                </button>
+                <form method="GET" action="{{ route('utilidad.indice') }}" class="d-flex">
                             <!-- Select de Año -->
                             <select name="year" class="form-select me-2" onchange="this.form.submit()" style="width: 80px;">
                                 @foreach ($years as $availableYear)
@@ -494,6 +500,39 @@
                 });
             });
         });
+
+        // Botón Tiempo Real - Refrescar vistas materializadas
+        document.getElementById('btnRefrescar').addEventListener('click', function() {
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg> Actualizando...';
+
+            fetch('{{ route("utilidad.refrescar") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> ¡Actualizado!';
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    btn.innerHTML = 'Error - Reintentar';
+                    btn.disabled = false;
+                }
+            })
+            .catch(() => {
+                btn.innerHTML = 'Error - Reintentar';
+                btn.disabled = false;
+            });
+        });
  </script>
+
+<style>.spin{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}</style>
 
 <x-footer />

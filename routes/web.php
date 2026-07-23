@@ -115,6 +115,7 @@ Route::resource('nit', NitController::class);
 Route::resource('proveedor', ProveedorController::class);
 Route::resource('utilidad', UtilidadController::class);
 Route::get('indice', [UtilidadController::class, 'indice'])->name('utilidad.indice');
+Route::post('indice/refrescar', [UtilidadController::class, 'refrescarVistas'])->name('utilidad.refrescar');
 Route::get('informe', [UtilidadController::class, 'informe'])->name('utilidad.informe');
 Route::match(['get', 'post'], 'reporte', [UtilidadController::class, 'reporte'])->name('utilidad.reporte');
 //Route::get('/informe/{mes}', [UtilidadController::class, 'obtenerDatosPorMes'])->name('informe.mes');
