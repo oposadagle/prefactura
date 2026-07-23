@@ -1321,28 +1321,22 @@ class SolicitudController extends Controller
 
     public function congelado(Request $request)
     {
-        // Obtener los a├▒os ├║nicos del campo fecha_cargue
         $years = DB::table('infoestatus')
             ->selectRaw('DISTINCT EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year')
             ->orderBy('year', 'desc')
             ->pluck('year')
             ->map(fn ($y) => (int) $y);
 
-        // Determinar a├▒o seleccionado (por defecto el ├║ltimo disponible o el actual)
         $defaultYear = $years->first() ?: Carbon::now()->year;
         $year = (int) $request->input('year', $defaultYear);
 
-        // Obtener los meses ├║nicos para el a├▒o seleccionado
         $months = DB::table('infoestatus')
             ->selectRaw('DISTINCT EXTRACT(MONTH FROM fecha_cargue::timestamp) AS month')
-            ->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year])
+            ->whereBetween('fecha_cargue', [sprintf('%04d-01-01', $year), sprintf('%04d-12-31', $year)])
             ->orderBy('month', 'asc')
             ->pluck('month')
             ->map(fn ($m) => (int) $m);
 
-        // Determinar mes seleccionado
-        // Si el mes solicitado est├í en la lista de meses disponibles, usarlo.
-        // Si no (ej. cambio de a├▒o), usar el ├║ltimo mes disponible.
         $requestedMonth = $request->input('month');
         if ($requestedMonth && $months->contains((int) $requestedMonth)) {
             $month = (int) $requestedMonth;
@@ -1350,13 +1344,13 @@ class SolicitudController extends Controller
             $month = $months->last() ?: Carbon::now()->month;
         }
 
-        // Filtrar por año y mes seleccionados
         $search = $request->input('search');
+        $startDate = sprintf('%04d-%02d-01', $year, $month);
+        $endDate = date('Y-m-t', strtotime($startDate));
 
         $query = DB::table('infoestatus')
             ->where('facturar', 'SI')
-            ->whereRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) = ?', [$year])
-            ->whereRaw('EXTRACT(MONTH FROM fecha_cargue::timestamp) = ?', [$month]);
+            ->whereBetween('fecha_cargue', [$startDate, $endDate]);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -1372,7 +1366,6 @@ class SolicitudController extends Controller
             ->paginate(200)
             ->appends($request->all());
 
-        // Datos adicionales para la vista
         $services = DB::table('servicios')->orderBy('nombre')->get();
         $servicios = $services->map(function ($service) {
             return ['value' => $service->nombre, 'text' => $service->nombre];
