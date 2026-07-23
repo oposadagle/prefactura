@@ -80,9 +80,17 @@
                                 <select class="form-select" id="tipo_vehiculo" name="tipo_vehiculo"
                                     autocomplete="off" aria-label="Floating label select example">
                                     <option selected disabled>Seleccionar</option>
-                                    @foreach ($tipos as $tipo)
-                                        <option value="{{ $tipo->tipo }}">{{ $tipo->tipo }}</option>
-                                    @endforeach
+                                    <option value="AUXILIAR">AUXILIAR</option>
+                                    <option value="CARRY">CARRY</option>
+                                    <option value="NHR">NHR</option>
+                                    <option value="NKR">NKR</option>
+                                    <option value="TURBO">TURBO</option>
+                                    <option value="TURBO SENCILLO">TURBO SENCILLO</option>
+                                    <option value="SENCILLO">SENCILLO</option>
+                                    <option value="DOBLER TROQUE">DOBLER TROQUE</option>
+                                    <option value="PATINETA">PATINETA</option>
+                                    <option value="PODEROSA">PODEROSA</option>
+                                    <option value="TRACTOMULA">TRACTOMULA</option>
                                 </select>
                                 <label style="font-size: 11px;">Tipo vehiculo</label>
                             </div>
@@ -398,7 +406,7 @@
                             <div class="form-floating mb-3">
                                 <input type="text" class="form-control"
                                     id="especificacion" name="especificacion" placeholder="name@example.com">
-                                <label style="font-size: 11px;">Especificacion</label>
+                                <label style="font-size: 11px;">Peso de carga (Kg)</label>
                             </div>
                         </div>
                         <div class="col-lg-2 col-md-6">
