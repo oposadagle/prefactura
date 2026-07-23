@@ -72,7 +72,12 @@ class UtilidadController extends Controller
     {
         try {
             DB::statement('REFRESH MATERIALIZED VIEW CONCURRENTLY masas_mat');
-            DB::statement('REFRESH MATERIALIZED VIEW CONCURRENTLY utiles_mat');
+            
+            $exists = DB::select("SELECT 1 FROM information_schema.tables WHERE table_name = 'utiles_mat'");
+            if (!empty($exists)) {
+                DB::statement('REFRESH MATERIALIZED VIEW CONCURRENTLY utiles_mat');
+            }
+            
             return response()->json(['success' => true, 'message' => 'Datos actualizados correctamente']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
