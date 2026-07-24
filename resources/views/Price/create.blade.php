@@ -490,7 +490,7 @@ C<x-header />
             'TURBO': 4500,
             'TBS PBV 8,000 A 9,000': 5000,
             'TBS PBV 9,000 A 10,500': 6500,
-            'SENCILLO PBV Mas de 10,500kg': 8500,
+            'SENCILLO PBV Mas de 10,500kg': 9000,
             'TRACTOCAMIÓN 2S2 10 TN': 10000,
             'TRACTOCAMIÓN 2S2 11 A 15 TN': 15000,
             'TRACTOCAMIÓN 2S2 11 A 17 TN': 17000,
