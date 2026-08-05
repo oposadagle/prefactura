@@ -4,10 +4,11 @@ namespace App\Exports;
 
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class CuentasPendientesExport implements FromCollection, WithHeadings, WithMapping
+class CuentasPendientesExport implements FromCollection, WithCustomCsvSettings, WithHeadings, WithMapping
 {
     public function collection()
     {
@@ -103,6 +104,13 @@ class CuentasPendientesExport implements FromCollection, WithHeadings, WithMappi
             $diario->tpagcon,
             $diario->cliente,
             $diario->id
+        ];
+    }
+
+    public function getCsvSettings(): array
+    {
+        return [
+            'delimiter' => ';',
         ];
     }
 }

@@ -234,7 +234,7 @@
                                         d="M400,432H96v16h304c8.8,0,16-7.2,16-16v-16C416,424.8,408.8,432,400,432z"></path>
                                 </g>
                             </svg>
-                            EXCEL
+                            CSV
                         </a>
                     </div>
                 @endcan
@@ -569,7 +569,7 @@
             form.remove();
         });
 
-        // 6. Descargar Excel action
+        // 6. Descargar CSV action
         $('#btnDescargarExcel').click(function(e) {
             e.preventDefault();
             window.location.href = '{{ route('solicitud.exportarCuentasExcel') }}';

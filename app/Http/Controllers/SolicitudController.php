@@ -431,7 +431,7 @@ class SolicitudController extends Controller
 
     public function exportarCuentasExcel()
     {
-        return Excel::download(new CuentasPendientesExport, 'cuentas_pendientes.xlsx');
+        return Excel::download(new CuentasPendientesExport, 'cuentas_pendientes.csv', \Maatwebsite\Excel\Excel::CSV);
     }
 
     public function exportarHistoricoCuentasExcel()
