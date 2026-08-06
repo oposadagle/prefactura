@@ -88,9 +88,11 @@
                                 <th class="celdas text-center" style="border: 1px solid #0c213a;">
                                     <input class="form-check-input" type="checkbox" id="selectAll">
                                 </th>
-                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">MANIFIESTO</th>
-                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">FECHA RECIBIDO</th>
-                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CONDICION DE PAGO</th>
+                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">MANIFIESTO</th>
+                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">MLOG</th>
+                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">FECHA RECIBIDO</th>
+                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">CENTRO DE COSTO</th>
+                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">CONDICION DE PAGO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">NIT</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CLIENTE</th>                                
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">ORIGEN</th>
@@ -107,14 +109,13 @@
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">TIPO VEHICULO</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">COSTO</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">EXTRA</th>
-                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">ANTICIPO</th>
-                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">PAGO COMPLETO</th>
-                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">CENTRO DE COSTO</th>
-                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">RETEICA</th>
-                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">RETEFUENTE</th>
-                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">FOPAT</th>
-                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">SEGURO</th>
-                                <th class="celdas" style="color: #00F7FF;border: 1px solid #0c213a;">VALOR A PAGAR</th>                               
+                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">ANTICIPO</th>
+                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">PAGO COMPLETO</th>
+                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">RETEICA</th>
+                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">RETEFUENTE</th>
+                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">FOPAT</th>
+                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">SEGURO</th>
+                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">VALOR A PAGAR</th>                               
                                 {{-- <th class="celdas" style="color: #E4FF30;border: 1px solid #0c213a;">CONFIRMAR</th> --}}
                             </tr>
                         </thead>
@@ -125,7 +126,9 @@
                                         <input class="form-check-input row-checkbox" type="checkbox" value="{{ $diario->id }}">
                                     </td>
                                     <td class="celdas" style="color: #000; font-weight: bold; border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->razon }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">MLOG{{ substr($diario->razon, -7) }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_llegada }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->centro_costo }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                             @php
                                                 $estadoClase = '';
@@ -183,7 +186,6 @@
                                         @endphp
                                         <span class="{{ $estadoClase }}">{{ $diario->pago_completo }}</span>
                                     </td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->centro_costo }}</td>
 
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->reteica, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->retefuente, 0, ',', '.') }}</td>

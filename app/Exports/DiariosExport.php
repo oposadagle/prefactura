@@ -14,15 +14,16 @@ class DiariosExport implements FromCollection, WithHeadings, WithMapping
     {
         $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE']);
         $excluidos = (['Servicio finalizado', 'Servicio cancelado']);
-        $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth()->toDateString(); // Inicio del mes anterior
-        $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString(); // Fin del mes actual
+        $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth()->toDateString();
+        $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString();
 
         return DB::table('peticiones')
+            ->leftJoin(DB::raw("(SELECT solicitud_id, MIN(created_at)::date as fecha_llegada FROM solicitudes_logs WHERE campo = 'enviado' GROUP BY solicitud_id) as logs_envio"), 'peticiones.id', '=', 'logs_envio.solicitud_id')
             ->select(
-                'razon', 'fecha_cargue', 'paytype', 'nit', 'cliente', 'origen', 'destino', 'placa', 
+                'razon', 'logs_envio.fecha_llegada', 'paytype', 'nit', 'cliente', 'origen', 'destino', 'placa',
                 'conductor', 'pagant', 'cpagant', 'tpagant', 'pagsal', 'cpagsal', 'pagcon', 'cpagcon',
-                'tipo_vehiculo', 'costo', 'costo_tiposerv', 'anticipo', 'pago_completo', 
-                'centro_costo', 'reteica', 'retefuente', 'seguro', 'valor_a_pagar'
+                'tipo_vehiculo', 'costo', 'costo_tiposerv', 'anticipo', 'pago_completo',
+                'centro_costo', 'reteica', 'retefuente', 'fopat', 'seguro', 'valor_a_pagar'
             )
             ->where('enviado', 'SI')
             ->where('confirmado', 'NO')
@@ -38,7 +39,9 @@ class DiariosExport implements FromCollection, WithHeadings, WithMapping
     {
         return [
             $record->razon,
-            $record->fecha_cargue,
+            'MLOG' . substr($record->razon, -7),
+            $record->fecha_llegada,
+            $record->centro_costo,
             $record->paytype,
             $record->nit,
             $record->cliente,
@@ -58,21 +61,21 @@ class DiariosExport implements FromCollection, WithHeadings, WithMapping
             $record->costo_tiposerv,
             $record->anticipo,
             $record->pago_completo,
-            $record->centro_costo,
             $record->reteica,
             $record->retefuente,
+            $record->fopat,
             $record->seguro,
-            $record->valor_a_pagar            
+            $record->valor_a_pagar
         ];
     }
 
     public function headings(): array
     {
         return [
-            'MANIFIESTO', 'CARGUE', 'CONDICION DE PAGO', 'NIT', 'CLIENTE', 'ORIGEN', 'DESTINO', 'PLACA',
-            'CONDUCTOR', 'PAGAR ANTICIPO A', 'CEDULA ANTICIPO', 'TELEFONO ANTICIPO', 'PAGAR SALDO A', 'CEDULA SALDO', 
-            'PAGAR CONTADO A', 'CEDULA CONTADO', 'TIPO VEHICULO', 'COSTO', 'EXTRA', 'ANTICIPO', 'PAGO COMPLETO', 
-            'CENTRO DE COSTO', 'RETEICA', 'RETEFUENTE', 'SEGURO', 'VALOR A PAGAR'
+            'MANIFIESTO', 'MLOG', 'FECHA RECIBIDO', 'CENTRO DE COSTO', 'CONDICION DE PAGO', 'NIT', 'CLIENTE', 'ORIGEN', 'DESTINO', 'PLACA',
+            'CONDUCTOR', 'PAGAR ANTICIPO A', 'CEDULA ANTICIPO', 'TELEFONO ANTICIPO', 'PAGAR SALDO A', 'CEDULA SALDO',
+            'PAGAR CONTADO A', 'CEDULA CONTADO', 'TIPO VEHICULO', 'COSTO', 'EXTRA', 'ANTICIPO', 'PAGO COMPLETO',
+            'RETEICA', 'RETEFUENTE', 'FOPAT', 'SEGURO', 'VALOR A PAGAR'
         ];
     }
 }
