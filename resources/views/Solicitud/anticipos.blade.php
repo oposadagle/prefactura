@@ -89,7 +89,7 @@
                                     <input class="form-check-input" type="checkbox" id="selectAll">
                                 </th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">MANIFIESTO</th>
-                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CARGUE</th>
+                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">FECHA RECIBIDO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CONDICION DE PAGO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">NIT</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CLIENTE</th>                                
@@ -125,7 +125,7 @@
                                         <input class="form-check-input row-checkbox" type="checkbox" value="{{ $diario->id }}">
                                     </td>
                                     <td class="celdas" style="color: #000; font-weight: bold; border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->razon }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_cargue }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_llegada }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                             @php
                                                 $estadoClase = '';

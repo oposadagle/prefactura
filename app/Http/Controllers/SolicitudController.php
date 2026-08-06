@@ -252,9 +252,12 @@ class SolicitudController extends Controller
         $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE']);
         $excluidos = (['Servicio cancelado']);
 
-        $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth()->toDateString(); // Inicio del mes anterior
-        $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString(); // Fin del mes actual
+        $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth()->toDateString();
+        $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString();
+
         $diarias = DB::table('peticiones')
+            ->leftJoin(DB::raw("(SELECT solicitud_id, MIN(created_at)::date as fecha_llegada FROM solicitudes_logs WHERE campo = 'enviado' GROUP BY solicitud_id) as logs_envio"), 'peticiones.id', '=', 'logs_envio.solicitud_id')
+            ->select('peticiones.*', 'logs_envio.fecha_llegada')
             ->where('enviado', 'SI')
             ->where('confirmado', 'NO')
             ->whereNotNull('razon')
@@ -2499,10 +2502,13 @@ class SolicitudController extends Controller
                 return response()->json(['success' => false, 'message' => 'datos incompletos del receptor del anticipo'], 400);
             }
 
-            // Actualiza el campo "enviado"
+            // Actualiza el campo "enviado" y la fecha_envio
             DB::table('solicitudes')
                 ->where('id', $id)
-                ->update(['enviado' => $request->input('enviado', 'SI')]);
+                ->update([
+                    'enviado' => $request->input('enviado', 'SI'),
+                    'fecha_envio' => now()->toDateString(),
+                ]);
 
             // Inserta el registro en la tabla solicitudes_logs
             DB::table('solicitudes_logs')->insert([
