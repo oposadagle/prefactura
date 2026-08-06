@@ -300,7 +300,7 @@
                                         <option>Maicol Palomino</option>
                                         <option>Mariana Quintero</option>
                                         <option>Martha Duarte</option>
-                                        <option>Ricardo Trujillo</option>
+                                        <option>Sebastian Angulo</option>
                                     </select>
                                     <label for="ejecutivo">Ejecutivo de cuenta</label>
                                 </div>
