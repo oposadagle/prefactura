@@ -241,6 +241,13 @@ class VehiculoController extends Controller
         }
 
         DB::table('vehiculos')->where('id', '=', $id)->update($dataVehiculos);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'message' => 'Vehículo modificado correctamente'
+            ]);
+        }
+
         return back()->with('success', 'Vehiculo modificado correctamente');
     }
 

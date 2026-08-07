@@ -31,7 +31,7 @@ class SolicitudController extends Controller
     {
         $userName = Auth::user()->name;
         $actual = Carbon::now('America/Bogota');
-        $vehiculos = DB::table('vehiculares')->where('estado', 'ACTIVO')->get();
+        $vehiculos = DB::table('vehiculares')->where('estado', 'ACTIVO')->where('especificacion', '>', 0)->get();
         $placas = $vehiculos->sortBy('placa')->map(function ($vehiculo) {
             return ['value' => $vehiculo->placa, 'text' => $vehiculo->placa];
         })->prepend(['value' => '', 'text' => '']);
