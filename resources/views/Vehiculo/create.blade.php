@@ -404,7 +404,7 @@
                         </div>
                         <div class="col-lg-2 col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control"
+                                <input type="number" class="form-control"
                                     id="especificacion" name="especificacion" placeholder="name@example.com">
                                 <label style="font-size: 11px;">Peso de carga (Kg)</label>
                             </div>

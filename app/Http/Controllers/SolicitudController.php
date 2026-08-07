@@ -287,12 +287,49 @@ class SolicitudController extends Controller
         }
 
         try {
-            DB::table('solicitudes')->whereIn('id', $ids)->update([
-                'confirmado' => 'SI',
-            ]);
+            $peticiones = DB::table('peticiones')
+                ->leftJoin(DB::raw("(SELECT solicitud_id, MIN(created_at)::date as fecha_llegada FROM solicitudes_logs WHERE campo = 'enviado' GROUP BY solicitud_id) as logs_envio"), 'peticiones.id', '=', 'logs_envio.solicitud_id')
+                ->select('peticiones.*', 'logs_envio.fecha_llegada')
+                ->whereIn('peticiones.id', $ids)
+                ->get();
+
+            $idsCompleto = [];
+            $idsAnticipo = [];
+            foreach ($peticiones as $p) {
+                if ($p->pago_completo === 'SI') {
+                    $idsCompleto[] = $p->id;
+                } else {
+                    $idsAnticipo[] = $p->id;
+                }
+            }
+
+            $ahora = Carbon::now('America/Bogota');
+
+            if (! empty($idsCompleto)) {
+                DB::table('solicitudes')->whereIn('id', $idsCompleto)->update([
+                    'confirmado' => 'SI',
+                    'fecha_pago_completo' => $ahora->toDateString(),
+                ]);
+                foreach ($peticiones->whereIn('id', $idsCompleto) as $p) {
+                    DB::table('solicitudes')->where('id', $p->id)->update([
+                        'nota_pc' => 'CONTADO MASIVOS ' . ($p->fecha_llegada ?? ''),
+                    ]);
+                }
+            }
+
+            if (! empty($idsAnticipo)) {
+                DB::table('solicitudes')->whereIn('id', $idsAnticipo)->update([
+                    'confirmado' => 'ANTICIPO',
+                    'fecha_pago_anticipo' => $ahora->toDateString(),
+                ]);
+                foreach ($peticiones->whereIn('id', $idsAnticipo) as $p) {
+                    DB::table('solicitudes')->where('id', $p->id)->update([
+                        'nota_pa' => 'ANTICIPO MASIVOS ' . $ahora->toDateString(),
+                    ]);
+                }
+            }
 
             // Dispatch SMS messages via single job with internal sleep
-            $peticiones = DB::table('peticiones')->whereIn('id', $ids)->get();
             Log::info("confirmarAnticipos: IDs recibidos=" . json_encode($ids) . ", peticiones encontradas=" . $peticiones->count());
             
             $mensajes = [];
@@ -358,30 +395,129 @@ class SolicitudController extends Controller
     {
         $userName = Auth::user()->name;
         $festivos = DB::table('festivos')->pluck('festivo')->toArray();
-        $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.']);
-        $excluidos = (['Servicio finalizado', 'Servicio cancelado']);
+        $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE']);
+        $excluidos = (['Servicio cancelado']);
 
-        $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth()->toDateString();
-        $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString();
         $diarias = DB::table('peticiones')
-            ->where('fecha_envio', '!=', null)
-            ->where('confirmado', 'SI')
-            ->where('pagado', false)
-            ->where('valor_saldo', '>', 0)
-            ->whereNotNull('razon')
-            ->whereIn('paytype', $incluidos)
-            ->whereNotIn('states', $excluidos)
-            ->whereBetween('fecha_cargue', [$startOfLastMonth, $endOfCurrentMonth])
-            ->orderBy('fecha_envio', 'asc')
+            ->join('solicitudes', 'peticiones.id', '=', 'solicitudes.id')
+            ->leftJoin(DB::raw("(SELECT solicitud_id, MIN(created_at)::date as fecha_llegada FROM solicitudes_logs WHERE campo = 'enviado' GROUP BY solicitud_id) as logs_envio"), 'peticiones.id', '=', 'logs_envio.solicitud_id')
+            ->select('peticiones.*', 'logs_envio.fecha_llegada', 'solicitudes.fecha_pago_anticipo', 'solicitudes.nota_pa', 'solicitudes.fecha_pago_completo', 'solicitudes.nota_pc', 'solicitudes.fecha_pago_saldo', 'solicitudes.nota_ps')
+            ->where('peticiones.confirmado', 'ANTICIPO')
+            ->whereNotNull('peticiones.razon')
+            ->whereIn('peticiones.paytype', $incluidos)
+            ->whereNotIn('peticiones.states', $excluidos)
+            ->orderBy('solicitudes.fecha_pago_anticipo', 'desc')
             ->get();
 
         foreach ($diarias as $diario) {
-            $diario->fecha_tentativa = $this->calcularFechaTentativa($diario->fecha_envio, 15, $festivos);
-            // Calculate numeric parts ensuring we don't hit null issues -> force float
-            $diario->saldo_total = floatval($diario->valor_saldo) - floatval($diario->deducciones);
+            $diario->fecha_tentativa = $this->calcularFechaTentativa($diario->fecha_envio, 9, $festivos);
         }
 
         return view('Solicitud.saldos', compact('diarias', 'festivos', 'userName'));
+    }
+
+    public function confirmarSaldos(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        if (empty($ids) || ! is_array($ids)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se recibieron identificadores válidos.',
+            ]);
+        }
+
+        try {
+            $ahora = Carbon::now('America/Bogota');
+
+            DB::table('solicitudes')->whereIn('id', $ids)->update([
+                'confirmado' => 'SI',
+                'fecha_pago_saldo' => $ahora->toDateString(),
+            ]);
+
+            foreach ($ids as $id) {
+                DB::table('solicitudes')->where('id', $id)->update([
+                    'nota_ps' => 'SALDOS MASIVOS ' . $ahora->toDateString(),
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Saldos confirmados correctamente.',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error en confirmacion de saldos: '.$e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Hubo un error al confirmar los saldos.',
+            ], 500);
+        }
+    }
+
+    public function historicoPagos(Request $request)
+    {
+        $userName = Auth::user()->name;
+        $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE']);
+        $excluidos = (['Servicio cancelado']);
+
+        $fechasDisponibles = DB::table('peticiones')
+            ->join('solicitudes', 'peticiones.id', '=', 'solicitudes.id')
+            ->leftJoin(DB::raw("(SELECT solicitud_id, MIN(created_at)::date as fecha_llegada FROM solicitudes_logs WHERE campo = 'enviado' GROUP BY solicitud_id) as logs_envio"), 'peticiones.id', '=', 'logs_envio.solicitud_id')
+            ->where('peticiones.confirmado', 'SI')
+            ->whereNotNull('peticiones.razon')
+            ->whereIn('peticiones.paytype', $incluidos)
+            ->whereNotIn('peticiones.states', $excluidos)
+            ->whereNotNull('logs_envio.fecha_llegada')
+            ->select(DB::raw("EXTRACT(YEAR FROM logs_envio.fecha_llegada) as anio, EXTRACT(MONTH FROM logs_envio.fecha_llegada) as mes"))
+            ->distinct()
+            ->orderBy('anio', 'desc')
+            ->orderBy('mes', 'desc')
+            ->get();
+
+        $mesesMap = [];
+        foreach ($fechasDisponibles as $f) {
+            $anioInt = (int) $f->anio;
+            $mesInt = (int) $f->mes;
+            if (! isset($mesesMap[$anioInt])) {
+                $mesesMap[$anioInt] = [];
+            }
+            $mesesMap[$anioInt][] = $mesInt;
+        }
+
+        $aniosDisponibles = array_keys($mesesMap);
+        rsort($aniosDisponibles);
+
+        $ultimoAnio = $fechasDisponibles->isNotEmpty() ? (int) $fechasDisponibles->first()->anio : Carbon::now()->year;
+        $ultimoMes = $fechasDisponibles->isNotEmpty() ? (int) $fechasDisponibles->first()->mes : Carbon::now()->month;
+
+        $mes = (int) $request->input('mes', $ultimoMes);
+        $anio = (int) $request->input('anio', $ultimoAnio);
+
+        if (! isset($mesesMap[$anio]) || ! in_array($mes, $mesesMap[$anio])) {
+            $anio = $ultimoAnio;
+            $mes = $ultimoMes;
+        }
+
+        $mesesDisponibles = $mesesMap[$anio] ?? [];
+        rsort($mesesDisponibles);
+
+        $fechaInicio = Carbon::createFromDate($anio, $mes, 1)->startOfMonth()->toDateString();
+        $fechaFin = Carbon::createFromDate($anio, $mes, 1)->endOfMonth()->toDateString();
+
+        $diarias = DB::table('peticiones')
+            ->join('solicitudes', 'peticiones.id', '=', 'solicitudes.id')
+            ->leftJoin(DB::raw("(SELECT solicitud_id, MIN(created_at)::date as fecha_llegada FROM solicitudes_logs WHERE campo = 'enviado' GROUP BY solicitud_id) as logs_envio"), 'peticiones.id', '=', 'logs_envio.solicitud_id')
+            ->select('peticiones.*', 'logs_envio.fecha_llegada', 'solicitudes.fecha_pago_completo', 'solicitudes.nota_pc', 'solicitudes.fecha_pago_anticipo', 'solicitudes.nota_pa', 'solicitudes.fecha_pago_saldo', 'solicitudes.nota_ps')
+            ->where('peticiones.confirmado', 'SI')
+            ->whereNotNull('peticiones.razon')
+            ->whereIn('peticiones.paytype', $incluidos)
+            ->whereNotIn('peticiones.states', $excluidos)
+            ->whereBetween('logs_envio.fecha_llegada', [$fechaInicio, $fechaFin])
+            ->orderBy('logs_envio.fecha_llegada', 'desc')
+            ->get();
+
+        return view('Solicitud.historico_pagos', compact('diarias', 'userName', 'mes', 'anio', 'aniosDisponibles', 'mesesMap'));
     }
 
     public function cuentas()

@@ -90,7 +90,7 @@
                                 </th>
                                 <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">MANIFIESTO</th>
                                 <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">MLOG</th>
-                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">FECHA RECIBIDO</th>
+                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">📅 RECIBIDO</th>
                                 <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">CENTRO DE COSTO</th>
                                 <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">CONDICION DE PAGO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">NIT</th>

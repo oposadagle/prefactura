@@ -103,7 +103,13 @@ class Solicitud extends Model
         'valor_declarado',
         'enviado',
         'confirmado',
-        'modalidad'
+        'modalidad',
+        'fecha_pago_completo',
+        'nota_pc',
+        'fecha_pago_anticipo',
+        'nota_pa',
+        'fecha_pago_saldo',
+        'nota_ps'
     ];
 
     protected static function booted()

@@ -15,13 +15,12 @@
     #example th:nth-child(2),
     #example td:nth-child(2) {
         position: sticky;
-        left: 31px;
+        left: 120px;
         z-index: 10 !important;
         background-clip: padding-box;
     }
     #example th:nth-child(1), #example td:nth-child(1) {
-        min-width: 30px;
-        max-width: 30px;
+        min-width: 120px;
     }
     #example thead th:nth-child(1),
     #example thead th:nth-child(2) {
@@ -38,22 +37,34 @@
     }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center m-2">
                 <div class="d-flex">
                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" width="28px" height="28px" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path style="fill:#999999;" d="M108.967,329.31v132.167c0,0,60.479-31.68,90.72-16.479c30.24,15.2,113.447,37.12,163.367,32.96 c49.92-4.16,130.087-70.239,145.287-92.159c15.2-22.08-19.68-24.8-54.4-6.88c-34.72,17.92-146.727,53.6-199.686,0 c0,0,122.567,11.04,127.047,0c4.48-11.04-13.6-28.96-108.967-49.6C176.967,308.679,108.967,329.31,108.967,329.31z"></path> <rect y="329.311" style="fill:#231F20;" width="72.639" height="148.646"></rect> <path style="fill:#E21B1B;" d="M308.846,293.542V262.71c-18.075-0.205-35.799-5.019-51.496-13.984l8.583-29.872 c15.033,8.901,32.131,13.722,49.6,13.984c20,0,33.696-9.856,33.696-25.112c0-14.304-11.128-23.52-34.648-32.112 c-33.375-12.08-54.991-27.336-54.991-56.896c0-27.336,19.072-48.32,51.2-54.04V33.527h26.008v29.6 c15.222,0.165,30.213,3.75,43.864,10.488l-8.583,29.248c-13.331-6.998-28.143-10.707-43.2-10.816 c-22.248,0-30.191,11.448-30.191,22.248c0,13.04,11.44,20.344,38.464,31.16c35.6,13.352,51.496,30.512,51.496,58.808 c0,27.015-18.752,50.856-53.719,56.575v32.744L308.846,293.542z"></path> <g> <rect x="72.639" y="119.905" style="fill:#999999;" width="158.419" height="15.999"></rect> <rect x="129.1" y="179.26" style="fill:#999999;" width="101.963" height="15.999"></rect> </g> </g></svg>
-                    <h4 class="card-title" style="margin-left: 10px;">SALDOS</h4>
-                </div>               
+                    <h4 class="card-title" style="margin-left: 10px;">HISTÓRICO PAGOS</h4>
+                </div>
 
                 <div class="d-flex align-items-center">
-                    <a class="btn btn-dark py-2 mr-2" id="btnConfirmarBulk" style="font-size: 12px;font-family: Titillium Web;color:#FFAB00;font-weight: 700; margin-right:10px;" href="javascript:void(0);">
-                        <svg class="me-1" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px" height="16px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path fill="#FAFAFA" d="M20,20H4c-1.1,0-2-0.9-2-2V6c0-1.1,0.9-2,2-2h16c1.1,0,2,0.9,2,2v12C22,19.1,21.1,20,20,20z"></path> <path id="Bottom-Bar" fill="#303F9F" d="M2,16h20v2c0,1.1-0.9,2-2,2H4c-1.1,0-2-0.9-2-2V16z"></path> <path id="Top-Bar" fill="#FFAB00" d="M4,4h16c1.1,0,2,0.9,2,2v2H2V6C2,4.9,2.9,4,4,4z"></path> <path opacity="0.12" fill="#020202" d="M20,4H4C2.9,4,2,4.9,2,6v12c0,1.1,0.9,2,2,2h16c1.1,0,2-0.9,2-2V6C22,4.9,21.1,4,20,4z M21,18c0,0.6-0.4,1-1,1H4c-0.6,0-1-0.4-1-1V6c0-0.6,0.4-1,1-1h16c0.6,0,1,0.4,1,1V18z"></path> <path fill="#303F9F" d="M15,13H9c-0.6,0-1-0.4-1-1v0c0-0.6,0.4-1,1-1h6c0.6,0,1,0.4,1,1v0C16,12.6,15.6,13,15,13z"></path> </g></svg>
-                        CONFIRMAR SALDOS
-                    </a>
+                    <form method="GET" action="{{ route('solicitud.historicoPagos') }}" class="d-flex align-items-center" style="gap: 8px;">
+                        @php
+                            $meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+                            $mesesDisponibles = $mesesMap[$anio] ?? [];
+                            rsort($mesesDisponibles);
+                        @endphp
+                        <select name="anio" class="form-select form-select-sm" style="width: 100px; font-size: 12px;" onchange="this.form.submit()">
+                            @foreach ($aniosDisponibles as $y)
+                                <option value="{{ $y }}" {{ $anio == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            @endforeach
+                        </select>
+                        <select name="mes" class="form-select form-select-sm" style="width: 130px; font-size: 12px;" onchange="this.form.submit()">
+                            @foreach ($mesesDisponibles as $m)
+                                <option value="{{ $m }}" {{ $mes == $m ? 'selected' : '' }}>{{ $meses[$m-1] }}</option>
+                            @endforeach
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary" style="font-size: 12px;">Filtrar</button>
+                    </form>
                 </div>
             </div>
 
@@ -62,12 +73,15 @@
                     <table id="example" class="table table-striped mb-0">
                         <thead class="table-dark" style="font-size: 11px;">
                             <tr>
-                                <th class="celdas text-center" style="border: 1px solid #0c213a;">
-                                    <input class="form-check-input" type="checkbox" id="selectAll">
-                                </th>
                                 <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">MANIFIESTO</th>
                                 <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">MLOG</th>
+                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">📅 RECIBIDO</th>
+                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">📅 PAGO COMPLETO</th>
+                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">NOTA PC</th>
                                 <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">📅 PAGO ANTICIPO</th>
+                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">NOTA PA</th>
+                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">📅 PAGO SALDO</th>
+                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">NOTA PS</th>
                                 <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">CENTRO DE COSTO</th>
                                 <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">CONDICION DE PAGO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">NIT</th>
@@ -98,12 +112,15 @@
                         <tbody style="font-size: 12px;font-family: Titillium Web;">
                             @foreach ($diarias as $diario)
                                 <tr style="text-align: center">
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        <input class="form-check-input row-checkbox" type="checkbox" value="{{ $diario->id }}">
-                                    </td>
                                     <td class="celdas" style="color: #000; font-weight: bold; border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->razon }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">MLOG{{ substr($diario->razon, -7) }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_llegada }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_pago_completo }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->nota_pc }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_pago_anticipo }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->nota_pa }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_pago_saldo }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->nota_ps }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->centro_costo }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                             @php
@@ -159,96 +176,5 @@
         </div>
     </div>
 </div>
-
-<script>
-$(document).ready(function() {
-    $('#selectAll').change(function() {
-        var isChecked = $(this).prop('checked');
-        $('.row-checkbox').prop('checked', isChecked);
-    });
-
-    $('.row-checkbox').change(function() {
-        if (!$(this).prop('checked')) {
-            $('#selectAll').prop('checked', false);
-        } else {
-            if ($('.row-checkbox:checked').length === $('.row-checkbox').length) {
-                $('#selectAll').prop('checked', true);
-            }
-        }
-    });
-
-    $('#btnConfirmarBulk').click(function(e) {
-        e.preventDefault();
-        
-        var selectedIds = [];
-        $('.row-checkbox:checked').each(function() {
-            selectedIds.push($(this).val());
-        });
-
-        if (selectedIds.length === 0) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Atención',
-                text: 'Debe seleccionar al menos un registro para confirmar.'
-            });
-            return;
-        }
-
-        Swal.fire({
-            title: '¿Está seguro de confirmar los saldos seleccionados?',
-            text: "Se marcarán como confirmados " + selectedIds.length + " registro(s)",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, confirmar',
-            cancelButtonText: 'Cancelar',
-            customClass: {
-                confirmButton: 'btn btn-primary',
-                cancelButton: 'btn btn-secondary'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $('#btnConfirmarBulk').addClass('disabled').html('<i class="ti ti-loader fa-spin me-2"></i> PROCESANDO...');
-                
-                $.ajax({
-                    url: '{{ route("solicitud.confirmarSaldos") }}',
-                    type: 'POST',
-                    data: {
-                        ids: selectedIds,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            Swal.fire(
-                                '¡Confirmados!',
-                                'Los saldos se han actualizado correctamente.',
-                                'success'
-                            ).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            $('#btnConfirmarBulk').removeClass('disabled').html('<i class="ti ti-check me-2"></i> CONFIRMAR SALDOS');
-                            Swal.fire('Error', response.message || 'Error desconocido', 'error');
-                        }
-                    },
-                    error: function() {
-                        $('#btnConfirmarBulk').removeClass('disabled').html('<i class="ti ti-check me-2"></i> CONFIRMAR SALDOS');
-                        Swal.fire('Error', 'Hubo un problema de conexión.', 'error');
-                    }
-                });
-            }
-        });
-    });
-});
-</script>
-
-@if(session('success'))
-    <script>
-        Swal.fire("Actualización correcta").then((result) => {
-            if (result.isConfirmed) {
-                window.location = "/saldos";
-            }
-        });
-    </script>
-@endif
 
 <x-footer />
