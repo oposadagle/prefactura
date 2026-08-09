@@ -89,7 +89,6 @@
                                     <input class="form-check-input" type="checkbox" id="selectAll">
                                 </th>
                                 <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">MANIFIESTO</th>
-                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">MLOG</th>
                                 <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">📅 RECIBIDO</th>
                                 <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">CENTRO DE COSTO</th>
                                 <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">CONDICION DE PAGO</th>
@@ -126,7 +125,6 @@
                                         <input class="form-check-input row-checkbox" type="checkbox" value="{{ $diario->id }}">
                                     </td>
                                     <td class="celdas" style="color: #000; font-weight: bold; border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->razon }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">MLOG{{ substr($diario->razon, -7) }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->fecha_llegada }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->centro_costo }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">

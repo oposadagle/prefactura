@@ -39,7 +39,6 @@ class DiariosExport implements FromCollection, WithHeadings, WithMapping
     {
         return [
             $record->razon,
-            'MLOG' . substr($record->razon, -7),
             $record->fecha_llegada,
             $record->centro_costo,
             $record->paytype,
@@ -72,7 +71,7 @@ class DiariosExport implements FromCollection, WithHeadings, WithMapping
     public function headings(): array
     {
         return [
-            'MANIFIESTO', 'MLOG', 'FECHA RECIBIDO', 'CENTRO DE COSTO', 'CONDICION DE PAGO', 'NIT', 'CLIENTE', 'ORIGEN', 'DESTINO', 'PLACA',
+            'MANIFIESTO', 'FECHA RECIBIDO', 'CENTRO DE COSTO', 'CONDICION DE PAGO', 'NIT', 'CLIENTE', 'ORIGEN', 'DESTINO', 'PLACA',
             'CONDUCTOR', 'PAGAR ANTICIPO A', 'CEDULA ANTICIPO', 'TELEFONO ANTICIPO', 'PAGAR SALDO A', 'CEDULA SALDO',
             'PAGAR CONTADO A', 'CEDULA CONTADO', 'TIPO VEHICULO', 'COSTO', 'EXTRA', 'ANTICIPO', 'PAGO COMPLETO',
             'RETEICA', 'RETEFUENTE', 'FOPAT', 'SEGURO', 'VALOR A PAGAR'
