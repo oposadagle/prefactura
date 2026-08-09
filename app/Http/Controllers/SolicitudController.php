@@ -319,7 +319,7 @@ class SolicitudController extends Controller
 
             if (! empty($idsAnticipo)) {
                 DB::table('solicitudes')->whereIn('id', $idsAnticipo)->update([
-                    'confirmado' => 'ANTICIPO',
+                    'confirmado' => 'AC',
                     'fecha_pago_anticipo' => $ahora->toDateString(),
                 ]);
                 foreach ($peticiones->whereIn('id', $idsAnticipo) as $p) {
@@ -402,7 +402,7 @@ class SolicitudController extends Controller
             ->join('solicitudes', 'peticiones.id', '=', 'solicitudes.id')
             ->leftJoin(DB::raw("(SELECT solicitud_id, MIN(created_at)::date as fecha_llegada FROM solicitudes_logs WHERE campo = 'enviado' GROUP BY solicitud_id) as logs_envio"), 'peticiones.id', '=', 'logs_envio.solicitud_id')
             ->select('peticiones.*', 'logs_envio.fecha_llegada', 'solicitudes.fecha_pago_anticipo', 'solicitudes.nota_pa', 'solicitudes.fecha_pago_completo', 'solicitudes.nota_pc', 'solicitudes.fecha_pago_saldo', 'solicitudes.nota_ps')
-            ->where('peticiones.confirmado', 'ANTICIPO')
+            ->where('peticiones.confirmado', 'AC')
             ->whereNotNull('peticiones.razon')
             ->whereIn('peticiones.paytype', $incluidos)
             ->whereNotIn('peticiones.states', $excluidos)

@@ -1210,7 +1210,7 @@
                                     style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                     @can('placa')
                                         @php
-                                            $estiloPlaca = $diario->placa ? 'color: black; font-weight: bold; text-decoration: none;' : '';
+                                            $estiloPlaca = $diario->placa ? 'color: black; font-weight: bold; border: 2px solid #e9af00; padding: 2px 6px; display: inline-block;' : '';
                                         @endphp
                                         @if ($diario->enviado == 'NO')
                                             <a href="#" class="editable" style="{{ $estiloPlaca }}" data-type="select"
@@ -1223,7 +1223,7 @@
                                         @endif
                                     @else
                                         @php
-                                            $estiloPlaca = $diario->placa ? 'color: black; font-weight: bold;' : '';
+                                            $estiloPlaca = $diario->placa ? 'color: black; font-weight: bold; border: 2px solid #e9af00; padding: 2px 6px; display: inline-block;' : '';
                                         @endphp
                                         <span style="{{ $estiloPlaca }}">{{ $diario->placa }}</span>
                                     @endcan
