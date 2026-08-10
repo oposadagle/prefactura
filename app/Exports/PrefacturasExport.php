@@ -47,6 +47,7 @@ class PrefacturasExport implements FromCollection, WithHeadings
             $remesas = preg_split('/[\s-]+/', $record->remesa ?? '', -1, PREG_SPLIT_NO_EMPTY);
 
             $count = max(count($radicados), count($remesas));
+            $valorCobrar = round(($record->valor_cobrar ?? 0) / $count);
 
             for ($i = 0; $i < $count; $i++) {
                 $rows->push([
@@ -72,7 +73,7 @@ class PrefacturasExport implements FromCollection, WithHeadings
                     $record->fecha_cargue,
                     $record->causal,
                     $record->causal_mas,
-                    round($record->valor_cobrar ?? 0),
+                    $valorCobrar,
                 ]);
             }
         }
