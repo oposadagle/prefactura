@@ -2871,10 +2871,55 @@ class SolicitudController extends Controller
     public function generarFacturas(Request $request)
     {
         $mmsIds = explode(',', $request->input('guia'));
-        $datos = DB::table('infoestatus')->whereIn('guia', $mmsIds)
-            ->select('cliente', 'guia', 'fecha_cargue', 'destinatario', 'direccion', 'remesa', 'origen', 'destino', 'valor_cobrar', 'documento_cliente', 'peso', 'factura_siigo')->get();
-        $cliente = $datos->first() ? $datos->first()->cliente : null;
-        $total = $datos->sum('valor_cobrar');
+        $records = DB::table('infoestatus')->whereIn('guia', $mmsIds)
+            ->select(
+                'cliente', 'guia', 'fecha_cargue', 'tipo_vehiculo',
+                'piezas', 'peso', 'remesa', 'radicado', 'documento_cliente',
+                'destinatario', 'origen', 'destino',
+                'valor_cliente', 'valor_servicios', 'valor_cobrar'
+            )->get();
+
+        $cliente = $records->first() ? $records->first()->cliente : null;
+
+        $datos = collect();
+        $total = 0;
+
+        foreach ($records as $record) {
+            $radicados = explode('-', $record->radicado ?? '');
+            $remesas = preg_split('/[\s-]+/', $record->remesa ?? '', -1, PREG_SPLIT_NO_EMPTY);
+
+            $count = max(count($radicados), count($remesas));
+            if ($count < 1) {
+                $count = 1;
+            }
+
+            $piezasDividido = round(($record->piezas ?? 0) / $count);
+            $pesoDividido = ($record->peso ?? 0) / $count;
+            $valorClienteDividido = round(($record->valor_cliente ?? 0) / $count);
+            $valorServiciosDividido = round(($record->valor_servicios ?? 0) / $count);
+            $valorCobrarDividido = round(($record->valor_cobrar ?? 0) / $count);
+
+            for ($i = 0; $i < $count; $i++) {
+                $dato = new \stdClass();
+                $dato->guia = $record->guia;
+                $dato->fecha_cargue = $record->fecha_cargue;
+                $dato->tipo_vehiculo = $record->tipo_vehiculo;
+                $dato->piezas = $piezasDividido;
+                $dato->peso = $pesoDividido;
+                $dato->remesa = $remesas[$i] ?? '';
+                $dato->radicado = $radicados[$i] ?? '';
+                $dato->documento_cliente = $record->documento_cliente;
+                $dato->destinatario = $record->destinatario;
+                $dato->origen = $record->origen;
+                $dato->destino = $record->destino;
+                $dato->valor_cliente = $valorClienteDividido;
+                $dato->valor_servicios = $valorServiciosDividido;
+                $dato->valor_cobrar = $valorCobrarDividido;
+                $datos->push($dato);
+                $total += $valorCobrarDividido;
+            }
+        }
+
         $fecha = Carbon::now()->locale('es')->isoFormat('dddd, D [de] MMMM [de] YYYY');
         $primero = Carbon::now()->startOfMonth()->format('j/n/Y');
         $ultimo = Carbon::now()->endOfMonth()->format('d/m/Y');

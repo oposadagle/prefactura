@@ -162,14 +162,18 @@
                                                 <th style="text-align: center">Item</th>
                                                 <th style="text-align: center">Fecha</th>
                                                 <th style="text-align: center">Tipo servicio</th>
+                                                <th style="text-align: center">Tipo vehiculo</th>
+                                                <th style="text-align: center">Unidades</th>
+                                                <th style="text-align: center">Peso kg</th>
                                                 <th style="text-align: center">Remesa</th>
+                                                <th style="text-align: center">Radicado</th>
+                                                <th style="text-align: center">Referencia</th>
                                                 <th style="text-align: center">Destinatario</th>
-                                                <th style="text-align: center">Direccion</th>                                                
-                                                <th style="text-align: center">Documento cliente</th>
-                                                <th style="text-align: center">Peso</th>
                                                 <th style="text-align: center">Origen</th>
-                                                <th style="text-align: center">Destino/Ciudad</th>
-                                                <th style="text-align: center">Valor servicio</th>                                                
+                                                <th style="text-align: center">Destino</th>
+                                                <th style="text-align: center">Valor flete</th>
+                                                <th style="text-align: center">Valor auxiliar</th>
+                                                <th style="text-align: center">Total</th>
                                             </tr><!--end tr-->
                                         </thead>
                                         <tbody>
@@ -178,15 +182,21 @@
                                                     <td class="celdas">{{ $dato->guia }}</td>
                                                     <td class="celdas">{{ $dato->fecha_cargue }}</td>
                                                     <td class="celdas">Masivos</td>
+                                                    <td class="celdas">{{ $dato->tipo_vehiculo }}</td>
+                                                    <td class="celdas">{{ $dato->piezas }}</td>
+                                                    <td class="celdas">{{ $dato->peso }}</td>
                                                     <td class="celdas">{{ $dato->remesa }}</td>
-                                                    <td class="celdas">{{ $dato->destinatario }}</td>
-                                                    <td class="celdas">{{ $dato->direccion }}</td>                                                    
+                                                    <td class="celdas">{{ $dato->radicado }}</td>
                                                     <td class="celdas">{{ $dato->documento_cliente }}</td>
-                                                    <td class="celdas">{{ $dato->peso }}</td>                                                  
+                                                    <td class="celdas">{{ $dato->destinatario }}</td>
                                                     <td class="celdas">{{ $dato->origen }}</td>
                                                     <td class="celdas">{{ $dato->destino }}</td>
                                                     <td class="celdas" style="text-align: right;">$
-                                                        {{ number_format($dato->valor_cobrar, 0, ',', '.') }}</td>                                                    
+                                                        {{ number_format($dato->valor_cliente, 0, ',', '.') }}</td>
+                                                    <td class="celdas" style="text-align: right;">$
+                                                        {{ number_format($dato->valor_servicios, 0, ',', '.') }}</td>
+                                                    <td class="celdas" style="text-align: right;">$
+                                                        {{ number_format($dato->valor_cobrar, 0, ',', '.') }}</td>
                                                 </tr><!--end tr-->
                                             @endforeach
                                             <tr>
@@ -198,8 +208,12 @@
                                                 <td class="border-0 font-14 text-dark"></td>
                                                 <td class="border-0 font-14 text-dark"></td>
                                                 <td class="border-0 font-14 text-dark"></td>
+                                                <td class="border-0 font-14 text-dark"></td>
+                                                <td class="border-0 font-14 text-dark"></td>
+                                                <td class="border-0 font-14 text-dark"></td>
+                                                <td class="border-0 font-14 text-dark"></td>
                                                 <td class="border-0 font-14 text-dark"><b></b></td>
-                                                <td class="border-0 font-14 text-dark"><b></b></td>                                                
+                                                <td class="border-0 font-14 text-dark"><b></b></td>
                                             </tr><!--end tr-->
                                             <tr class="bg-black text-white">
                                                 <th colspan="2" class="border-0"></th>
@@ -210,9 +224,13 @@
                                                 <td class="border-0 font-14"></td>
                                                 <td class="border-0 font-14"></td>
                                                 <td class="border-0 font-14"></td>
+                                                <td class="border-0 font-14"></td>
+                                                <td class="border-0 font-14"></td>
+                                                <td class="border-0 font-14"></td>
+                                                <td class="border-0 font-14"></td>
                                                 <td class="border-0 font-14"><b>Total</b></td>
                                                 <td class="border-0 font-14" style="text-align: right;"><b>$
-                                                        {{ number_format($total, 0, ',', '.') }}</b></td>                                                
+                                                        {{ number_format($total, 0, ',', '.') }}</b></td>
                                             </tr><!--end tr-->
                                         </tbody>
                                     </table><!--end table-->
