@@ -223,9 +223,17 @@ class SolicitudController extends Controller
 
         $diarias = $query->orderBy('fecha_cargue', 'desc')->get();
 
-        // Calcula la fecha tentativa para cada entrada
+        $manifiestos = $diarias->pluck('razon')->filter()->unique()->toArray();
+        $novedadesSums = DB::table('novedades')
+            ->whereIn('manifiesto', $manifiestos)
+            ->select('manifiesto', DB::raw('SUM(valor) as total_novedades'))
+            ->groupBy('manifiesto')
+            ->pluck('total_novedades', 'manifiesto');
+
         foreach ($diarias as $diario) {
             $diario->fecha_tentativa = $this->calcularFechaTentativa($diario->fenv_cumplido, 9, $festivos);
+            $diario->total_novedades = $novedadesSums[$diario->razon] ?? 0;
+            $diario->saldo_total = floatval($diario->valor_saldo) - floatval($diario->deducciones) - floatval($diario->total_novedades);
         }
 
         // Obtener fechas disponibles para los selectores
@@ -409,8 +417,17 @@ class SolicitudController extends Controller
             ->orderBy('solicitudes.fecha_pago_anticipo', 'desc')
             ->get();
 
+        $manifiestos = $diarias->pluck('razon')->filter()->unique()->toArray();
+        $novedadesSums = DB::table('novedades')
+            ->whereIn('manifiesto', $manifiestos)
+            ->select('manifiesto', DB::raw('SUM(valor) as total_novedades'))
+            ->groupBy('manifiesto')
+            ->pluck('total_novedades', 'manifiesto');
+
         foreach ($diarias as $diario) {
             $diario->fecha_tentativa = $this->calcularFechaTentativa($diario->fecha_envio, 9, $festivos);
+            $diario->total_novedades = $novedadesSums[$diario->razon] ?? 0;
+            $diario->saldo_total = floatval($diario->valor_saldo) - floatval($diario->total_novedades);
         }
 
         return view('Solicitud.saldos', compact('diarias', 'festivos', 'userName'));
@@ -2736,6 +2753,84 @@ class SolicitudController extends Controller
         DB::table('solicitudes')->where('id', '=', $id)->update($dataFinal17);
 
         return back()->with('success', 'ok');
+    }
+
+    public function guardarNovedad(Request $request)
+    {
+        $request->validate([
+            'ide' => 'required|integer|exists:solicitudes,id',
+            'manifiesto' => 'required|string',
+            'tipo_novedad' => 'required|string',
+            'valor' => 'required|integer|min:0',
+        ]);
+
+        try {
+            $soporte = null;
+            if ($request->hasFile('soporte')) {
+                $file = $request->file('soporte');
+                $extension = strtolower($file->getClientOriginalExtension());
+                if (! in_array($extension, ['jpg', 'jpeg', 'png', 'pdf'])) {
+                    return response()->json(['success' => false, 'message' => 'Formato de archivo no permitido.'], 422);
+                }
+                $soporte = base64_encode(file_get_contents($file->getRealPath()));
+            }
+
+            $ahora = Carbon::now('America/Bogota');
+
+            DB::table('novedades')->insert([
+                'ide' => $request->ide,
+                'manifiesto' => $request->manifiesto,
+                'tipo_novedad' => $request->tipo_novedad,
+                'clase_novedad' => $request->clase_novedad,
+                'valor' => $request->valor,
+                'nota' => $request->nota,
+                'soporte' => $soporte,
+                'update_user' => auth()->user()->name ?? auth()->user()->email ?? 'sistema',
+                'created_at' => $ahora,
+                'updated_at' => $ahora,
+            ]);
+
+            $accionesCosto = ['AUXILIARES', 'PUNTO NO CARGADO', 'TRANSBORDO'];
+            $accionesSumaCosto = ['PUNTO ADICIONAL'];
+
+            if (in_array($request->tipo_novedad, $accionesCosto)) {
+                DB::table('solicitudes')->where('id', $request->ide)->decrement('costo', $request->valor);
+            } elseif (in_array($request->tipo_novedad, $accionesSumaCosto)) {
+                DB::table('solicitudes')->where('id', $request->ide)->increment('costo', $request->valor);
+            }
+
+            return response()->json(['success' => true, 'message' => 'Novedad guardada correctamente.']);
+        } catch (\Exception $e) {
+            Log::error('Error al guardar novedad: ' . $e->getMessage());
+
+            return response()->json(['success' => false, 'message' => 'Error al guardar la novedad.'], 500);
+        }
+    }
+
+    public function detalleNovedades($manifiesto)
+    {
+        $novedades = DB::table('novedades')
+            ->where('manifiesto', $manifiesto)
+            ->select('tipo_novedad', 'clase_novedad', 'valor', 'nota', 'soporte', 'update_user', 'created_at')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        foreach ($novedades as $n) {
+            if ($n->soporte) {
+                $firstBytes = substr($n->soporte, 0, 10);
+                if (str_starts_with($firstBytes, '/9j/')) {
+                    $n->soporte_tipo = 'image/jpeg';
+                } elseif (str_starts_with($firstBytes, 'iVBOR')) {
+                    $n->soporte_tipo = 'image/png';
+                } else {
+                    $n->soporte_tipo = 'application/pdf';
+                }
+            } else {
+                $n->soporte_tipo = null;
+            }
+        }
+
+        return response()->json($novedades);
     }
 
     public function toggleTrafico(Request $request, $id)

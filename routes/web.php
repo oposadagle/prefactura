@@ -86,6 +86,8 @@ Route::get('/sac', [SolicitudController::class, 'sac'])->name('solicitud.sac');
 Route::get('/anticipo', [SolicitudController::class, 'anticipo'])->name('solicitud.anticipo');
 Route::get('/anticipos', [SolicitudController::class, 'anticipos'])->name('solicitud.anticipos');
 Route::post('/solicitud/anticipos/confirmar', [SolicitudController::class, 'confirmarAnticipos'])->name('solicitud.confirmarAnticipos');
+Route::post('/solicitud/novedad/guardar', [SolicitudController::class, 'guardarNovedad'])->name('solicitud.guardarNovedad');
+Route::get('/solicitud/novedad/detalle/{manifiesto}', [SolicitudController::class, 'detalleNovedades'])->name('solicitud.detalleNovedades');
 Route::post('/solicitud/anticipos/archivo-plano', [SolicitudController::class, 'archivoPlanoAnticipos'])->name('solicitud.archivoPlanoAnticipos');
 Route::get('/saldos', [SolicitudController::class, 'saldos'])->name('solicitud.saldos');
 Route::post('/solicitud/saldos/confirmar', [SolicitudController::class, 'confirmarSaldos'])->name('solicitud.confirmarSaldos');

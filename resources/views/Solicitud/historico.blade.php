@@ -6,6 +6,9 @@
     color: #656C82;    
     }
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
@@ -104,7 +107,10 @@
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">TIPO TRAYECTO</th>                                
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">TIPO VEHICULO</th>
                                 <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">TIPO CARROCERIA</th>                                
-                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">EJECUTIVO</th>                                
+                                <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">EJECUTIVO</th>
+                                @can('novedades')
+                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">NOVEDAD</th>
+                                @endcan
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">PLACA</th>
                                 @can('costos')
                                 <th class="celdas" style="color: #FFAF61;border: 1px solid #0c213a;">COSTO FLETE</th>
@@ -203,8 +209,29 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->tipo_trayecto }}</td> 
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->tipo_vehiculo }}</td> 
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->carroceria }}</td> 
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strtoupper($diario->ejecutivo) }}</td>                                    
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->placa }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strtoupper($diario->ejecutivo) }}</td>
+                                    @can('novedades')
+                                    @php
+                                        $condicionesNovedad = $diario->razon && $diario->costo > 0 && in_array($diario->paytype, ['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE']) && $diario->states != 'Servicio cancelado';
+                                    @endphp
+                                    <td class="celdas text-center"
+                                        style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        <button type="button" class="btn btn-sm btn-novedad {{ $condicionesNovedad ? '' : 'disabled' }}"
+                                            style="background-color: #00FF9C; color: #000; font-weight: bold; font-size: 14px; width: 30px; height: 30px; padding: 0; {{ $condicionesNovedad ? '' : 'opacity: 0.4; cursor: not-allowed;' }}"
+                                            {{ $condicionesNovedad ? '' : 'disabled' }}
+                                            data-id="{{ $diario->id }}"
+                                            data-razon="{{ $diario->razon }}">
+                                            +
+                                        </button>
+                                    </td>
+                                    @endcan
+                                    <td class="celdas fw-bold" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;color: #021526;">
+                                        @if ($diario->placa)
+                                            <span style="border: 2px solid #e9af00; padding: 2px 6px; display: inline-block;">{{ $diario->placa }}</span>
+                                        @else
+                                            {{ $diario->placa }}
+                                        @endif
+                                    </td>
                                     @can('costos')
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         <a href="#" class="editable" data-type="text" data-name="costo" data-pk="{{$diario->id}}" style="color: #747b8e">
@@ -677,6 +704,141 @@
     });
     $(document).on('shown', '.editable', function(e, editable) {
         $('.editable-costo').trigger('input');
+    });
+</script>
+
+<div class="modal fade" id="modalNovedad" tabindex="-1" role="dialog" aria-labelledby="modalNovedadTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" style="color: white;">Novedad <span id="modalNovedadManifiesto" style="color: #00FF9C; font-weight: bold;"></span></h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formNovedad" enctype="multipart/form-data">
+                    <input type="hidden" id="novedad_ide" name="ide">
+                    <input type="hidden" id="novedad_manifiesto" name="manifiesto">
+
+                    <div class="form-floating mb-3">
+                        <select class="form-select" id="novedad_tipo" name="tipo_novedad" required>
+                            <option value="" disabled selected>Seleccione...</option>
+                            <option value="ACUERDO DE PAGO">ACUERDO DE PAGO</option>
+                            <option value="AUXILIARES">AUXILIARES</option>
+                            <option value="AVERIA">AVERIA</option>
+                            <option value="DAÑO A TERCEROS">DAÑO A TERCEROS</option>
+                            <option value="ESCOLTA Y CANDADO SATELITAL">ESCOLTA Y CANDADO SATELITAL</option>
+                            <option value="HURTO">HURTO</option>
+                            <option value="PENALIZACIONES">PENALIZACIONES</option>
+                            <option value="PENDIENTES">PENDIENTES</option>
+                            <option value="PUNTO ADICIONAL">PUNTO ADICIONAL</option>
+                            <option value="PUNTO NO CARGADO">PUNTO NO CARGADO</option>
+                            <option value="TRANSBORDO">TRANSBORDO</option>
+                            <option value="VIAJE CANCELADO">VIAJE CANCELADO</option>
+                        </select>
+                        <label>Tipo de novedad</label>
+                    </div>
+
+                    <div class="form-floating mb-3" id="divClaseNovedad" style="display: none;">
+                        <select class="form-select" id="novedad_clase" name="clase_novedad">
+                            <option value="" disabled selected>Seleccione...</option>
+                            <option value="DEVOLUCION TOTAL">DEVOLUCION TOTAL</option>
+                            <option value="DEVOLUCION PARCIAL">DEVOLUCION PARCIAL</option>
+                            <option value="DESCUENTO SALDOS">DESCUENTO SALDOS</option>
+                        </select>
+                        <label>Clase de novedad</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="novedad_valor_display" placeholder="Valor" required>
+                        <input type="hidden" id="novedad_valor" name="valor">
+                        <label>Valor</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control" id="novedad_nota" name="nota" placeholder="Nota" style="height: 80px; resize: none;"></textarea>
+                        <label>Nota</label>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" style="font-size: 13px;">Soporte (jpg, png, pdf)</label>
+                        <input type="file" class="form-control form-control-sm" id="novedad_soporte" name="soporte" accept=".jpg,.jpeg,.png,.pdf">
+                    </div>
+
+                    <div class="d-flex justify-content-end" style="gap: 8px;">
+                        <button type="button" class="btn btn-soft-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-sm" style="background-color: #00FF9C; color: #000; font-weight: bold;">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.btn-novedad').click(function() {
+            if ($(this).hasClass('disabled')) return;
+            var id = $(this).data('id');
+            var razon = $(this).data('razon');
+            $('#modalNovedadManifiesto').text(razon);
+            $('#novedad_ide').val(id);
+            $('#novedad_manifiesto').val(razon);
+            $('#formNovedad')[0].reset();
+            $('#divClaseNovedad').hide();
+            $('#modalNovedad').modal('show');
+        });
+
+        $('#novedad_tipo').change(function() {
+            if ($(this).val() === 'VIAJE CANCELADO') {
+                $('#divClaseNovedad').show();
+            } else {
+                $('#divClaseNovedad').hide();
+                $('#novedad_clase').val('');
+            }
+        });
+
+        $('#novedad_valor_display').on('input', function() {
+            var raw = $(this).val().replace(/\./g, '').replace(/\D/g, '');
+            if (raw === '') {
+                $('#novedad_valor').val('');
+                $(this).val('');
+                return;
+            }
+            var formateado = parseInt(raw, 10).toLocaleString('es-CO');
+            $(this).val(formateado);
+            $('#novedad_valor').val(raw);
+        });
+
+        $('#formNovedad').submit(function(e) {
+            e.preventDefault();
+            var raw = $('#novedad_valor_display').val().replace(/\./g, '').replace(/\D/g, '');
+            $('#novedad_valor').val(raw);
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '{{ route("solicitud.guardarNovedad") }}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                success: function(response) {
+                    if (response.success) {
+                        $('#modalNovedad').modal('hide');
+                        Swal.fire('Guardado', 'Novedad registrada correctamente.', 'success');
+                    } else {
+                        Swal.fire('Error', response.message || 'Error al guardar.', 'error');
+                    }
+                },
+                error: function(xhr) {
+                    var msg = 'Error al guardar la novedad.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        msg = xhr.responseJSON.message;
+                    }
+                    Swal.fire('Error', msg, 'error');
+                }
+            });
+        });
     });
 </script>
 

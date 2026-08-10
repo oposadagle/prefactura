@@ -91,7 +91,10 @@
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">RETEFUENTE</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">FOPAT</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">SEGURO</th>
-                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">VALOR A PAGAR</th>
+                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">VALOR SALDO</th>
+                                <th class="celdas" style="color: #00FF9C;border: 1px solid #0c213a;">NOVEDADES</th>
+                                <th class="celdas" style="color: #00FF9C;border: 1px solid #0c213a;">DETALLE</th>
+                                <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">SALDO TOTAL</th>
                             </tr>
                         </thead>
                         <tbody style="font-size: 12px;font-family: Titillium Web;">
@@ -122,7 +125,13 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->cliente }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->origen) }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->destino) }}</td>
-                                    <td class="celdas fw-bold" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;color: #021526;">{{ $diario->placa }}</td>
+                                    <td class="celdas fw-bold" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;color: #021526;">
+                                        @if ($diario->placa)
+                                            <span style="border: 2px solid #e9af00; padding: 2px 6px; display: inline-block;">{{ $diario->placa }}</span>
+                                        @else
+                                            {{ $diario->placa }}
+                                        @endif
+                                    </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ strToUpper($diario->conductor) }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->pagant }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ $diario->cpagant }}</td>
@@ -147,7 +156,17 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->retefuente, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->fopat, 0, ',', '.') }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->seguro, 0, ',', '.') }}</td>
-                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->valor_a_pagar, 0, ',', '.') }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->valor_saldo, 0, ',', '.') }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->total_novedades, 0, ',', '.') }}</td>
+                                    <td class="celdas text-center"
+                                        style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        <button type="button" class="btn btn-sm btn-detalle-novedad"
+                                            style="background-color: #00FF9C; color: #000; font-size: 14px; width: 30px; height: 30px; padding: 0;"
+                                            data-manifiesto="{{ $diario->razon }}">
+                                            👁
+                                        </button>
+                                    </td>
+                                    <td class="celdas fw-bold" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->saldo_total, 0, ',', '.') }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -248,5 +267,84 @@ $(document).ready(function() {
         });
     </script>
 @endif
+
+<div class="modal fade" id="modalDetalleNovedad" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" style="color: white;">Detalle novedades - <span id="detalleManifiesto" style="color: #00FF9C; font-weight: bold;"></span></h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm mb-0">
+                        <thead class="table-dark" style="font-size: 11px;">
+                            <tr>
+                                <th style="color: #00FF9C;">TIPO</th>
+                                <th style="color: #00FF9C;">CLASE</th>
+                                <th style="color: #00FF9C;">VALOR</th>
+                                <th style="color: #00FF9C;">NOTA</th>
+                                <th style="color: #00FF9C;">SOPORTE</th>
+                                <th style="color: #00FF9C;">USUARIO</th>
+                                <th style="color: #00FF9C;">FECHA</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyDetalleNovedad" style="font-size: 11px;">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.btn-detalle-novedad').click(function() {
+            var manifiesto = $(this).data('manifiesto');
+            $('#detalleManifiesto').text(manifiesto);
+            $('#tbodyDetalleNovedad').html('<tr><td colspan="7" class="text-center">Cargando...</td></tr>');
+            $('#modalDetalleNovedad').modal('show');
+
+            $.get('/solicitud/novedad/detalle/' + manifiesto, function(data) {
+                var html = '';
+                if (data.length === 0) {
+                    html = '<tr><td colspan="7" class="text-center">Sin novedades</td></tr>';
+                } else {
+                    data.forEach(function(n) {
+                        var soporteHtml = n.soporte
+                            ? '<a href="#" class="ver-soporte" data-soporte="' + n.soporte + '" data-tipo="' + n.soporte_tipo + '" title="Ver soporte">📄</a>'
+                            : '';
+                        html += '<tr>' +
+                            '<td>' + n.tipo_novedad + '</td>' +
+                            '<td>' + (n.clase_novedad || '') + '</td>' +
+                            '<td style="text-align: right;">' + parseInt(n.valor).toLocaleString('es-CO') + '</td>' +
+                            '<td>' + (n.nota || '') + '</td>' +
+                            '<td class="text-center">' + soporteHtml + '</td>' +
+                            '<td>' + n.update_user + '</td>' +
+                            '<td>' + n.created_at + '</td>' +
+                            '</tr>';
+                    });
+                }
+                $('#tbodyDetalleNovedad').html(html);
+
+                $('.ver-soporte').click(function(e) {
+                    e.preventDefault();
+                    var base64 = $(this).data('soporte');
+                    var tipo = $(this).data('tipo');
+                    if (tipo === 'application/pdf') {
+                        var win = window.open('', '_blank');
+                        win.document.write('<iframe src="data:application/pdf;base64,' + base64 + '" width="100%" height="100%" frameborder="0"></iframe>');
+                    } else {
+                        var win = window.open('', '_blank');
+                        win.document.write('<img src="data:' + tipo + ';base64,' + base64 + '" style="max-width:100%; height:auto;">');
+                    }
+                });
+            }).fail(function() {
+                $('#tbodyDetalleNovedad').html('<tr><td colspan="7" class="text-center text-danger">Error al cargar</td></tr>');
+            });
+        });
+    });
+</script>
 
 <x-footer />
