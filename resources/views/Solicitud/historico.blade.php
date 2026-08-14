@@ -715,7 +715,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="formNovedad" enctype="multipart/form-data">
+                <form id="formNovedad" enctype="multipart/form-data" novalidate>
                     <input type="hidden" id="novedad_ide" name="ide">
                     <input type="hidden" id="novedad_manifiesto" name="manifiesto">
 
@@ -741,27 +741,31 @@
                     <div class="form-floating mb-3" id="divClaseNovedad" style="display: none;">
                         <select class="form-select" id="novedad_clase" name="clase_novedad">
                             <option value="" disabled selected>Seleccione...</option>
-                            <option value="DEVOLUCION TOTAL">DEVOLUCION TOTAL</option>
-                            <option value="DEVOLUCION PARCIAL">DEVOLUCION PARCIAL</option>
-                            <option value="DESCUENTO SALDOS">DESCUENTO SALDOS</option>
                         </select>
                         <label>Clase de novedad</label>
                     </div>
 
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="novedad_valor_display" placeholder="Valor" required>
-                        <input type="hidden" id="novedad_valor" name="valor">
-                        <label>Valor</label>
+                    <div id="divCamposBasicos">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="novedad_valor_display" placeholder="Valor" required>
+                            <input type="hidden" id="novedad_valor" name="valor">
+                            <label>Valor</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" id="novedad_nota" name="nota" placeholder="Nota" style="height: 80px; resize: none;"></textarea>
+                            <label>Nota</label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" style="font-size: 13px;">Soporte (jpg, png, pdf)</label>
+                            <input type="file" class="form-control form-control-sm" id="novedad_soporte" name="soporte" accept=".jpg,.jpeg,.png,.pdf">
+                        </div>
                     </div>
 
-                    <div class="form-floating mb-3">
-                        <textarea class="form-control" id="novedad_nota" name="nota" placeholder="Nota" style="height: 80px; resize: none;"></textarea>
-                        <label>Nota</label>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label" style="font-size: 13px;">Soporte (jpg, png, pdf)</label>
-                        <input type="file" class="form-control form-control-sm" id="novedad_soporte" name="soporte" accept=".jpg,.jpeg,.png,.pdf">
+                    <div id="divPendienteExcel" class="mb-3" style="display: none;">
+                        <label class="form-label" style="font-size: 13px;">Archivo Excel (MANIFIESTO, NOTA)</label>
+                        <input type="file" class="form-control form-control-sm" id="novedad_excel" name="excel" accept=".xlsx,.xls">
                     </div>
 
                     <div class="d-flex justify-content-end" style="gap: 8px;">
@@ -785,15 +789,34 @@
             $('#novedad_manifiesto').val(razon);
             $('#formNovedad')[0].reset();
             $('#divClaseNovedad').hide();
+            $('#divPendienteExcel').hide();
+            $('#divCamposBasicos').show();
             $('#modalNovedad').modal('show');
         });
 
         $('#novedad_tipo').change(function() {
-            if ($(this).val() === 'VIAJE CANCELADO') {
+            var tipo = $(this).val();
+            var claseSelect = $('#novedad_clase');
+            claseSelect.empty().append('<option value="" disabled selected>Seleccione...</option>');
+
+            if (tipo === 'VIAJE CANCELADO') {
+                claseSelect.append('<option value="DEVOLUCION TOTAL">DEVOLUCION TOTAL</option>');
+                claseSelect.append('<option value="DEVOLUCION PARCIAL">DEVOLUCION PARCIAL</option>');
                 $('#divClaseNovedad').show();
+                $('#divPendienteExcel').hide();
+                $('#divCamposBasicos').show();
+            } else if (tipo === 'PENDIENTES') {
+                claseSelect.append('<option value="CONGELAR">CONGELAR</option>');
+                claseSelect.append('<option value="DESCONGELAR">DESCONGELAR</option>');
+                $('#divClaseNovedad').show();
+                $('#divPendienteExcel').show();
+                $('#divCamposBasicos').hide();
+                $('#novedad_valor_display').removeAttr('required');
             } else {
                 $('#divClaseNovedad').hide();
-                $('#novedad_clase').val('');
+                $('#divPendienteExcel').hide();
+                $('#divCamposBasicos').show();
+                $('#novedad_valor_display').attr('required', true);
             }
         });
 
@@ -811,8 +834,17 @@
 
         $('#formNovedad').submit(function(e) {
             e.preventDefault();
-            var raw = $('#novedad_valor_display').val().replace(/\./g, '').replace(/\D/g, '');
-            $('#novedad_valor').val(raw);
+
+            if ($('#novedad_tipo').val() === 'PENDIENTES') {
+                if (!$('#novedad_excel').val()) {
+                    Swal.fire('Error', 'Debe seleccionar un archivo Excel.', 'error');
+                    return;
+                }
+            } else {
+                var raw = $('#novedad_valor_display').val().replace(/\./g, '').replace(/\D/g, '');
+                $('#novedad_valor').val(raw);
+            }
+
             var formData = new FormData(this);
 
             $.ajax({

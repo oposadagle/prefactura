@@ -95,11 +95,12 @@
                                 <th class="celdas" style="color: #00FF9C;border: 1px solid #0c213a;">NOVEDADES</th>
                                 <th class="celdas" style="color: #00FF9C;border: 1px solid #0c213a;">DETALLE</th>
                                 <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">SALDO TOTAL</th>
+                                <th class="celdas" style="color: #FFFFFF;border: 1px solid #0c213a;">ESTADO</th>
                             </tr>
                         </thead>
                         <tbody style="font-size: 12px;font-family: Titillium Web;">
                             @foreach ($diarias as $diario)
-                                <tr style="text-align: center">
+                                <tr style="text-align: center; {{ $diario->estado_pago === 'CONGELADO' ? 'background-color: #d9eeff;' : '' }}">
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         <input class="form-check-input row-checkbox" type="checkbox" value="{{ $diario->id }}">
                                     </td>
@@ -167,6 +168,13 @@
                                         </button>
                                     </td>
                                     <td class="celdas fw-bold" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->saldo_total, 0, ',', '.') }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        @if ($diario->estado_pago === 'CONGELADO')
+                                            <span class="badge bg-info">CONGELADO</span>
+                                        @else
+                                            <span class="badge bg-dark">PAGAR</span>
+                                        @endif
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>

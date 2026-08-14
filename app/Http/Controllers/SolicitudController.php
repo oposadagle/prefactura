@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class SolicitudController extends Controller
 {
@@ -424,10 +425,20 @@ class SolicitudController extends Controller
             ->groupBy('manifiesto')
             ->pluck('total_novedades', 'manifiesto');
 
+        $congelados = DB::table('novedades')
+            ->whereIn('manifiesto', $manifiestos)
+            ->where('tipo_novedad', 'PENDIENTES')
+            ->where('clase_novedad', 'CONGELAR')
+            ->select('manifiesto')
+            ->distinct()
+            ->pluck('manifiesto')
+            ->toArray();
+
         foreach ($diarias as $diario) {
             $diario->fecha_tentativa = $this->calcularFechaTentativa($diario->fecha_envio, 9, $festivos);
             $diario->total_novedades = $novedadesSums[$diario->razon] ?? 0;
             $diario->saldo_total = floatval($diario->valor_saldo) - floatval($diario->total_novedades);
+            $diario->estado_pago = in_array($diario->razon, $congelados) ? 'CONGELADO' : 'PAGAR';
         }
 
         return view('Solicitud.saldos', compact('diarias', 'festivos', 'userName'));
@@ -2502,9 +2513,9 @@ class SolicitudController extends Controller
             return back()->with('error', 'Los campos pedido, remesa, manifiesto, radicado y nota cumplido (campo despu├®s de tr├ífico) no pueden estar vac├¡os.');
         }
 
-        // Validacion para pagos anticipados: deben estar confirmados
+        // Validacion para pagos anticipados: deben estar confirmados (anticipo, el saldo no participa)
         if (in_array($restricciones->paytype, $incluidos)) {
-            if ($restricciones->confirmado !== 'SI') {
+            if (! in_array($restricciones->confirmado, ['AC', 'SI'], true)) {
                 return back()->with('error', 'El anticipo debe estar confirmado para poder cerrar el caso.');
             }
         }
@@ -2757,14 +2768,75 @@ class SolicitudController extends Controller
 
     public function guardarNovedad(Request $request)
     {
-        $request->validate([
-            'ide' => 'required|integer|exists:solicitudes,id',
-            'manifiesto' => 'required|string',
-            'tipo_novedad' => 'required|string',
-            'valor' => 'required|integer|min:0',
-        ]);
+        $tipo = $request->input('tipo_novedad');
 
         try {
+            $ahora = Carbon::now('America/Bogota');
+            $usuario = auth()->user()->name ?? auth()->user()->email ?? 'sistema';
+
+            if ($tipo === 'PENDIENTES') {
+                $request->validate([
+                    'clase_novedad' => 'required|string',
+                    'excel' => 'required|file|mimes:xlsx,xls',
+                ]);
+
+                $spreadsheet = IOFactory::load($request->file('excel')->getRealPath());
+                $sheet = $spreadsheet->getActiveSheet();
+                $rows = $sheet->toArray();
+
+                $insertados = 0;
+                $actualizados = 0;
+                $accion = $request->input('clase_novedad'); // CONGELAR o DESCONGELAR
+
+                for ($i = 1; $i < count($rows); $i++) {
+                    $manifiestoExcel = trim($rows[$i][0] ?? '');
+                    $notaExcel = trim($rows[$i][1] ?? '');
+
+                    if (empty($manifiestoExcel)) continue;
+
+                    $solicitud = DB::table('solicitudes')->where('razon', $manifiestoExcel)->first();
+
+                    if ($accion === 'DESCONGELAR') {
+                        DB::table('novedades')
+                            ->where('manifiesto', $manifiestoExcel)
+                            ->where('tipo_novedad', 'PENDIENTES')
+                            ->update([
+                                'clase_novedad' => 'DESCONGELAR',
+                                'nota' => $notaExcel,
+                                'update_user' => $usuario,
+                                'updated_at' => $ahora,
+                            ]);
+                        $actualizados++;
+                    } else {
+                        DB::table('novedades')->insert([
+                            'ide' => $solicitud ? $solicitud->id : null,
+                            'manifiesto' => $manifiestoExcel,
+                            'tipo_novedad' => 'PENDIENTES',
+                            'clase_novedad' => $accion,
+                            'valor' => 0,
+                            'nota' => $notaExcel,
+                            'soporte' => null,
+                            'update_user' => $usuario,
+                            'created_at' => $ahora,
+                            'updated_at' => $ahora,
+                        ]);
+                        $insertados++;
+                    }
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => "Procesado: {$insertados} insertados, {$actualizados} actualizados.",
+                ]);
+            }
+
+            $request->validate([
+                'ide' => 'required|integer|exists:solicitudes,id',
+                'manifiesto' => 'required|string',
+                'tipo_novedad' => 'required|string',
+                'valor' => 'required|integer|min:0',
+            ]);
+
             $soporte = null;
             if ($request->hasFile('soporte')) {
                 $file = $request->file('soporte');
@@ -2775,8 +2847,6 @@ class SolicitudController extends Controller
                 $soporte = base64_encode(file_get_contents($file->getRealPath()));
             }
 
-            $ahora = Carbon::now('America/Bogota');
-
             DB::table('novedades')->insert([
                 'ide' => $request->ide,
                 'manifiesto' => $request->manifiesto,
@@ -2785,7 +2855,7 @@ class SolicitudController extends Controller
                 'valor' => $request->valor,
                 'nota' => $request->nota,
                 'soporte' => $soporte,
-                'update_user' => auth()->user()->name ?? auth()->user()->email ?? 'sistema',
+                'update_user' => $usuario,
                 'created_at' => $ahora,
                 'updated_at' => $ahora,
             ]);
