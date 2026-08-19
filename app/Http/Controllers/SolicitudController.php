@@ -14,6 +14,7 @@ use App\Exports\LogsExport;
 use App\Exports\MastotalesExport;
 use App\Exports\PaqtotalesExport;
 use App\Exports\PrefacturasExport;
+use App\Exports\PrefacturasExportOriginal;
 use App\Exports\ServiciosExport;
 use App\Exports\TransitosExport;
 use App\Models\Solicitud;
@@ -1343,6 +1344,28 @@ class SolicitudController extends Controller
 
         // Descargar el archivo usando los par├ímetros
         return Excel::download(new PrefacturasExport($year, $month), $filename);
+    }
+
+    public function prefacturasOriginal(Request $request)
+    {
+        $year = $request->input('year');
+        $month = $request->input('month');
+
+        // Validar que el formato sea correcto
+        if (! $year || ! $month || ! is_numeric($year) || ! is_numeric($month)) {
+            return redirect()->back()->withErrors(['year' => 'Año o mes inválido']);
+        }
+
+        // Verificar que los valores sean válidos
+        if (! checkdate((int) $month, 1, (int) $year)) {
+            return redirect()->back()->withErrors(['month' => 'Fecha inválida']);
+        }
+
+        // Generar el nombre del archivo din├ímicamente
+        $filename = 'prefactura_completa_'.$year.'_'.str_pad($month, 2, '0', STR_PAD_LEFT).'.xlsx';
+
+        // Descargar el archivo usando los par├ímetros
+        return Excel::download(new PrefacturasExportOriginal($year, $month), $filename);
     }
 
     public function historico(Request $request)

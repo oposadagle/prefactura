@@ -47,6 +47,7 @@ Route::get('/diaria', [SolicitudController::class, 'diaria'])->name('solicitud.d
 Route::get('/adelanto', [SolicitudController::class, 'adelanto'])->name('solicitud.adelanto');
 Route::get('/estatus', [SolicitudController::class, 'estatus'])->name('solicitud.estatus');
 Route::get('/prefacturas', [SolicitudController::class, 'prefacturas'])->name('solicitud.prefacturas');
+Route::get('/prefacturas-original', [SolicitudController::class, 'prefacturasOriginal'])->name('solicitud.prefacturas.original');
 Route::get('/historico', [SolicitudController::class, 'historico'])->name('solicitud.historico');
 Route::get('/infoestatus', [SolicitudController::class, 'infoestatus'])->name('solicitud.infoestatus');
 Route::get('/congelado', [SolicitudController::class, 'congelado'])->name('solicitud.congelado');
