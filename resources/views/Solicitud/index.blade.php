@@ -541,7 +541,7 @@
                                             stroke-linejoin="round" />
                                     </g>
                                 </svg> DESCARGUE</th>
-                            <th class="celdas" style="color: #C4F4FF;border: 1px solid #0c213a;">GUIA</th>
+                            {{-- <th class="celdas" style="color: #C4F4FF;border: 1px solid #0c213a;">GUIA</th> --}}
                             <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">NIT</th>
                             <th class="celdas" style="color: #CAF4FF;border: 1px solid #0c213a;">CLIENTE</th>
                             <th class="celdas" style="color: #FFDB00;border: 1px solid #0c213a;">ESTADO</th>
@@ -706,9 +706,9 @@
                                         {{ $diario->hora_descargue }}
                                     @endcan
                                 </td>
-                                <td class="celdas"
+                                {{-- <td class="celdas"
                                     style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                    {{ $diario->guia }}</td>
+                                    {{ $diario->guia }}</td> --}}
                                 <td class="celdas"
                                     style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                     {{ $diario->nit }}</td>
