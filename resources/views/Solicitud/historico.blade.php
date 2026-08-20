@@ -220,7 +220,8 @@
                                             style="background-color: #00FF9C; color: #000; font-weight: bold; font-size: 14px; width: 30px; height: 30px; padding: 0; {{ $condicionesNovedad ? '' : 'opacity: 0.4; cursor: not-allowed;' }}"
                                             {{ $condicionesNovedad ? '' : 'disabled' }}
                                             data-id="{{ $diario->id }}"
-                                            data-razon="{{ $diario->razon }}">
+                                            data-razon="{{ $diario->razon }}"
+                                            data-faltante="{{ $diario->total_faltante ?? 0 }}">
                                             +
                                         </button>
                                     </td>
@@ -718,11 +719,14 @@
                 <form id="formNovedad" enctype="multipart/form-data" novalidate>
                     <input type="hidden" id="novedad_ide" name="ide">
                     <input type="hidden" id="novedad_manifiesto" name="manifiesto">
+                    <input type="hidden" id="novedad_faltante" name="faltante">
 
                     <div class="form-floating mb-3">
                         <select class="form-select" id="novedad_tipo" name="tipo_novedad" required>
                             <option value="" disabled selected>Seleccione...</option>
+                            @can('acuerdo')
                             <option value="ACUERDO DE PAGO">ACUERDO DE PAGO</option>
+                            @endcan
                             <option value="AUXILIARES">AUXILIARES</option>
                             <option value="AVERIA">AVERIA</option>
                             <option value="DAÑO A TERCEROS">DAÑO A TERCEROS</option>
@@ -750,6 +754,11 @@
                             <input type="text" class="form-control" id="novedad_valor_display" placeholder="Valor" required>
                             <input type="hidden" id="novedad_valor" name="valor">
                             <label>Valor</label>
+                        </div>
+
+                        <div class="form-floating mb-3" id="divCuotas" style="display: none;">
+                            <input type="number" class="form-control" id="novedad_cuotas" name="cuotas" placeholder="Cuotas" min="0" max="3">
+                            <label>Cuotas</label>
                         </div>
 
                         <div class="form-floating mb-3">
@@ -784,13 +793,17 @@
             if ($(this).hasClass('disabled')) return;
             var id = $(this).data('id');
             var razon = $(this).data('razon');
+            var faltante = $(this).data('faltante') || 0;
             $('#modalNovedadManifiesto').text(razon);
             $('#novedad_ide').val(id);
             $('#novedad_manifiesto').val(razon);
+            $('#novedad_faltante').val(faltante);
             $('#formNovedad')[0].reset();
             $('#divClaseNovedad').hide();
             $('#divPendienteExcel').hide();
             $('#divCamposBasicos').show();
+            $('#divCuotas').hide();
+            $('#novedad_nota').prop('readonly', false);
             $('#modalNovedad').modal('show');
         });
 
@@ -805,17 +818,38 @@
                 $('#divClaseNovedad').show();
                 $('#divPendienteExcel').hide();
                 $('#divCamposBasicos').show();
+                $('#divCuotas').hide();
+                $('#novedad_nota').prop('readonly', false);
             } else if (tipo === 'PENDIENTES') {
                 claseSelect.append('<option value="CONGELAR">CONGELAR</option>');
                 claseSelect.append('<option value="DESCONGELAR">DESCONGELAR</option>');
                 $('#divClaseNovedad').show();
                 $('#divPendienteExcel').show();
                 $('#divCamposBasicos').hide();
+                $('#divCuotas').hide();
                 $('#novedad_valor_display').removeAttr('required');
+            } else if (tipo === 'ACUERDO DE PAGO') {
+                var faltante = parseInt($('#novedad_faltante').val()) || 0;
+                if (faltante === 0) {
+                    Swal.fire('Error', 'No hay valor faltante para este registro.', 'error');
+                    $('#novedad_tipo').val('');
+                    return;
+                }
+                $('#divClaseNovedad').hide();
+                $('#divPendienteExcel').hide();
+                $('#divCamposBasicos').show();
+                $('#divCuotas').show();
+                $('#novedad_valor_display').val(faltante.toLocaleString('es-CO'));
+                $('#novedad_valor').val(faltante);
+                $('#novedad_nota').val('');
+                $('#novedad_nota').prop('readonly', false);
+                $('#novedad_soporte').val('');
             } else {
                 $('#divClaseNovedad').hide();
                 $('#divPendienteExcel').hide();
                 $('#divCamposBasicos').show();
+                $('#divCuotas').hide();
+                $('#novedad_nota').prop('readonly', false);
                 $('#novedad_valor_display').attr('required', true);
             }
         });
@@ -830,6 +864,20 @@
             var formateado = parseInt(raw, 10).toLocaleString('es-CO');
             $(this).val(formateado);
             $('#novedad_valor').val(raw);
+        });
+
+        $('#novedad_cuotas').on('input', function() {
+            var cuotas = parseInt($(this).val()) || 0;
+            if (cuotas < 0) { $(this).val(0); cuotas = 0; }
+            if (cuotas > 3) { $(this).val(3); cuotas = 3; }
+            if ($('#novedad_tipo').val() === 'ACUERDO DE PAGO') {
+                if (cuotas === 0) {
+                    $('#novedad_nota').val('Acuerdo de pago en perdida.');
+                    $('#novedad_nota').prop('readonly', true);
+                } else {
+                    $('#novedad_nota').prop('readonly', false);
+                }
+            }
         });
 
         $('#formNovedad').submit(function(e) {

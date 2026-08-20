@@ -34,9 +34,21 @@ class SolicitudController extends Controller
         $userName = Auth::user()->name;
         $actual = Carbon::now('America/Bogota');
         $vehiculos = DB::table('vehiculares')->where('estado', 'ACTIVO')->where('especificacion', '>', 0)->get();
+        $placasConFaltante = DB::table('novedades')
+            ->join('solicitudes', 'novedades.ide', '=', 'solicitudes.id')
+            ->where('novedades.valor_faltante', '>', 0)
+            ->where('novedades.tipo_novedad', '!=', 'ACUERDO DE PAGO')
+            ->pluck('solicitudes.placa')
+            ->filter()
+            ->unique()
+            ->toArray();
         $placas = $vehiculos->sortBy('placa')->map(function ($vehiculo) {
             return ['value' => $vehiculo->placa, 'text' => $vehiculo->placa];
-        })->prepend(['value' => '', 'text' => '']);
+        })->prepend(['value' => '', 'text' => ''])
+          ->filter(function ($item) use ($placasConFaltante) {
+              return ! in_array($item['value'], $placasConFaltante);
+          })
+          ->values();
         $licencias = DB::table('matriculas')->get();
         $pagos = DB::table('medios')->orderBy('medio')->get();
         $medios = $pagos->map(function ($pago) {
@@ -123,6 +135,22 @@ class SolicitudController extends Controller
 
         $diarias = $query->orderBy('fecha_cargue', 'desc')->paginate(100);
         $festivos = DB::table('festivos')->pluck('festivo')->toArray();
+
+        $idsPagina = $diarias->pluck('id')->filter()->toArray();
+        $faltantePorIde = [];
+        if (! empty($idsPagina)) {
+            $faltantePorIde = DB::table('novedades')
+                ->whereIn('ide', $idsPagina)
+                ->where('valor_faltante', '>', 0)
+                ->where('tipo_novedad', '!=', 'ACUERDO DE PAGO')
+                ->select('ide', DB::raw('SUM(valor_faltante) as total_faltante'))
+                ->groupBy('ide')
+                ->pluck('total_faltante', 'ide')
+                ->toArray();
+        }
+        foreach ($diarias as $diario) {
+            $diario->total_faltante = $faltantePorIde[$diario->id] ?? 0;
+        }
 
         return view('Solicitud.index', compact('vehiculos', 'placas', 'medios', 'diarias', 'userName', 'actual', 'clientes', 'estados', 'radicados', 'pagos', 'cargues', 'descargues', 'matriculas', 'manifiestos', 'sucursales', 'tipos', 'types', 'municipios', 'places', 'ciudades', 'trayectos', 'licencias', 'festivos', 'regionales'));
     }
@@ -1399,6 +1427,22 @@ class SolicitudController extends Controller
 
         $diarias = $query->orderBy('fecha_cargue', 'desc')->get();
 
+        $idsHistorico = $diarias->pluck('id')->filter()->toArray();
+        $faltantePorIde = [];
+        if (! empty($idsHistorico)) {
+            $faltantePorIde = DB::table('novedades')
+                ->whereIn('ide', $idsHistorico)
+                ->where('valor_faltante', '>', 0)
+                ->where('tipo_novedad', '!=', 'ACUERDO DE PAGO')
+                ->select('ide', DB::raw('SUM(valor_faltante) as total_faltante'))
+                ->groupBy('ide')
+                ->pluck('total_faltante', 'ide')
+                ->toArray();
+        }
+        foreach ($diarias as $diario) {
+            $diario->total_faltante = $faltantePorIde[$diario->id] ?? 0;
+        }
+
         $years = DB::table('peticiones')
             ->selectRaw('DISTINCT EXTRACT(YEAR FROM fecha_cargue::timestamp) AS year')
             ->orderBy('year', 'desc')
@@ -2331,6 +2375,9 @@ class SolicitudController extends Controller
                         'fecha_placa' => Carbon::now('America/Bogota'),
                     ]);
 
+                // Hook: aplicar cuotas pendientes de acuerdos de pago de esta placa
+                $this->aplicarCuotasPendientesPlaca($request->value, $request->pk);
+
                 return response()->json(['success' => true]);
             }
 
@@ -2853,6 +2900,58 @@ class SolicitudController extends Controller
                 ]);
             }
 
+            // ---- ACUERDO DE PAGO ----
+            if ($tipo === 'ACUERDO DE PAGO') {
+                if (! auth()->user()->can('acuerdo')) {
+                    return response()->json(['success' => false, 'message' => 'No tiene permiso para esta acción.'], 403);
+                }
+
+                $ide = (int) $request->input('ide');
+                $faltante = (int) DB::table('novedades')
+                    ->where('ide', $ide)
+                    ->where('tipo_novedad', '!=', 'ACUERDO DE PAGO')
+                    ->where('valor_faltante', '>', 0)
+                    ->sum('valor_faltante');
+
+                if ($faltante <= 0) {
+                    return response()->json(['success' => false, 'message' => 'No hay valor faltante para este registro.'], 422);
+                }
+
+                $cuotas = (int) $request->input('cuotas', 0);
+                $cuotas = max(0, min(3, $cuotas));
+
+                $nota = $cuotas === 0 ? 'Acuerdo de pago en perdida.' : $request->input('nota');
+
+                DB::table('novedades')->insert([
+                    'ide' => $ide,
+                    'manifiesto' => $request->input('manifiesto'),
+                    'tipo_novedad' => 'ACUERDO DE PAGO',
+                    'clase_novedad' => null,
+                    'valor' => $faltante,
+                    'valor_faltante' => $cuotas > 0 ? $faltante : 0,
+                    'cuotas' => $cuotas,
+                    'nota' => $nota,
+                    'soporte' => null,
+                    'update_user' => $usuario,
+                    'created_at' => $ahora,
+                    'updated_at' => $ahora,
+                ]);
+
+                // Resolver el faltante de las novedades de descuento de este ide (re-habilita la placa)
+                DB::table('novedades')
+                    ->where('ide', $ide)
+                    ->where('tipo_novedad', '!=', 'ACUERDO DE PAGO')
+                    ->where('valor_faltante', '>', 0)
+                    ->update(['valor_faltante' => 0]);
+
+                // Descontar cuotas de los saldos de los servicios de la misma placa
+                if ($cuotas > 0) {
+                    $this->aplicarCuotasAcuerdo($ide);
+                }
+
+                return response()->json(['success' => true, 'message' => 'Acuerdo de pago registrado correctamente.']);
+            }
+
             $request->validate([
                 'ide' => 'required|integer|exists:solicitudes,id',
                 'manifiesto' => 'required|string',
@@ -2870,12 +2969,17 @@ class SolicitudController extends Controller
                 $soporte = base64_encode(file_get_contents($file->getRealPath()));
             }
 
-            DB::table('novedades')->insert([
+            $valor = (int) $request->input('valor');
+            $faltante = 0;
+
+            $novedadId = DB::table('novedades')->insertGetId([
                 'ide' => $request->ide,
                 'manifiesto' => $request->manifiesto,
                 'tipo_novedad' => $request->tipo_novedad,
                 'clase_novedad' => $request->clase_novedad,
-                'valor' => $request->valor,
+                'valor' => $valor,
+                'valor_faltante' => 0,
+                'cuotas' => 0,
                 'nota' => $request->nota,
                 'soporte' => $soporte,
                 'update_user' => $usuario,
@@ -2885,11 +2989,24 @@ class SolicitudController extends Controller
 
             $accionesCosto = ['AUXILIARES', 'PUNTO NO CARGADO', 'TRANSBORDO'];
             $accionesSumaCosto = ['PUNTO ADICIONAL'];
+            $accionesSaldo = ['AVERIA', 'DAÑO A TERCEROS', 'ESCOLTA Y CANDADO SATELITAL', 'HURTO', 'PENALIZACIONES'];
 
             if (in_array($request->tipo_novedad, $accionesCosto)) {
-                DB::table('solicitudes')->where('id', $request->ide)->decrement('costo', $request->valor);
+                $solicitud = DB::table('solicitudes')->where('id', $request->ide)->first();
+                $costoActual = floatval($solicitud->costo ?? 0);
+                $faltante = max(0, $valor - $costoActual);
+                $nuevoCosto = max(0, $costoActual - $valor);
+                DB::table('solicitudes')->where('id', $request->ide)->update(['costo' => $nuevoCosto]);
             } elseif (in_array($request->tipo_novedad, $accionesSumaCosto)) {
-                DB::table('solicitudes')->where('id', $request->ide)->increment('costo', $request->valor);
+                DB::table('solicitudes')->where('id', $request->ide)->increment('costo', $valor);
+            } elseif (in_array($request->tipo_novedad, $accionesSaldo)) {
+                $peticion = DB::table('peticiones')->where('id', $request->ide)->first();
+                $valorSaldo = floatval($peticion->valor_saldo ?? 0);
+                $faltante = max(0, $valor - $valorSaldo);
+            }
+
+            if ($faltante > 0) {
+                DB::table('novedades')->where('id', $novedadId)->update(['valor_faltante' => $faltante]);
             }
 
             return response()->json(['success' => true, 'message' => 'Novedad guardada correctamente.']);
@@ -2924,6 +3041,122 @@ class SolicitudController extends Controller
         }
 
         return response()->json($novedades);
+    }
+
+    private function aplicarCuotasAcuerdo($ideAcuerdo)
+    {
+        $incluidos = ['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE'];
+        $excluidos = ['Servicio cancelado'];
+
+        $acuerdo = DB::table('novedades')
+            ->where('ide', $ideAcuerdo)
+            ->where('tipo_novedad', 'ACUERDO DE PAGO')
+            ->where('valor_faltante', '>', 0)
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if (! $acuerdo) {
+            return;
+        }
+
+        $solicitud = DB::table('solicitudes')->where('id', $ideAcuerdo)->first();
+        $placa = $solicitud->placa ?? null;
+        if (! $placa) {
+            return;
+        }
+
+        $cuotas = (int) $acuerdo->cuotas;
+        if ($cuotas <= 0) {
+            return;
+        }
+
+        $valorCuota = (int) round($acuerdo->valor / $cuotas);
+        if ($valorCuota <= 0) {
+            $valorCuota = (int) $acuerdo->valor_faltante;
+        }
+
+        $restante = (int) $acuerdo->valor_faltante;
+
+        for ($i = 0; $i < $cuotas; $i++) {
+            if ($restante <= 0) {
+                break;
+            }
+
+            $servicio = DB::table('peticiones')
+                ->where('placa', $placa)
+                ->where('id', '!=', $ideAcuerdo)
+                ->whereIn('paytype', $incluidos)
+                ->whereNotIn('states', $excluidos)
+                ->whereRaw('COALESCE(valor_saldo::numeric, 0) > COALESCE(deducciones::numeric, 0)')
+                ->orderBy('fecha_cargue', 'asc')
+                ->first();
+
+            if (! $servicio) {
+                break;
+            }
+
+            $aDescontar = min($valorCuota, $restante);
+
+            DB::table('solicitudes')->where('id', $servicio->id)->increment('deducciones', $aDescontar);
+            $restante -= $aDescontar;
+
+            Log::info("Cuota de acuerdo aplicada: servicio {$servicio->id} deducciones +{$aDescontar}");
+        }
+
+        DB::table('novedades')->where('id', $acuerdo->id)->update(['valor_faltante' => $restante]);
+    }
+
+    private function aplicarCuotasPendientesPlaca($placa, $nuevoServicioId)
+    {
+        if (! $placa) {
+            return;
+        }
+
+        $incluidos = ['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE'];
+        $excluidos = ['Servicio cancelado'];
+
+        $nuevoServicio = DB::table('peticiones')->where('id', $nuevoServicioId)->first();
+        if (! $nuevoServicio || ! in_array($nuevoServicio->paytype, $incluidos) || in_array($nuevoServicio->states, $excluidos)) {
+            return;
+        }
+
+        $saldoDisponible = floatval($nuevoServicio->valor_saldo ?? 0) - floatval($nuevoServicio->deducciones ?? 0);
+        if ($saldoDisponible <= 0) {
+            return;
+        }
+
+        $acuerdos = DB::table('novedades')
+            ->join('solicitudes', 'novedades.ide', '=', 'solicitudes.id')
+            ->where('solicitudes.placa', $placa)
+            ->where('novedades.tipo_novedad', 'ACUERDO DE PAGO')
+            ->where('novedades.valor_faltante', '>', 0)
+            ->where('novedades.cuotas', '>', 0)
+            ->select('novedades.*')
+            ->orderBy('novedades.id', 'asc')
+            ->get();
+
+        foreach ($acuerdos as $acuerdo) {
+            $restante = (int) $acuerdo->valor_faltante;
+            if ($restante <= 0 || $saldoDisponible <= 0) {
+                continue;
+            }
+
+            $cuotas = (int) $acuerdo->cuotas;
+            $valorCuota = (int) round($acuerdo->valor / $cuotas);
+            if ($valorCuota <= 0) {
+                $valorCuota = $restante;
+            }
+
+            $aDescontar = min($valorCuota, $restante, (int) $saldoDisponible);
+
+            DB::table('solicitudes')->where('id', $nuevoServicioId)->increment('deducciones', $aDescontar);
+            $restante -= $aDescontar;
+            $saldoDisponible -= $aDescontar;
+
+            DB::table('novedades')->where('id', $acuerdo->id)->update(['valor_faltante' => $restante]);
+
+            Log::info("Cuota pendiente aplicada a nuevo servicio {$nuevoServicioId}: deducciones +{$aDescontar}");
+        }
     }
 
     public function toggleTrafico(Request $request, $id)
