@@ -2174,38 +2174,6 @@ class SolicitudController extends Controller
                 'DISTRIBUIDORA TOYOTA SAS'
             ];
 
-            $guia = null;
-            if (! in_array($cliente, $excluidos)) {
-                $year = Carbon::now()->year;
-                $prefix = 'MAS-'.$year;
-
-                // Obtener el máximo consecutivo de ambas tablas para asegurar unicidad
-                $maxEstatus = DB::table('estatus')
-                    ->where('guia', 'LIKE', $prefix.'%')
-                    ->orderBy('guia', 'desc')
-                    ->value('guia');
-
-                $maxSolicitudes = DB::table('solicitudes')
-                    ->where('guia', 'LIKE', $prefix.'%')
-                    ->orderBy('guia', 'desc')
-                    ->value('guia');
-
-                $maxGuia = ($maxEstatus > $maxSolicitudes) ? $maxEstatus : $maxSolicitudes;
-
-                if ($maxGuia) {
-                    $consecutivo = (int) substr($maxGuia, 8); // MAS-2026xxxxxx (8 caracteres: MAS-2026)
-                    // Asegurarnos de que el consecutivo inicie mínimo en 6500
-                    if ($consecutivo < 6600) {
-                        $consecutivo = 6600;
-                    }
-                    $nuevoConsecutivo = str_pad($consecutivo + 1, 6, '0', STR_PAD_LEFT);
-                } else {
-                    $nuevoConsecutivo = '006501';
-                }
-
-                $guia = $prefix.$nuevoConsecutivo;
-            }
-
             $dataSolicitud = request()->only([
                 'fecha_solicitud',
                 'fecha_cargue',
@@ -2228,26 +2196,71 @@ class SolicitudController extends Controller
                 'peso',
                 'valor_declarado',
             ]);
-
-            $dataSolicitud['guia'] = $guia;
             $dataSolicitud['created_at'] = Carbon::now();
-            $insertedId = DB::table('solicitudes')->insertGetId($dataSolicitud);
 
-            // Si se generó una guía (no es cliente excluido), insertar en estatus
-            if ($guia) {
-                DB::table('estatus')->insert([
-                    'id' => $insertedId,
-                    'guia' => $guia,
-                    'destino_real' => $dataSolicitud['destino'],
-                    'documento_cliente' => $dataSolicitud['documento_cliente'],
-                    'destinatario' => $dataSolicitud['destinatario'],
-                    'direccion' => $dataSolicitud['direccion'],
-                    'piezas' => $dataSolicitud['piezas'],
-                    'peso' => $dataSolicitud['peso'],
-                    'valor_declarado' => $dataSolicitud['valor_declarado'],
-                    'costo_flete' => 0, // Inicia en 0 hasta que se asigne costo
-                    'created_at' => Carbon::now(),
-                ]);
+            $guia = null;
+
+            if (! in_array($cliente, $excluidos)) {
+                // Generar el consecutivo de forma atómica dentro de una transacción,
+                // con un lock consultivo para que dos peticiones simultáneas no lean
+                // el mismo máximo y generen la misma guía (evita duplicados).
+                $result = DB::transaction(function () use ($dataSolicitud) {
+                    $year = Carbon::now()->year;
+                    $prefix = 'MAS-'.$year;
+
+                    DB::select('SELECT pg_advisory_xact_lock(hashtext(?))', ['solicitud_guia_'.$year]);
+
+                    // Obtener el máximo consecutivo de ambas tablas para asegurar unicidad
+                    $maxEstatus = DB::table('estatus')
+                        ->where('guia', 'LIKE', $prefix.'%')
+                        ->orderBy('guia', 'desc')
+                        ->value('guia');
+
+                    $maxSolicitudes = DB::table('solicitudes')
+                        ->where('guia', 'LIKE', $prefix.'%')
+                        ->orderBy('guia', 'desc')
+                        ->value('guia');
+
+                    $maxGuia = ($maxEstatus > $maxSolicitudes) ? $maxEstatus : $maxSolicitudes;
+
+                    if ($maxGuia) {
+                        $consecutivo = (int) substr($maxGuia, 8); // MAS-2026xxxxxx (8 caracteres: MAS-2026)
+                        // Asegurarnos de que el consecutivo inicie mínimo en 6500
+                        if ($consecutivo < 6600) {
+                            $consecutivo = 6600;
+                        }
+                        $nuevoConsecutivo = str_pad($consecutivo + 1, 6, '0', STR_PAD_LEFT);
+                    } else {
+                        $nuevoConsecutivo = '006501';
+                    }
+
+                    $guia = $prefix.$nuevoConsecutivo;
+
+                    $dataSolicitud['guia'] = $guia;
+                    $insertedId = DB::table('solicitudes')->insertGetId($dataSolicitud);
+
+                    DB::table('estatus')->insert([
+                        'id' => $insertedId,
+                        'guia' => $guia,
+                        'destino_real' => $dataSolicitud['destino'],
+                        'documento_cliente' => $dataSolicitud['documento_cliente'],
+                        'destinatario' => $dataSolicitud['destinatario'],
+                        'direccion' => $dataSolicitud['direccion'],
+                        'piezas' => $dataSolicitud['piezas'],
+                        'peso' => $dataSolicitud['peso'],
+                        'valor_declarado' => $dataSolicitud['valor_declarado'],
+                        'costo_flete' => 0, // Inicia en 0 hasta que se asigne costo
+                        'created_at' => Carbon::now(),
+                    ]);
+
+                    return ['id' => $insertedId, 'guia' => $guia];
+                });
+
+                $insertedId = $result['id'];
+                $guia = $result['guia'];
+            } else {
+                $dataSolicitud['guia'] = $guia;
+                $insertedId = DB::table('solicitudes')->insertGetId($dataSolicitud);
             }
 
             if ($request->wantsJson()) {
