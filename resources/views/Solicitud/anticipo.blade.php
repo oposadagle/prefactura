@@ -106,7 +106,7 @@
                         </div>
                     </form>
 
-                    @if (session('manifiestos_cumplido'))
+                    @if ($hayManifiestos)
                         <a href="{{ route('solicitud.descargarManifiestos') }}" title="Descargar manifiestos"
                             class="btn btn-success d-flex align-items-center justify-content-center me-3 align-self-stretch"
                             style="font-size: 12px;font-family: Titillium Web;font-weight: 700; width: 40px; padding: 0;">

@@ -281,7 +281,11 @@ class SolicitudController extends Controller
             $availableDates[(int) $date->year][] = (int) $date->month;
         }
 
-        return view('Solicitud.anticipo', compact('diarias', 'festivos', 'userName', 'availableDates', 'year', 'month'));
+        $registroManifiestos = DB::table('manifiestos_cumplido')->where('id', 1)->first();
+        $manifiestosGlobales = $registroManifiestos ? json_decode($registroManifiestos->manifiestos, true) : null;
+        $hayManifiestos = is_array($manifiestosGlobales) && ! empty(array_filter($manifiestosGlobales));
+
+        return view('Solicitud.anticipo', compact('diarias', 'festivos', 'userName', 'availableDates', 'year', 'month', 'hayManifiestos'));
     }
 
     public function anticipos()
@@ -1931,7 +1935,19 @@ class SolicitudController extends Controller
             return back()->with('error', 'No se encontraron manifiestos en el archivo');
         }
 
-        session(['manifiestos_cumplido' => $manifiestos]);
+        $datos = [
+            'manifiestos' => json_encode($manifiestos),
+            'updated_by' => Auth::user()->name ?? null,
+            'updated_at' => now(),
+        ];
+
+        if (DB::table('manifiestos_cumplido')->where('id', 1)->exists()) {
+            DB::table('manifiestos_cumplido')->where('id', 1)->update($datos);
+        } else {
+            $datos['id'] = 1;
+            $datos['created_at'] = now();
+            DB::table('manifiestos_cumplido')->insert($datos);
+        }
 
         return back()
             ->with('success', 'Manifiestos cargados correctamente')
@@ -1940,7 +1956,10 @@ class SolicitudController extends Controller
 
     public function descargarManifiestos()
     {
-        $manifiestos = session('manifiestos_cumplido', []);
+        $registro = DB::table('manifiestos_cumplido')->where('id', 1)->first();
+
+        $manifiestos = $registro ? json_decode($registro->manifiestos, true) : null;
+        $manifiestos = is_array($manifiestos) ? array_values(array_filter($manifiestos)) : [];
 
         if (empty($manifiestos)) {
             return back()->with('error', 'No hay manifiestos cargados. Suba un archivo primero.');
