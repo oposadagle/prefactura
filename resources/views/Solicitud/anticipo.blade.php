@@ -81,11 +81,11 @@
                     <h4 class="card-title" style="margin-left: 10px;">CONTABLE Y TESORERIA</h4>
                 </div>
 
-                <div class="col-lg-3">
+                <div class="d-flex align-items-center gap-2">
                     <form action="{{ route('procesar.anticipos') }}" method="post" enctype="multipart/form-data"
                         id="facturaForm">
                         @csrf
-                        <div class="input-group">
+                        <div class="input-group" style="width: 250px;">
                             <input type="file" class="form-control" id="inputGroupFile04" name="archivo"
                                 aria-describedby="inputGroupFileAddon04" aria-label="Upload">
                             <button class="btn btn-outline-primary"
@@ -93,6 +93,32 @@
                                 id="inputGroupFileAddon04">CARGAR</button>
                         </div>
                     </form>
+
+                    <form action="{{ route('solicitud.subirManifiestos') }}" method="post"
+                        enctype="multipart/form-data" id="manifiestosForm">
+                        @csrf
+                        <div class="input-group" style="width: 320px;">
+                            <input type="file" class="form-control" id="inputManifiestos"
+                                name="archivo_manifiestos" aria-label="Subir manifiesto">
+                            <button class="btn btn-outline-success"
+                                style="font-size: 12px;font-family: Titillium Web;font-weight: 700;" type="submit">SUBIR
+                                MANIFIESTO</button>
+                        </div>
+                    </form>
+
+                    @if (session('manifiestos_cumplido'))
+                        <a href="{{ route('solicitud.descargarManifiestos') }}" title="Descargar manifiestos"
+                            class="btn btn-success d-flex align-items-center justify-content-center me-3 align-self-stretch"
+                            style="font-size: 12px;font-family: Titillium Web;font-weight: 700; width: 40px; padding: 0;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 3v10m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                        </a>
+                    @endif
                 </div>
 
                 <div class="d-flex align-items-center">

@@ -11,6 +11,7 @@ use App\Exports\DiariosExport;
 use App\Exports\EstatusExport;
 use App\Exports\HistoricosExport;
 use App\Exports\LogsExport;
+use App\Exports\ManifiestosReporteExport;
 use App\Exports\MastotalesExport;
 use App\Exports\PaqtotalesExport;
 use App\Exports\PrefacturasExport;
@@ -1889,6 +1890,78 @@ class SolicitudController extends Controller
         return back()
             ->with('success', 'Datos actualizados correctamente')
             ->with('cantidad', $cantidad);
+    }
+
+    public function subirManifiestos(Request $request)
+    {
+        $this->validate($request, [
+            'archivo_manifiestos' => 'required|max:10000|mimes:xlsx',
+        ], [
+            'archivo_manifiestos.required' => 'El archivo de manifiestos es requerido',
+        ]);
+
+        $archivo = $request->file('archivo_manifiestos');
+        $rutaTemporal = $archivo->getPathname();
+
+        $xlsx = \Shuchkin\SimpleXLSX::parse($rutaTemporal);
+        if (! $xlsx) {
+            return back()->with('error', 'No se pudo leer el archivo de manifiestos');
+        }
+
+        $manifiestos = [];
+        $esPrimeraFila = true;
+
+        foreach ($xlsx->rows() as $fila) {
+            if ($esPrimeraFila) {
+                $esPrimeraFila = false;
+                continue;
+            }
+
+            $manifiesto = trim((string) ($fila[0] ?? ''));
+            if ($manifiesto !== '') {
+                $manifiestos[] = $manifiesto;
+            }
+        }
+
+        unset($xlsx);
+
+        $manifiestos = array_values(array_unique($manifiestos));
+
+        if (empty($manifiestos)) {
+            return back()->with('error', 'No se encontraron manifiestos en el archivo');
+        }
+
+        session(['manifiestos_cumplido' => $manifiestos]);
+
+        return back()
+            ->with('success', 'Manifiestos cargados correctamente')
+            ->with('cantidad', count($manifiestos));
+    }
+
+    public function descargarManifiestos()
+    {
+        $manifiestos = session('manifiestos_cumplido', []);
+
+        if (empty($manifiestos)) {
+            return back()->with('error', 'No hay manifiestos cargados. Suba un archivo primero.');
+        }
+
+        $resultados = DB::table('infoestatus')
+            ->selectRaw('id, fecha_cargue as fecha_servicio, now()::date as llegada_cumplido_gle, now()::date as entrega_facturacion, guia, razon as manifiesto, cliente, origen, destino, documento_cliente, destinatario, direccion')
+            ->whereIn('razon', $manifiestos)
+            ->orderBy('razon')
+            ->get();
+
+        DB::table('solicitudes')
+            ->whereIn('razon', $manifiestos)
+            ->update([
+                'recibido_cumplido' => DB::raw('NOW()::date'),
+                'updated_at' => DB::raw('NOW()'),
+            ]);
+
+        $filename = 'manifiestos_cumplido_'.date('Ymd_His').'.xlsx';
+
+        return Excel::download(new ManifiestosReporteExport($resultados), $filename);
     }
 
     public function procesarRegistros(Request $request)

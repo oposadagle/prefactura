@@ -90,6 +90,8 @@ Route::post('/solicitud/anticipos/confirmar', [SolicitudController::class, 'conf
 Route::post('/solicitud/novedad/guardar', [SolicitudController::class, 'guardarNovedad'])->name('solicitud.guardarNovedad');
 Route::get('/solicitud/novedad/detalle/{manifiesto}', [SolicitudController::class, 'detalleNovedades'])->name('solicitud.detalleNovedades');
 Route::post('/solicitud/anticipos/archivo-plano', [SolicitudController::class, 'archivoPlanoAnticipos'])->name('solicitud.archivoPlanoAnticipos');
+Route::post('/solicitud/anticipos/subir-manifiestos', [SolicitudController::class, 'subirManifiestos'])->name('solicitud.subirManifiestos');
+Route::get('/solicitud/anticipos/descargar-manifiestos', [SolicitudController::class, 'descargarManifiestos'])->name('solicitud.descargarManifiestos');
 Route::get('/saldos', [SolicitudController::class, 'saldos'])->name('solicitud.saldos');
 Route::post('/solicitud/saldos/confirmar', [SolicitudController::class, 'confirmarSaldos'])->name('solicitud.confirmarSaldos');
 Route::get('/historico-pagos', [SolicitudController::class, 'historicoPagos'])->name('solicitud.historicoPagos');
