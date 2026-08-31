@@ -15,16 +15,30 @@ class ManifiestosReporteExport implements WithMultipleSheets
 
     public function sheets(): array
     {
+        $normalizar = function ($valor) {
+            return preg_replace('/[^A-Z0-9]/', '', strtoupper((string) $valor));
+        };
+
+        $clientesDerco = [
+            'DERCO COLOMBIA SAS',
+            'INCHCAPE COLOMBIA S A S',
+            'AUTOMOTORES COMERCIALES AUTOCOM S.A',
+            'METROKIA S.A.',
+        ];
+
+        $dercoNormalizados = array_map($normalizar, $clientesDerco);
+        $simonizNormalizado = $normalizar('SIMONIZ SA');
+
         $derco = collect();
         $simoniz = collect();
         $generales = collect();
 
         foreach ($this->resultados as $registro) {
-            $cliente = strtoupper(trim((string) ($registro->cliente ?? '')));
+            $cliente = $normalizar($registro->cliente ?? '');
 
-            if ($cliente === 'DERCO COLOMBIA SAS') {
+            if (in_array($cliente, $dercoNormalizados, true)) {
                 $derco->push($registro);
-            } elseif ($cliente === 'SIMONIZ SA') {
+            } elseif ($cliente === $simonizNormalizado) {
                 $simoniz->push($registro);
             } else {
                 $generales->push($registro);
