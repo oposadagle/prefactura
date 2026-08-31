@@ -2,14 +2,9 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithColumnFormatting;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class ManifiestosReporteExport implements FromCollection, ShouldAutoSize, WithColumnFormatting, WithHeadings, WithMapping
+class ManifiestosReporteExport implements WithMultipleSheets
 {
     protected $resultados;
 
@@ -18,51 +13,38 @@ class ManifiestosReporteExport implements FromCollection, ShouldAutoSize, WithCo
         $this->resultados = $resultados;
     }
 
-    public function collection()
+    public function sheets(): array
     {
-        return $this->resultados;
-    }
+        $derco = collect();
+        $simoniz = collect();
+        $generales = collect();
 
-    public function map($record): array
-    {
-        return [
-            $record->id,
-            $record->fecha_servicio,
-            $record->llegada_cumplido_gle,
-            $record->entrega_facturacion,
-            $record->guia,
-            is_numeric($record->manifiesto) ? (int) $record->manifiesto : $record->manifiesto,
-            $record->cliente,
-            $record->origen,
-            $record->destino,
-            $record->documento_cliente,
-            $record->destinatario,
-            $record->direccion,
-        ];
-    }
+        foreach ($this->resultados as $registro) {
+            $cliente = strtoupper(trim((string) ($registro->cliente ?? '')));
 
-    public function headings(): array
-    {
-        return [
-            'ID',
-            'FECHA_SERVICIO',
-            'LLEGADA_CUMPLIDO_GLE',
-            'ENTREGA_FACTURACION',
-            'GUIA',
-            'MANIFIESTO',
-            'CLIENTE',
-            'ORIGEN',
-            'DESTINO',
-            'DOCUMENTO_CLIENTE',
-            'DESTINATARIO',
-            'DIRECCION',
-        ];
-    }
+            if ($cliente === 'DERCO COLOMBIA SAS') {
+                $derco->push($registro);
+            } elseif ($cliente === 'SIMONIZ SA') {
+                $simoniz->push($registro);
+            } else {
+                $generales->push($registro);
+            }
+        }
 
-    public function columnFormats(): array
-    {
-        return [
-            'F' => NumberFormat::FORMAT_NUMBER,
-        ];
+        $sheets = [];
+
+        if ($derco->isNotEmpty()) {
+            $sheets[] = new ManifiestoSheet($derco, 'DERCO COLOMBIA SAS');
+        }
+
+        if ($simoniz->isNotEmpty()) {
+            $sheets[] = new ManifiestoSheet($simoniz, 'SIMONIZ SA');
+        }
+
+        if ($generales->isNotEmpty() || empty($sheets)) {
+            $sheets[] = new ManifiestoSheet($generales, 'CLIENTES GENERALES');
+        }
+
+        return $sheets;
     }
 }
