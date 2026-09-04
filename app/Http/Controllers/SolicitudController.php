@@ -2796,7 +2796,7 @@ class SolicitudController extends Controller
                 return response()->json(['success' => false, 'message' => 'Registro no encontrado'], 404);
             }
 
-            $fechaActual = Carbon::now()->toDateString(); // formato YYYY-MM-DD
+            $fechaActual = Carbon::now(); // formato YYYY-MM-DD HH:MM:SS
 
             DB::table('estatus')
                 ->where('ide', $ide)
@@ -2807,7 +2807,7 @@ class SolicitudController extends Controller
 
             return response()->json([
                 'success' => true,
-                'fecha' => $fechaActual, // enviamos la fecha al frontend
+                'fecha' => $fechaActual->toDateTimeString(), // enviamos la fecha al frontend
             ]);
         } catch (\Exception $e) {
             Log::error('Error actualizando el registro: '.$e->getMessage());
