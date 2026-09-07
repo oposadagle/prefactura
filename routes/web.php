@@ -45,6 +45,7 @@ Route::get('/logs', [SolicitudController::class, 'logs'])->name('solicitud.logs'
 Route::get('/diario', [SolicitudController::class, 'diario'])->name('solicitud.diario');
 Route::get('/diaria', [SolicitudController::class, 'diaria'])->name('solicitud.diaria');
 Route::get('/adelanto', [SolicitudController::class, 'adelanto'])->name('solicitud.adelanto');
+Route::get('/novedades/exportar', [SolicitudController::class, 'exportarNovedadesExcel'])->name('solicitud.exportarNovedadesExcel');
 Route::get('/estatus', [SolicitudController::class, 'estatus'])->name('solicitud.estatus');
 Route::get('/prefacturas', [SolicitudController::class, 'prefacturas'])->name('solicitud.prefacturas');
 Route::get('/prefacturas-original', [SolicitudController::class, 'prefacturasOriginal'])->name('solicitud.prefacturas.original');

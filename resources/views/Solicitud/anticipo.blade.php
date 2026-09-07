@@ -45,7 +45,7 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center m-2">
+            <div class="card-header d-flex justify-content-between align-items-center m-2 flex-wrap" style="gap: 10px;">
                 <div class="d-flex">
                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                         xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve"
@@ -97,12 +97,11 @@
                     <form action="{{ route('solicitud.subirManifiestos') }}" method="post"
                         enctype="multipart/form-data" id="manifiestosForm">
                         @csrf
-                        <div class="input-group" style="width: 320px;">
+                        <div class="input-group" style="width: 260px;">
                             <input type="file" class="form-control" id="inputManifiestos"
                                 name="archivo_manifiestos" aria-label="Subir manifiesto">
                             <button class="btn btn-outline-success"
-                                style="font-size: 12px;font-family: Titillium Web;font-weight: 700;" type="submit">SUBIR
-                                MANIFIESTO</button>
+                                style="font-size: 12px;font-family: Titillium Web;font-weight: 700;" type="submit">MANIFIESTO</button>
                         </div>
                     </form>
 
@@ -188,6 +187,26 @@
                             </svg>
                             <i class="me-2"></i>
                             DESCARGAR
+                        </button>
+                    </form>
+
+                    <form method="GET" action="{{ route('solicitud.exportarNovedadesExcel') }}" class="d-flex align-items-center ms-3">
+                        <select name="novedades_anio" id="novedades_year_select" class="form-select me-2" style="width: 100px; font-size: 12px;">
+                            @foreach ($novedadesAnios as $y)
+                                <option value="{{ $y }}" {{ $novedadesAnio == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            @endforeach
+                        </select>
+                        <select name="novedades_mes" id="novedades_month_select" class="form-select me-2" style="width: 120px; font-size: 12px;">
+                            @php
+                                $mesesNombre = [1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril', 5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto', 9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'];
+                            @endphp
+                            @foreach ($novedadesMesesDisponibles as $m)
+                                <option value="{{ $m }}" {{ $novedadesMes == $m ? 'selected' : '' }}>{{ $mesesNombre[$m] ?? $m }}</option>
+                            @endforeach
+                        </select>
+                        <button type="submit" class="btn me-3 d-flex align-items-center"
+                            style="background-color: #FF8C00; color: #fff; font-size: 12px; font-family: Titillium Web; font-weight: 700; border: none;">
+                            NOVEDADES
                         </button>
                     </form>
                 </div>
@@ -1032,6 +1051,29 @@
         if (yearSelect) {
             yearSelect.addEventListener('change', () => updateMonths(yearSelect, monthSelect));
             updateMonths(yearSelect, monthSelect, selectedMonth);
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const novedadesDates = @json($novedadesDates ?? []);
+        const mesesNombre = {1: 'Enero', 2: 'Febrero', 3: 'Marzo', 4: 'Abril', 5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Agosto', 9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre', 12: 'Diciembre'};
+        const novedadesYearSelect = document.getElementById('novedades_year_select');
+        const novedadesMonthSelect = document.getElementById('novedades_month_select');
+
+        if (novedadesYearSelect && novedadesMonthSelect) {
+            novedadesYearSelect.addEventListener('change', function() {
+                const year = this.value;
+                const months = novedadesDates[year] || [];
+                novedadesMonthSelect.innerHTML = '';
+                months.forEach(m => {
+                    const option = document.createElement('option');
+                    option.value = m;
+                    option.textContent = mesesNombre[m] || m;
+                    novedadesMonthSelect.appendChild(option);
+                });
+            });
         }
     });
 </script>

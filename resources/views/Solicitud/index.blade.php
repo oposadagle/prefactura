@@ -1220,7 +1220,9 @@
                                         {{ $condicionesNovedad ? '' : 'disabled' }}
                                         data-id="{{ $diario->id }}"
                                         data-razon="{{ $diario->razon }}"
-                                        data-faltante="{{ $diario->total_faltante ?? 0 }}">
+                                        data-faltante="{{ $diario->total_faltante ?? 0 }}"
+                                        data-anticipo="{{ $diario->anticipo ?? 0 }}"
+                                        data-viaje="{{ $diario->tiene_viaje_cancelado ? '1' : '0' }}">
                                         +
                                     </button>
                                 </td>
@@ -2601,6 +2603,8 @@
                     <input type="hidden" id="novedad_ide" name="ide">
                     <input type="hidden" id="novedad_manifiesto" name="manifiesto">
                     <input type="hidden" id="novedad_faltante" name="faltante">
+                    <input type="hidden" id="novedad_anticipo" name="anticipo">
+                    <input type="hidden" id="novedad_viaje" name="viaje">
 
                     <div class="form-floating mb-3">
                         <select class="form-select" id="novedad_tipo" name="tipo_novedad" required>
@@ -2675,16 +2679,23 @@
             var id = $(this).data('id');
             var razon = $(this).data('razon');
             var faltante = $(this).data('faltante') || 0;
+            var anticipo = $(this).data('anticipo') || 0;
+            var viaje = $(this).data('viaje') || '0';
             $('#modalNovedadManifiesto').text(razon);
             $('#novedad_ide').val(id);
             $('#novedad_manifiesto').val(razon);
             $('#novedad_faltante').val(faltante);
+            $('#novedad_anticipo').val(anticipo);
+            $('#novedad_viaje').val(viaje);
             $('#formNovedad')[0].reset();
             $('#divClaseNovedad').hide();
             $('#divPendienteExcel').hide();
             $('#divCamposBasicos').show();
             $('#divCuotas').hide();
             $('#novedad_nota').prop('readonly', false);
+            $('#novedad_valor_display').prop('readonly', false);
+            $('#novedad_soporte').removeAttr('required');
+            $('#novedad_nota').removeAttr('required');
             $('#modalNovedad').modal('show');
         });
 
@@ -2701,6 +2712,12 @@
                 $('#divCamposBasicos').show();
                 $('#divCuotas').hide();
                 $('#novedad_nota').prop('readonly', false);
+                $('#novedad_valor_display').prop('readonly', false);
+                var anticipo = parseInt($('#novedad_anticipo').val()) || 0;
+                $('#novedad_valor_display').val(anticipo.toLocaleString('es-CO'));
+                $('#novedad_valor').val(anticipo);
+                $('#novedad_soporte').attr('required', true);
+                $('#novedad_nota').attr('required', true);
             } else if (tipo === 'PENDIENTES') {
                 claseSelect.append('<option value="CONGELAR">CONGELAR</option>');
                 claseSelect.append('<option value="DESCONGELAR">DESCONGELAR</option>');
@@ -2716,6 +2733,9 @@
                     $('#novedad_tipo').val('');
                     return;
                 }
+                var viaje = $('#novedad_viaje').val();
+                var maxCuotas = viaje === '1' ? 1 : 3;
+                $('#novedad_cuotas').attr('max', maxCuotas);
                 $('#divClaseNovedad').hide();
                 $('#divPendienteExcel').hide();
                 $('#divCamposBasicos').show();
@@ -2725,6 +2745,8 @@
                 $('#novedad_nota').val('');
                 $('#novedad_nota').prop('readonly', false);
                 $('#novedad_soporte').val('');
+                $('#novedad_soporte').removeAttr('required');
+                $('#novedad_nota').removeAttr('required');
             } else {
                 $('#divClaseNovedad').hide();
                 $('#divPendienteExcel').hide();
@@ -2748,9 +2770,10 @@
         });
 
         $('#novedad_cuotas').on('input', function() {
+            var max = parseInt($(this).attr('max')) || 3;
             var cuotas = parseInt($(this).val()) || 0;
             if (cuotas < 0) { $(this).val(0); cuotas = 0; }
-            if (cuotas > 3) { $(this).val(3); cuotas = 3; }
+            if (cuotas > max) { $(this).val(max); cuotas = max; }
             if ($('#novedad_tipo').val() === 'ACUERDO DE PAGO') {
                 if (cuotas === 0) {
                     $('#novedad_nota').val('Acuerdo de pago en perdida.');
@@ -2761,14 +2784,40 @@
             }
         });
 
+        $('#novedad_clase').change(function() {
+            if ($('#novedad_tipo').val() !== 'VIAJE CANCELADO') return;
+            var clase = $(this).val();
+            var anticipo = parseInt($('#novedad_anticipo').val()) || 0;
+            if (clase === 'DEVOLUCION TOTAL') {
+                $('#novedad_valor_display').val(anticipo.toLocaleString('es-CO'));
+                $('#novedad_valor').val(anticipo);
+                $('#novedad_valor_display').prop('readonly', true);
+            } else {
+                $('#novedad_valor_display').prop('readonly', false);
+            }
+        });
+
         $('#formNovedad').submit(function(e) {
             e.preventDefault();
 
-            if ($('#novedad_tipo').val() === 'PENDIENTES') {
+            var tipo = $('#novedad_tipo').val();
+
+            if (tipo === 'PENDIENTES') {
                 if (!$('#novedad_excel').val()) {
                     Swal.fire('Error', 'Debe seleccionar un archivo Excel.', 'error');
                     return;
                 }
+            } else if (tipo === 'VIAJE CANCELADO') {
+                if (!$('#novedad_nota').val()) {
+                    Swal.fire('Error', 'La nota es obligatoria para viaje cancelado.', 'error');
+                    return;
+                }
+                if (!$('#novedad_soporte').val()) {
+                    Swal.fire('Error', 'El soporte es obligatorio para viaje cancelado.', 'error');
+                    return;
+                }
+                var raw = $('#novedad_valor_display').val().replace(/\./g, '').replace(/\D/g, '');
+                $('#novedad_valor').val(raw);
             } else {
                 var raw = $('#novedad_valor_display').val().replace(/\./g, '').replace(/\D/g, '');
                 $('#novedad_valor').val(raw);

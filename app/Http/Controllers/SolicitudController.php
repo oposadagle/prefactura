@@ -13,6 +13,7 @@ use App\Exports\HistoricosExport;
 use App\Exports\LogsExport;
 use App\Exports\ManifiestosReporteExport;
 use App\Exports\MastotalesExport;
+use App\Exports\NovedadesExport;
 use App\Exports\PaqtotalesExport;
 use App\Exports\PrefacturasExport;
 use App\Exports\PrefacturasExportOriginal;
@@ -149,8 +150,16 @@ class SolicitudController extends Controller
                 ->pluck('total_faltante', 'ide')
                 ->toArray();
         }
+        $viajeCanceladoIds = DB::table('novedades')
+            ->whereIn('ide', $idsPagina)
+            ->where('tipo_novedad', 'VIAJE CANCELADO')
+            ->where('valor_faltante', '>', 0)
+            ->pluck('ide')
+            ->unique()
+            ->toArray();
         foreach ($diarias as $diario) {
             $diario->total_faltante = $faltantePorIde[$diario->id] ?? 0;
+            $diario->tiene_viaje_cancelado = in_array($diario->id, $viajeCanceladoIds);
         }
 
         return view('Solicitud.index', compact('vehiculos', 'placas', 'medios', 'diarias', 'userName', 'actual', 'clientes', 'estados', 'radicados', 'pagos', 'cargues', 'descargues', 'matriculas', 'manifiestos', 'sucursales', 'tipos', 'types', 'municipios', 'places', 'ciudades', 'trayectos', 'licencias', 'festivos', 'regionales'));
@@ -285,7 +294,51 @@ class SolicitudController extends Controller
         $manifiestosGlobales = $registroManifiestos ? json_decode($registroManifiestos->manifiestos, true) : null;
         $hayManifiestos = is_array($manifiestosGlobales) && ! empty(array_filter($manifiestosGlobales));
 
-        return view('Solicitud.anticipo', compact('diarias', 'festivos', 'userName', 'availableDates', 'year', 'month', 'hayManifiestos'));
+        // Años y meses disponibles en la tabla novedades para el selector de descarga
+        $novedadesDatesRaw = DB::table('novedades')
+            ->selectRaw('EXTRACT(YEAR FROM created_at) as year, EXTRACT(MONTH FROM created_at) as month')
+            ->whereNotNull('created_at')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->get();
+
+        $novedadesDates = [];
+        foreach ($novedadesDatesRaw as $date) {
+            $novedadesDates[(int) $date->year][] = (int) $date->month;
+        }
+
+        $novedadesAnios = array_keys($novedadesDates);
+        rsort($novedadesAnios);
+
+        $novedadesAnioDefault = $novedadesAnios[0] ?? Carbon::now()->year;
+        $novedadesMesDefault = isset($novedadesDates[$novedadesAnioDefault]) ? max($novedadesDates[$novedadesAnioDefault]) : Carbon::now()->month;
+
+        $novedadesAnio = (int) $request->input('novedades_anio', $novedadesAnioDefault);
+        $novedadesMes = (int) $request->input('novedades_mes', $novedadesMesDefault);
+
+        if (! isset($novedadesDates[$novedadesAnio]) || ! in_array($novedadesMes, $novedadesDates[$novedadesAnio])) {
+            $novedadesAnio = $novedadesAnioDefault;
+            $novedadesMes = $novedadesMesDefault;
+        }
+
+        $novedadesMesesDisponibles = $novedadesDates[$novedadesAnio] ?? [];
+        rsort($novedadesMesesDisponibles);
+
+        return view('Solicitud.anticipo', compact('diarias', 'festivos', 'userName', 'availableDates', 'year', 'month', 'hayManifiestos', 'novedadesAnios', 'novedadesMesesDisponibles', 'novedadesAnio', 'novedadesMes', 'novedadesDates'));
+    }
+
+    public function exportarNovedadesExcel(Request $request)
+    {
+        $request->validate([
+            'novedades_anio' => 'required|integer',
+            'novedades_mes' => 'required|integer',
+        ]);
+
+        $anio = (int) $request->input('novedades_anio');
+        $mes = (int) $request->input('novedades_mes');
+
+        return Excel::download(new NovedadesExport($anio, $mes), "novedades_{$anio}_{$mes}.xlsx");
     }
 
     public function anticipos()
@@ -1444,8 +1497,16 @@ class SolicitudController extends Controller
                 ->pluck('total_faltante', 'ide')
                 ->toArray();
         }
+        $viajeCanceladoIds = DB::table('novedades')
+            ->whereIn('ide', $idsHistorico)
+            ->where('tipo_novedad', 'VIAJE CANCELADO')
+            ->where('valor_faltante', '>', 0)
+            ->pluck('ide')
+            ->unique()
+            ->toArray();
         foreach ($diarias as $diario) {
             $diario->total_faltante = $faltantePorIde[$diario->id] ?? 0;
+            $diario->tiene_viaje_cancelado = in_array($diario->id, $viajeCanceladoIds);
         }
 
         $years = DB::table('peticiones')
@@ -3005,6 +3066,53 @@ class SolicitudController extends Controller
                 ]);
             }
 
+            // ---- VIAJE CANCELADO ----
+            if ($tipo === 'VIAJE CANCELADO') {
+                $request->validate([
+                    'ide' => 'required|integer|exists:solicitudes,id',
+                    'clase_novedad' => 'required|in:DEVOLUCION TOTAL,DEVOLUCION PARCIAL',
+                    'nota' => 'required|string',
+                    'soporte' => 'required|file|mimes:jpg,jpeg,png,pdf',
+                    'valor' => 'required|integer|min:0',
+                ]);
+
+                $solicitud = DB::table('solicitudes')->where('id', $request->ide)->first();
+                $anticipo = (int) ($solicitud->anticipo ?? 0);
+
+                $soporte = base64_encode(file_get_contents($request->file('soporte')->getRealPath()));
+
+                $clase = $request->input('clase_novedad');
+                $valor = (int) $request->input('valor');
+
+                if ($clase === 'DEVOLUCION TOTAL') {
+                    $valor = $anticipo;
+                    $faltante = 0;
+                } else {
+                    $valor = min($valor, $anticipo);
+                    $faltante = $anticipo - $valor;
+                }
+
+                DB::table('novedades')->insert([
+                    'ide' => $request->ide,
+                    'manifiesto' => $request->input('manifiesto'),
+                    'tipo_novedad' => 'VIAJE CANCELADO',
+                    'clase_novedad' => $clase,
+                    'valor' => $valor,
+                    'valor_faltante' => $faltante,
+                    'cuotas' => 0,
+                    'nota' => $request->input('nota'),
+                    'soporte' => $soporte,
+                    'update_user' => $usuario,
+                    'created_at' => $ahora,
+                    'updated_at' => $ahora,
+                ]);
+
+                // Borrar de saldos: cambiar confirmado de AC a VC
+                DB::table('solicitudes')->where('id', $request->ide)->update(['confirmado' => 'VC']);
+
+                return response()->json(['success' => true, 'message' => 'Viaje cancelado registrado correctamente.']);
+            }
+
             // ---- ACUERDO DE PAGO ----
             if ($tipo === 'ACUERDO DE PAGO') {
                 if (! auth()->user()->can('acuerdo')) {
@@ -3023,7 +3131,18 @@ class SolicitudController extends Controller
                 }
 
                 $cuotas = (int) $request->input('cuotas', 0);
-                $cuotas = max(0, min(3, $cuotas));
+
+                $tieneViajeCancelado = DB::table('novedades')
+                    ->where('ide', $ide)
+                    ->where('tipo_novedad', 'VIAJE CANCELADO')
+                    ->where('valor_faltante', '>', 0)
+                    ->exists();
+
+                if ($tieneViajeCancelado) {
+                    $cuotas = min(1, max(0, $cuotas));
+                } else {
+                    $cuotas = max(0, min(3, $cuotas));
+                }
 
                 $nota = $cuotas === 0 ? 'Acuerdo de pago en perdida.' : $request->input('nota');
 
