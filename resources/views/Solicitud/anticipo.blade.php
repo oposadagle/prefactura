@@ -1114,7 +1114,7 @@
             var manifiesto = $(this).data('manifiesto');
             $('#detalleManifiesto').text(manifiesto);
             $('#tbodyDetalleNovedad').html('<tr><td colspan="7" class="text-center">Cargando...</td></tr>');
-            $('#modalDetalleNovedad').modal('show');
+            abrirModalSeguro('modalDetalleNovedad');
 
             $.get('{{ route("solicitud.detalleNovedades", ["manifiesto" => "__MAN__"]) }}'.replace('__MAN__', manifiesto), function(data) {
                 var html = '';

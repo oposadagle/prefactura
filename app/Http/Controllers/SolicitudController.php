@@ -1601,6 +1601,35 @@ class SolicitudController extends Controller
         $endOfCurrentMonth = Carbon::now()->endOfMonth()->toDateString(); // Fin del mes actual
         $diarias = DB::table('infoestatus')->where('facturar', 'NO')->whereBetween('fecha_cargue', [$startOfLastMonth, $endOfCurrentMonth])->orderBy('fecha_cargue', 'desc')->get();
 
+        // Novedades por solicitud (id) y detección de la fila principal (la que tiene costo_flete > 0)
+        $idsPagina = $diarias->pluck('id')->filter()->unique()->toArray();
+        $novedadesSums = [];
+        if (! empty($idsPagina)) {
+            $novedadesSums = DB::table('novedades')
+                ->whereIn('ide', $idsPagina)
+                ->select('ide', DB::raw('SUM(valor) as total_novedades'))
+                ->groupBy('ide')
+                ->pluck('total_novedades', 'ide')
+                ->toArray();
+        }
+
+        $principalPorId = [];
+        foreach ($diarias as $d) {
+            $id = $d->id;
+            $tieneCosto = floatval($d->costo_flete) > 0;
+            if (! isset($principalPorId[$id])) {
+                $principalPorId[$id] = ['guia' => $d->guia, 'tiene_costo' => $tieneCosto];
+            } elseif ($tieneCosto && ! $principalPorId[$id]['tiene_costo']) {
+                $principalPorId[$id] = ['guia' => $d->guia, 'tiene_costo' => true];
+            }
+        }
+
+        foreach ($diarias as $diario) {
+            $esPrincipal = ($principalPorId[$diario->id]['guia'] ?? null) === $diario->guia;
+            $diario->es_principal = $esPrincipal;
+            $diario->total_novedades = $esPrincipal ? ($novedadesSums[$diario->id] ?? 0) : 0;
+        }
+
         // Obtener Años y Meses disponibles para el filtro
         $fechasDisponibles = DB::table('infoestatus')
             ->selectRaw('EXTRACT(YEAR FROM fecha_cargue::timestamp) as year, EXTRACT(MONTH FROM fecha_cargue::timestamp) as month')
@@ -3224,8 +3253,10 @@ class SolicitudController extends Controller
                 $faltante = max(0, $valor - $costoActual);
                 $nuevoCosto = max(0, $costoActual - $valor);
                 DB::table('solicitudes')->where('id', $request->ide)->update(['costo' => $nuevoCosto]);
+                $this->ajustarCostoFleteEstatus($request->ide, -($costoActual - $nuevoCosto));
             } elseif (in_array($request->tipo_novedad, $accionesSumaCosto)) {
                 DB::table('solicitudes')->where('id', $request->ide)->increment('costo', $valor);
+                $this->ajustarCostoFleteEstatus($request->ide, $valor);
             } elseif (in_array($request->tipo_novedad, $accionesSaldo)) {
                 $peticion = DB::table('peticiones')->where('id', $request->ide)->first();
                 $valorSaldo = floatval($peticion->valor_saldo ?? 0);
@@ -3384,6 +3415,32 @@ class SolicitudController extends Controller
 
             Log::info("Cuota pendiente aplicada a nuevo servicio {$nuevoServicioId}: deducciones +{$aDescontar}");
         }
+    }
+
+    private function ajustarCostoFleteEstatus($id, $delta)
+    {
+        if ($delta == 0) {
+            return;
+        }
+
+        $principal = DB::table('estatus')
+            ->where('id', $id)
+            ->where('costo_flete', '>', 0)
+            ->orderBy('guia', 'asc')
+            ->first();
+
+        if (! $principal) {
+            return;
+        }
+
+        $nuevo = max(0, floatval($principal->costo_flete) + $delta);
+
+        DB::table('estatus')
+            ->where('id', $id)
+            ->where('guia', $principal->guia)
+            ->update(['costo_flete' => $nuevo]);
+
+        Log::info("Costo flete estatus ajustado para id {$id}: {$principal->costo_flete} -> {$nuevo}");
     }
 
     public function toggleTrafico(Request $request, $id)

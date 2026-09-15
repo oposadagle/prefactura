@@ -312,7 +312,7 @@ $(document).ready(function() {
             var manifiesto = $(this).data('manifiesto');
             $('#detalleManifiesto').text(manifiesto);
             $('#tbodyDetalleNovedad').html('<tr><td colspan="7" class="text-center">Cargando...</td></tr>');
-            $('#modalDetalleNovedad').modal('show');
+            abrirModalSeguro('modalDetalleNovedad');
 
             $.get('/solicitud/novedad/detalle/' + manifiesto, function(data) {
                 var html = '';

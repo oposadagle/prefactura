@@ -79,6 +79,28 @@
 
 <!-- jQuery  -->
 <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+<script>
+    // Abre un modal Bootstrap de forma segura (compatible con Bootstrap 5 y 4)
+    function abrirModalSeguro(id) {
+        var el = document.getElementById(id);
+        if (!el) {
+            return;
+        }
+        if (window.bootstrap && window.bootstrap.Modal) {
+            var instancia = window.bootstrap.Modal.getInstance(el);
+            if (!instancia) {
+                instancia = new window.bootstrap.Modal(el);
+            }
+            instancia.show();
+        } else if (window.jQuery && window.jQuery.fn && window.jQuery.fn.modal) {
+            window.jQuery(el).modal('show');
+        } else {
+            el.classList.add('show');
+            el.style.display = 'block';
+            el.removeAttribute('aria-hidden');
+        }
+    }
+</script>
 <script src="{{ asset('assets/js/metismenu.min.js') }}"></script>
 <script src="{{ asset('assets/js/waves.js') }}"></script>
 <script src="{{ asset('assets/js/feather.min.js') }}"></script>

@@ -815,7 +815,7 @@
             $('#novedad_valor_display').prop('readonly', false);
             $('#novedad_soporte').removeAttr('required');
             $('#novedad_nota').removeAttr('required');
-            $('#modalNovedad').modal('show');
+            abrirModalSeguro('modalNovedad');
         });
 
         $('#novedad_tipo').change(function() {
