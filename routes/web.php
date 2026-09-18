@@ -148,6 +148,7 @@ Route::get('/facturar', [CuentaController::class, 'facturar'])->name('cuenta.fac
 Route::get('/bancos', [BancoController::class, 'index'])->name('banco.index');
 Route::post('/bancos', [BancoController::class, 'store'])->name('banco.store');
 Route::delete('/bancos/{id}', [BancoController::class, 'destroy'])->name('banco.destroy');
+Route::get('datos-bancarios/export', [DatosBancariosController::class, 'export'])->name('datos-bancarios.export');
 Route::resource('datos-bancarios', DatosBancariosController::class)->except(['show']);
 Route::resource('centro-costo', CentroCostoController::class)->except(['show']);
 Route::get('/testSms', [SolicitudController::class, 'testSms'])->name('test.sms');

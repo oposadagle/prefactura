@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\DatosBancariosExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
 
 class DatosBancariosController extends Controller
@@ -13,6 +15,12 @@ class DatosBancariosController extends Controller
     {
         $datosBancarios = DB::table('datos_bancarios')->orderBy('id', 'desc')->get();
         return view('DatosBancarios.index', compact('datosBancarios'));
+    }
+
+    public function export()
+    {
+        $filename = 'datos_bancarios_' . Carbon::now()->format('Ymd_His') . '.xlsx';
+        return Excel::download(new DatosBancariosExport, $filename);
     }
 
     public function create()

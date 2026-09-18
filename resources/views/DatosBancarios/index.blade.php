@@ -16,7 +16,11 @@
                     <h4 class="card-title" style="margin-left: 10px;">DATOS BANCARIOS</h4>
                 </div>
                 <div class="button-items">
-                    <a class="btn btn-outline-primary py-2" style="font-size: 12px; font-family: Titillium Web; font-weight: 700;" href="{{ route('datos-bancarios.create') }}">
+                    <a class="btn btn-success py-2" style="font-size: 12px; font-family: Titillium Web; font-weight: 700;" href="{{ route('datos-bancarios.export') }}">
+                        <i class="fas fa-file-excel me-1"></i>
+                        DESCARGAR
+                    </a>
+                    <a class="btn btn-primary py-2" style="font-size: 12px; font-family: Titillium Web; font-weight: 700;" href="{{ route('datos-bancarios.create') }}">
                         <i class="fas fa-plus-circle me-1"></i>
                         AGREGAR DATO BANCARIO
                     </a>     
