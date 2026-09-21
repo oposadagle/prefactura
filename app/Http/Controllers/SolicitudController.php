@@ -1604,7 +1604,9 @@ class SolicitudController extends Controller
         // Novedades por solicitud (id) y detección de la fila principal (la que tiene costo_flete > 0)
         $idsPagina = $diarias->pluck('id')->filter()->unique()->toArray();
         $novedadesSums = [];
+        $faltanteSums = [];
         $ajustesNovedades = [];
+        $pagoCompletoPorId = [];
         if (! empty($idsPagina)) {
             $novedadesSums = DB::table('novedades')
                 ->whereIn('ide', $idsPagina)
@@ -1613,9 +1615,17 @@ class SolicitudController extends Controller
                 ->pluck('total_novedades', 'ide')
                 ->toArray();
 
-            // Ajuste al COSTO TOTAL por novedades.
-            // PUNTO ADICIONAL suma; el resto (descuentos de costo y de saldo) resta.
-            // En infoestatus se aplica todo sobre COSTO TOTAL porque aquí no existe el campo saldo.
+            // Faltante por solicitud (lo que quedó como deuda)
+            $faltanteSums = DB::table('novedades')
+                ->whereIn('ide', $idsPagina)
+                ->where('valor_faltante', '>', 0)
+                ->where('tipo_novedad', '!=', 'ACUERDO DE PAGO')
+                ->select('ide', DB::raw('SUM(valor_faltante) as total_faltante'))
+                ->groupBy('ide')
+                ->pluck('total_faltante', 'ide')
+                ->toArray();
+
+            // Ajuste de novedades al COSTO TOTAL (solo aplica cuando el pago NO está completo)
             $ajustesNovedades = DB::table('novedades')
                 ->whereIn('ide', $idsPagina)
                 ->whereIn('tipo_novedad', [
@@ -1633,6 +1643,18 @@ class SolicitudController extends Controller
                 ->groupBy('ide')
                 ->pluck('ajuste', 'ide')
                 ->toArray();
+
+            // paytype y confirmado para saber si el pago ya se realizó completo
+            $solicitudesInfo = DB::table('solicitudes')
+                ->whereIn('id', $idsPagina)
+                ->select('id', 'paytype', 'confirmado')
+                ->get();
+
+            foreach ($solicitudesInfo as $s) {
+                $paytype = $s->paytype ?? '';
+                $pagoCompletoPorId[$s->id] = in_array($paytype, ['CONTADO', 'CONTADO AM.', 'CONTADO PM.'])
+                    || ($s->confirmado === 'SI');
+            }
         }
 
         $principalPorId = [];
@@ -1650,8 +1672,13 @@ class SolicitudController extends Controller
             $esPrincipal = ($principalPorId[$diario->id]['guia'] ?? null) === $diario->guia;
             $diario->es_principal = $esPrincipal;
             $diario->total_novedades = $esPrincipal ? ($novedadesSums[$diario->id] ?? 0) : 0;
-            $ajuste = $esPrincipal ? floatval($ajustesNovedades[$diario->id] ?? 0) : 0;
-            $diario->costo_total = floatval($diario->costo_total) + $ajuste;
+            $diario->total_faltante = $esPrincipal ? ($faltanteSums[$diario->id] ?? 0) : 0;
+
+            // Si el pago NO está completo, la novedad se descuenta del COSTO TOTAL.
+            // Si ya está completo, el valor fue a faltante y no se descuenta aquí.
+            if ($esPrincipal && ! ($pagoCompletoPorId[$diario->id] ?? false)) {
+                $diario->costo_total = floatval($diario->costo_total) + floatval($ajustesNovedades[$diario->id] ?? 0);
+            }
         }
 
         // Obtener Años y Meses disponibles para el filtro
@@ -3252,6 +3279,14 @@ class SolicitudController extends Controller
             $valor = (int) $request->input('valor');
             $faltante = 0;
 
+            // Determinar si el pago ya se realizó completo para este id.
+            // CONTADO (contado, contado AM., contado PM.) se paga completo antes de la novedad.
+            // Para los demás paytype (anticipo + saldo) se considera completo cuando el saldo ya fue confirmado (confirmado = 'SI').
+            $solicitud = DB::table('solicitudes')->where('id', $request->ide)->first();
+            $paytype = $solicitud->paytype ?? '';
+            $estaConfirmado = $solicitud->confirmado ?? 'NO';
+            $pagoCompleto = in_array($paytype, ['CONTADO', 'CONTADO AM.', 'CONTADO PM.']) || $estaConfirmado === 'SI';
+
             $novedadId = DB::table('novedades')->insertGetId([
                 'ide' => $request->ide,
                 'manifiesto' => $request->manifiesto,
@@ -3271,14 +3306,18 @@ class SolicitudController extends Controller
             $accionesSumaCosto = ['PUNTO ADICIONAL'];
             $accionesSaldo = ['AVERIA', 'DAÑO A TERCEROS', 'ESCOLTA Y CANDADO SATELITAL', 'HURTO', 'PENALIZACIONES'];
 
-            if (in_array($request->tipo_novedad, $accionesCosto)) {
-                $solicitud = DB::table('solicitudes')->where('id', $request->ide)->first();
+            if (in_array($request->tipo_novedad, $accionesSumaCosto)) {
+                // PUNTO ADICIONAL siempre suma al costo
+                DB::table('solicitudes')->where('id', $request->ide)->increment('costo', $valor);
+            } elseif ($pagoCompleto) {
+                // El pago ya se realizó completo: el descuento no se puede aplicar al mismo id,
+                // por lo que todo el valor de la novedad pasa a faltante.
+                $faltante = $valor;
+            } elseif (in_array($request->tipo_novedad, $accionesCosto)) {
                 $costoActual = floatval($solicitud->costo ?? 0);
                 $faltante = max(0, $valor - $costoActual);
                 $nuevoCosto = max(0, $costoActual - $valor);
                 DB::table('solicitudes')->where('id', $request->ide)->update(['costo' => $nuevoCosto]);
-            } elseif (in_array($request->tipo_novedad, $accionesSumaCosto)) {
-                DB::table('solicitudes')->where('id', $request->ide)->increment('costo', $valor);
             } elseif (in_array($request->tipo_novedad, $accionesSaldo)) {
                 $peticion = DB::table('peticiones')->where('id', $request->ide)->first();
                 $valorSaldo = floatval($peticion->valor_saldo ?? 0);

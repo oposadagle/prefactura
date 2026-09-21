@@ -368,9 +368,10 @@
                                     TRANSPORTADORA</th>
                                 <th class="      " style="color: #F7E6AD;border: 1px solid #0c213a;">SEGURO VEHICULO
                                 </th>
+                                <th class="      " style="color: #F7E6AD;border: 1px solid #0c213a;">COSTO TOTAL</th>
                                 <th class="      " style="color: #00FF9C;border: 1px solid #0c213a;">NOVEDADES</th>
                                 <th class="      " style="color: #00FF9C;border: 1px solid #0c213a;">DETALLE</th>
-                                <th class="      " style="color: #F7E6AD;border: 1px solid #0c213a;">COSTO TOTAL</th>
+                                <th class="      " style="color: #FF7D7D;border: 1px solid #0c213a;">FALTANTE</th>
                                 <th class="      " style="color: #C3FF93;border: 1px solid #0c213a;">VALOR FACTURAR EN
                                     FLETE</th>
                                 <th class="      " style="color: #C3FF93;border: 1px solid #0c213a;">% FACTURAR SEGURO
@@ -1059,6 +1060,9 @@
                                     @endif
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        {{ number_format($diario->costo_total, 0, ',', '.') }}</td>
+                                    <td class="celdas"
+                                        style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
                                         {{ $diario->es_principal ? number_format($diario->total_novedades, 0, ',', '.') : '' }}
                                     </td>
                                     <td class="celdas text-center"
@@ -1073,7 +1077,8 @@
                                     </td>
                                     <td class="celdas"
                                         style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
-                                        {{ number_format($diario->costo_total, 0, ',', '.') }}</td>
+                                        {{ $diario->es_principal ? number_format($diario->total_faltante, 0, ',', '.') : '' }}
+                                    </td>
                                     @if ($diario->facturar == 'NO')
                                         @can('nuevos.costos')
                                             <td class="celdas"
