@@ -90,6 +90,7 @@ Route::get('/anticipos', [SolicitudController::class, 'anticipos'])->name('solic
 Route::post('/solicitud/anticipos/confirmar', [SolicitudController::class, 'confirmarAnticipos'])->name('solicitud.confirmarAnticipos');
 Route::post('/solicitud/novedad/guardar', [SolicitudController::class, 'guardarNovedad'])->name('solicitud.guardarNovedad');
 Route::get('/solicitud/novedad/detalle/{manifiesto}', [SolicitudController::class, 'detalleNovedades'])->name('solicitud.detalleNovedades');
+Route::get('/solicitud/novedad/placa/{placa}', [SolicitudController::class, 'detalleNovedadesPorPlaca'])->name('solicitud.detalleNovedadesPorPlaca');
 Route::post('/solicitud/anticipos/archivo-plano', [SolicitudController::class, 'archivoPlanoAnticipos'])->name('solicitud.archivoPlanoAnticipos');
 Route::post('/solicitud/anticipos/subir-manifiestos', [SolicitudController::class, 'subirManifiestos'])->name('solicitud.subirManifiestos');
 Route::get('/solicitud/anticipos/descargar-manifiestos', [SolicitudController::class, 'descargarManifiestos'])->name('solicitud.descargarManifiestos');

@@ -3369,6 +3369,32 @@ class SolicitudController extends Controller
         return response()->json($novedades);
     }
 
+    public function detalleNovedadesPorPlaca($placa)
+    {
+        $novedades = DB::table('novedades')
+            ->where('placa', $placa)
+            ->select('manifiesto', 'tipo_novedad', 'clase_novedad', 'valor', 'valor_faltante', 'cuotas', 'nota', 'soporte', 'update_user', 'created_at')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        foreach ($novedades as $n) {
+            if ($n->soporte) {
+                $firstBytes = substr($n->soporte, 0, 10);
+                if (str_starts_with($firstBytes, '/9j/')) {
+                    $n->soporte_tipo = 'image/jpeg';
+                } elseif (str_starts_with($firstBytes, 'iVBOR')) {
+                    $n->soporte_tipo = 'image/png';
+                } else {
+                    $n->soporte_tipo = 'application/pdf';
+                }
+            } else {
+                $n->soporte_tipo = null;
+            }
+        }
+
+        return response()->json($novedades);
+    }
+
     private function aplicarCuotasAcuerdo($ideAcuerdo)
     {
         $incluidos = ['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE'];

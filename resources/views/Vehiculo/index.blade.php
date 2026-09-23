@@ -41,6 +41,7 @@
                                 <th class="celdas" style="color: #FBB454;border: 1px solid #0C213A;"><i class="ti ti-calendar me-1"></i>CREACION</th>
                                 <th class="celdas" style="color: #FBB454;border: 1px solid #0C213A;"><i class="ti ti-calendar me-1"></i>EVALUACION</th>
                                 <th class="celdas" style="color: #FBB454;border: 1px solid #0C213A;">ESTADO</th>
+                                <th class="celdas" style="color: #00FF9C;border: 1px solid #0C213A;">DETALLE</th>
                                 <th class="celdas" style="color: #03D87F;border: 1px solid #0C213A;">REEVALUACION</th>
                                 <th class="celdas" style="color: #A3D8FF;border: 1px solid #0C213A;">CONDUCTOR</th>
                                 <th class="celdas" style="color: #A3D8FF;border: 1px solid #0C213A;">CEDULA_CONDUCTOR</th>
@@ -112,6 +113,13 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->fecha_creacion }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;">{{ $vehiculo->fecha_evaluacion }}</td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;">{{ strToUpper($vehiculo->estado) }}</td>
+                                    <td class="celdas text-center" style="border: 1px solid #9FAACC;">
+                                        <button type="button" class="btn btn-sm"
+                                            style="background-color: #00FF9C; color: #000; font-size: 14px; width: 30px; height: 30px; padding: 0;"
+                                            onclick="abrirDetalleNovedadPlaca('{{ $vehiculo->placa }}')">
+                                            👁
+                                        </button>
+                                    </td>
                                     <td class="celdas" style="border: 1px solid #9FAACC;">
                                         @if ($vehiculo->estado === 'ACTIVO')
                                             <a class="btn btn-outline-success px-2 py-0"
@@ -221,4 +229,99 @@
         });
     }
 </script>
+<!-- Modal detalle novedades por placa -->
+<div class="modal fade" id="modalDetalleNovedadPlaca" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" style="color: white;">Novedades de la placa
+                    <span id="detallePlacaTitulo" style="color: #00FF9C; font-weight: bold;"></span>
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm mb-0">
+                        <thead class="table-dark" style="font-size: 11px;">
+                            <tr>
+                                <th style="color: #00FF9C;">MANIFIESTO</th>
+                                <th style="color: #00FF9C;">TIPO</th>
+                                <th style="color: #00FF9C;">CLASE</th>
+                                <th style="color: #00FF9C;">VALOR</th>
+                                <th style="color: #00FF9C;">FALTANTE</th>
+                                <th style="color: #00FF9C;">NOTA</th>
+                                <th style="color: #00FF9C;">SOPORTE</th>
+                                <th style="color: #00FF9C;">USUARIO</th>
+                                <th style="color: #00FF9C;">FECHA</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyDetalleNovedadPlaca" style="font-size: 11px;">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function verSoporteNovedadPlaca(base64, tipo) {
+        var win = window.open('', '_blank');
+        if (tipo === 'application/pdf') {
+            win.document.write('<iframe src="data:application/pdf;base64,' + base64 + '" width="100%" height="100%" frameborder="0"></iframe>');
+        } else {
+            win.document.write('<img src="data:' + tipo + ';base64,' + base64 + '" style="max-width:100%; height:auto;">');
+        }
+    }
+
+    function abrirDetalleNovedadPlaca(placa) {
+        var span = document.getElementById('detallePlacaTitulo');
+        if (span) {
+            span.textContent = placa;
+        }
+
+        var tbody = document.getElementById('tbodyDetalleNovedadPlaca');
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center">Cargando...</td></tr>';
+
+        abrirModalSeguro('modalDetalleNovedadPlaca');
+
+        fetch('/solicitud/novedad/placa/' + encodeURIComponent(placa), {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(function(r) {
+                return r.json();
+            })
+            .then(function(data) {
+                var html = '';
+                if (!data || data.length === 0) {
+                    html = '<tr><td colspan="9" class="text-center">Sin novedades</td></tr>';
+                } else {
+                    data.forEach(function(n) {
+                        var soporteHtml = n.soporte
+                            ? '<a href="javascript:void(0)" onclick="verSoporteNovedadPlaca(\'' + n.soporte + '\', \'' + n.soporte_tipo + '\')" title="Ver soporte">📄</a>'
+                            : '';
+                        html += '<tr>' +
+                            '<td>' + (n.manifiesto || '') + '</td>' +
+                            '<td>' + n.tipo_novedad + '</td>' +
+                            '<td>' + (n.clase_novedad || '') + '</td>' +
+                            '<td style="text-align: right;">' + parseInt(n.valor).toLocaleString('es-CO') + '</td>' +
+                            '<td style="text-align: right;">' + parseInt(n.valor_faltante || 0).toLocaleString('es-CO') + '</td>' +
+                            '<td>' + (n.nota || '') + '</td>' +
+                            '<td class="text-center">' + soporteHtml + '</td>' +
+                            '<td>' + n.update_user + '</td>' +
+                            '<td>' + n.created_at + '</td>' +
+                            '</tr>';
+                    });
+                }
+                tbody.innerHTML = html;
+            })
+            .catch(function() {
+                tbody.innerHTML = '<tr><td colspan="9" class="text-center text-danger">Error al cargar</td></tr>';
+            });
+    }
+</script>
+
 <x-footer />
