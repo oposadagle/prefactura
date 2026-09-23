@@ -3120,6 +3120,7 @@ class SolicitudController extends Controller
                             ->where('manifiesto', $manifiestoExcel)
                             ->where('tipo_novedad', 'PENDIENTES')
                             ->update([
+                                'placa' => $solicitud ? $solicitud->placa : null,
                                 'clase_novedad' => 'DESCONGELAR',
                                 'nota' => $notaExcel,
                                 'update_user' => $usuario,
@@ -3129,6 +3130,7 @@ class SolicitudController extends Controller
                     } else {
                         DB::table('novedades')->insert([
                             'ide' => $solicitud ? $solicitud->id : null,
+                            'placa' => $solicitud ? $solicitud->placa : null,
                             'manifiesto' => $manifiestoExcel,
                             'tipo_novedad' => 'PENDIENTES',
                             'clase_novedad' => $accion,
@@ -3177,6 +3179,7 @@ class SolicitudController extends Controller
 
                 DB::table('novedades')->insert([
                     'ide' => $request->ide,
+                    'placa' => $solicitud ? $solicitud->placa : null,
                     'manifiesto' => $request->input('manifiesto'),
                     'tipo_novedad' => 'VIAJE CANCELADO',
                     'clase_novedad' => $clase,
@@ -3229,8 +3232,11 @@ class SolicitudController extends Controller
 
                 $nota = $cuotas === 0 ? 'Acuerdo de pago en perdida.' : $request->input('nota');
 
+                $solicitud = DB::table('solicitudes')->where('id', $ide)->first();
+
                 DB::table('novedades')->insert([
                     'ide' => $ide,
+                    'placa' => $solicitud ? $solicitud->placa : null,
                     'manifiesto' => $request->input('manifiesto'),
                     'tipo_novedad' => 'ACUERDO DE PAGO',
                     'clase_novedad' => null,
@@ -3289,6 +3295,7 @@ class SolicitudController extends Controller
 
             $novedadId = DB::table('novedades')->insertGetId([
                 'ide' => $request->ide,
+                'placa' => $solicitud ? $solicitud->placa : null,
                 'manifiesto' => $request->manifiesto,
                 'tipo_novedad' => $request->tipo_novedad,
                 'clase_novedad' => $request->clase_novedad,
