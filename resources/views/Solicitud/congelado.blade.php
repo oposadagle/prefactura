@@ -143,6 +143,8 @@
                                 <th class="      " style="color: #F7E6AD;border: 1px solid #0c213a;">SOBRECOSTOS TRANSPORTADORA</th>
                                 <th class="      " style="color: #F7E6AD;border: 1px solid #0c213a;">SEGURO VEHICULO</th>
                                 <th class="      " style="color: #F7E6AD;border: 1px solid #0c213a;">COSTO TOTAL</th>                                
+                                <th class="      " style="color: #00FF9C;border: 1px solid #0c213a;">NOVEDADES</th>
+                                <th class="      " style="color: #00FF9C;border: 1px solid #0c213a;">DETALLE</th>
                                 <th class="      " style="color: #C3FF93;border: 1px solid #0c213a;">VALOR FACTURAR EN FLETE</th>
                                 <th class="      " style="color: #C3FF93;border: 1px solid #0c213a;">% FACTURAR SEGURO</th>
                                 <th class="      " style="color: #C3FF93;border: 1px solid #0c213a;">VALOR COBRAR_EN SEGURO</th>
@@ -491,6 +493,18 @@
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->seguros, 0, ',', '.') }}</td>
                                 @endif
                                     <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">{{ number_format($diario->costo_total, 0, ',', '.') }}</td>
+                                    <td class="celdas" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        {{ $diario->es_principal ? number_format($diario->total_novedades, 0, ',', '.') : '' }}
+                                    </td>
+                                    <td class="celdas text-center" style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                        @if ($diario->es_principal && $diario->total_novedades > 0)
+                                            <button type="button" class="btn btn-sm btn-detalle-novedad"
+                                                style="background-color: #00FF9C; color: #000; font-size: 14px; width: 30px; height: 30px; padding: 0;"
+                                                onclick="abrirDetalleNovedad('{{ $diario->razon }}')">
+                                                👁
+                                            </button>
+                                        @endif
+                                    </td>
                                 @if ($diario->facturar == 'NO')
                                     @can('nuevos.costos')
                                     
@@ -864,5 +878,99 @@
     });
 </script>
 @endif
+
+<!-- Modal detalle novedades -->
+<div class="modal fade" id="modalDetalleNovedad" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" style="color: white;">Detalle novedades - <span id="detalleManifiesto" style="color: #00FF9C; font-weight: bold;"></span></h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm mb-0">
+                        <thead class="table-dark" style="font-size: 11px;">
+                            <tr>
+                                <th style="color: #00FF9C;">MANIFIESTO</th>
+                                <th style="color: #00FF9C;">TIPO</th>
+                                <th style="color: #00FF9C;">CLASE</th>
+                                <th style="color: #00FF9C;">VALOR</th>
+                                <th style="color: #00FF9C;">NOTA</th>
+                                <th style="color: #00FF9C;">SOPORTE</th>
+                                <th style="color: #00FF9C;">USUARIO</th>
+                                <th style="color: #00FF9C;">FECHA</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyDetalleNovedad" style="font-size: 11px;">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function verSoporteNovedad(base64, tipo) {
+        var win = window.open('', '_blank');
+        if (tipo === 'application/pdf') {
+            win.document.write('<iframe src="data:application/pdf;base64,' + base64 + '" width="100%" height="100%" frameborder="0"></iframe>');
+        } else {
+            win.document.write('<img src="data:' + tipo + ';base64,' + base64 + '" style="max-width:100%; height:auto;">');
+        }
+    }
+
+    function abrirDetalleNovedad(manifiesto) {
+        var span = document.getElementById('detalleManifiesto');
+        if (span) {
+            span.textContent = manifiesto;
+        }
+
+        var tbody = document.getElementById('tbodyDetalleNovedad');
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center">Cargando...</td></tr>';
+
+        abrirModalSeguro('modalDetalleNovedad');
+
+        fetch('/solicitud/novedad/detalle/' + encodeURIComponent(manifiesto), {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(function(r) {
+                return r.json();
+            })
+            .then(function(data) {
+                var html = '';
+                if (!data || data.length === 0) {
+                    html = '<tr><td colspan="8" class="text-center">Sin novedades</td></tr>';
+                } else {
+                    data.forEach(function(n) {
+                        var soporteHtml = n.soporte
+                            ? '<a href="javascript:void(0)" onclick="verSoporteNovedad(\'' + n.soporte + '\', \'' + n.soporte_tipo + '\')" title="Ver soporte">📄</a>'
+                            : '';
+                        var manifiestoMostrar = n.es_traslado
+                            ? (n.manifiesto_origen + ' → ' + n.manifiesto)
+                            : (n.manifiesto || '');
+                        html += '<tr>' +
+                            '<td>' + manifiestoMostrar + '</td>' +
+                            '<td>' + n.tipo_novedad + '</td>' +
+                            '<td>' + (n.clase_novedad || '') + '</td>' +
+                            '<td style="text-align: right;">' + parseInt(n.valor).toLocaleString('es-CO') + '</td>' +
+                            '<td>' + (n.nota || '') + '</td>' +
+                            '<td class="text-center">' + soporteHtml + '</td>' +
+                            '<td>' + n.update_user + '</td>' +
+                            '<td>' + n.created_at + '</td>' +
+                            '</tr>';
+                    });
+                }
+                tbody.innerHTML = html;
+            })
+            .catch(function() {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Error al cargar</td></tr>';
+            });
+    }
+</script>
 
 <x-footer />

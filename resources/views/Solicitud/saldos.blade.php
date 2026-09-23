@@ -288,6 +288,7 @@ $(document).ready(function() {
                     <table class="table table-striped table-sm mb-0">
                         <thead class="table-dark" style="font-size: 11px;">
                             <tr>
+                                <th style="color: #00FF9C;">MANIFIESTO</th>
                                 <th style="color: #00FF9C;">TIPO</th>
                                 <th style="color: #00FF9C;">CLASE</th>
                                 <th style="color: #00FF9C;">VALOR</th>
@@ -311,19 +312,23 @@ $(document).ready(function() {
         $('.btn-detalle-novedad').click(function() {
             var manifiesto = $(this).data('manifiesto');
             $('#detalleManifiesto').text(manifiesto);
-            $('#tbodyDetalleNovedad').html('<tr><td colspan="7" class="text-center">Cargando...</td></tr>');
+            $('#tbodyDetalleNovedad').html('<tr><td colspan="8" class="text-center">Cargando...</td></tr>');
             abrirModalSeguro('modalDetalleNovedad');
 
             $.get('/solicitud/novedad/detalle/' + manifiesto, function(data) {
                 var html = '';
                 if (data.length === 0) {
-                    html = '<tr><td colspan="7" class="text-center">Sin novedades</td></tr>';
+                    html = '<tr><td colspan="8" class="text-center">Sin novedades</td></tr>';
                 } else {
                     data.forEach(function(n) {
                         var soporteHtml = n.soporte
                             ? '<a href="#" class="ver-soporte" data-soporte="' + n.soporte + '" data-tipo="' + n.soporte_tipo + '" title="Ver soporte">📄</a>'
                             : '';
+                        var manifiestoMostrar = n.es_traslado
+                            ? (n.manifiesto_origen + ' → ' + n.manifiesto)
+                            : (n.manifiesto || '');
                         html += '<tr>' +
+                            '<td>' + manifiestoMostrar + '</td>' +
                             '<td>' + n.tipo_novedad + '</td>' +
                             '<td>' + (n.clase_novedad || '') + '</td>' +
                             '<td style="text-align: right;">' + parseInt(n.valor).toLocaleString('es-CO') + '</td>' +
@@ -349,7 +354,7 @@ $(document).ready(function() {
                     }
                 });
             }).fail(function() {
-                $('#tbodyDetalleNovedad').html('<tr><td colspan="7" class="text-center text-danger">Error al cargar</td></tr>');
+                $('#tbodyDetalleNovedad').html('<tr><td colspan="8" class="text-center text-danger">Error al cargar</td></tr>');
             });
         });
     });

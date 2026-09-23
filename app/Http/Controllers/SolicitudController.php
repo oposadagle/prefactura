@@ -266,14 +266,37 @@ class SolicitudController extends Controller
         $manifiestos = $diarias->pluck('razon')->filter()->unique()->toArray();
         $novedadesSums = DB::table('novedades')
             ->whereIn('manifiesto', $manifiestos)
+            ->where('tipo_novedad', '!=', 'ACUERDO DE PAGO')
             ->select('manifiesto', DB::raw('SUM(valor) as total_novedades'))
             ->groupBy('manifiesto')
             ->pluck('total_novedades', 'manifiesto');
 
+        // Acuerdos de pago trasladados desde un servicio anterior de la misma placa
+        // (cuando el pago ya estaba completo, el descuento se aplica al siguiente servicio)
+        $idsAnticipo = $diarias->pluck('id')->filter()->toArray();
+        $trasladosSums = DB::table('novedades')
+            ->where('tipo_novedad', 'ACUERDO DE PAGO')
+            ->whereIn('ide_aplicado', $idsAnticipo)
+            ->select('ide_aplicado', DB::raw('SUM(valor) as total_traslado'))
+            ->groupBy('ide_aplicado')
+            ->pluck('total_traslado', 'ide_aplicado')
+            ->toArray();
+
         foreach ($diarias as $diario) {
             $diario->fecha_tentativa = $this->calcularFechaTentativa($diario->fenv_cumplido, 9, $festivos);
-            $diario->total_novedades = $novedadesSums[$diario->razon] ?? 0;
-            $diario->saldo_total = floatval($diario->valor_saldo) - floatval($diario->deducciones) - floatval($diario->total_novedades);
+            $esContado = in_array($diario->paytype, ['CONTADO', 'CONTADO AM.', 'CONTADO PM.']);
+            $novedadesPropias = floatval($novedadesSums[$diario->razon] ?? 0);
+            $diario->total_traslado = floatval($trasladosSums[$diario->id] ?? 0);
+            $diario->total_novedades = $novedadesPropias + $diario->total_traslado;
+
+            if ($esContado) {
+                // CONTADO: el traslado se descuenta SOLO del VALOR A PAGAR (no del valor saldo)
+                $diario->saldo_total = floatval($diario->valor_saldo) - floatval($diario->deducciones) - $novedadesPropias;
+                $diario->valor_a_pagar = floatval($diario->valor_a_pagar) - $diario->total_traslado;
+            } else {
+                // Otros tipos: el traslado se descuenta del VALOR SALDO (reflejado en SALDO TOTAL)
+                $diario->saldo_total = floatval($diario->valor_saldo) - floatval($diario->deducciones) - $diario->total_novedades;
+            }
         }
 
         // Obtener fechas disponibles para los selectores
@@ -363,9 +386,35 @@ class SolicitudController extends Controller
             ->orderBy('fecha_cargue', 'desc')
             ->get();
 
+        // Novedades propias y acuerdos de pago trasladados desde un servicio anterior de la placa
+        $manifiestos = $diarias->pluck('razon')->filter()->unique()->toArray();
+        $novedadesSums = DB::table('novedades')
+            ->whereIn('manifiesto', $manifiestos)
+            ->where('tipo_novedad', '!=', 'ACUERDO DE PAGO')
+            ->select('manifiesto', DB::raw('SUM(valor) as total_novedades'))
+            ->groupBy('manifiesto')
+            ->pluck('total_novedades', 'manifiesto');
+
+        $idsAnticipo = $diarias->pluck('id')->filter()->toArray();
+        $trasladosSums = DB::table('novedades')
+            ->where('tipo_novedad', 'ACUERDO DE PAGO')
+            ->whereIn('ide_aplicado', $idsAnticipo)
+            ->select('ide_aplicado', DB::raw('SUM(valor) as total_traslado'))
+            ->groupBy('ide_aplicado')
+            ->pluck('total_traslado', 'ide_aplicado')
+            ->toArray();
+
         // Calcula la fecha tentativa para cada entrada
         foreach ($diarias as $diario) {
             $diario->fecha_tentativa = $this->calcularFechaTentativa($diario->fecha_envio, 9, $festivos);
+            $esContado = in_array($diario->paytype, ['CONTADO', 'CONTADO AM.', 'CONTADO PM.']);
+            $diario->total_traslado = floatval($trasladosSums[$diario->id] ?? 0);
+            $diario->total_novedades = floatval($novedadesSums[$diario->razon] ?? 0) + $diario->total_traslado;
+
+            // Solo para CONTADO el traslado del acuerdo descuenta el VALOR A PAGAR
+            if ($esContado) {
+                $diario->valor_a_pagar = floatval($diario->valor_a_pagar) - $diario->total_traslado;
+            }
         }
 
         return view('Solicitud.anticipos', compact('diarias', 'festivos', 'userName'));
@@ -493,6 +542,7 @@ class SolicitudController extends Controller
         $festivos = DB::table('festivos')->pluck('festivo')->toArray();
         $incluidos = (['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE']);
         $excluidos = (['Servicio cancelado']);
+        $excluidosPaytype = (['CONTADO', 'CONTADO AM.', 'CONTADO PM.']);
 
         $diarias = DB::table('peticiones')
             ->join('solicitudes', 'peticiones.id', '=', 'solicitudes.id')
@@ -501,6 +551,7 @@ class SolicitudController extends Controller
             ->where('peticiones.confirmado', 'AC')
             ->whereNotNull('peticiones.razon')
             ->whereIn('peticiones.paytype', $incluidos)
+            ->whereNotIn('peticiones.paytype', $excluidosPaytype)
             ->whereNotIn('peticiones.states', $excluidos)
             ->orderBy('solicitudes.fecha_pago_anticipo', 'desc')
             ->get();
@@ -508,9 +559,21 @@ class SolicitudController extends Controller
         $manifiestos = $diarias->pluck('razon')->filter()->unique()->toArray();
         $novedadesSums = DB::table('novedades')
             ->whereIn('manifiesto', $manifiestos)
+            ->where('tipo_novedad', '!=', 'ACUERDO DE PAGO')
             ->select('manifiesto', DB::raw('SUM(valor) as total_novedades'))
             ->groupBy('manifiesto')
             ->pluck('total_novedades', 'manifiesto');
+
+        // Acuerdos de pago trasladados desde un servicio anterior de la misma placa
+        // (se descuentan del VALOR SALDO porque en Saldos solo hay paytypes distintos a CONTADO)
+        $idsSaldos = $diarias->pluck('id')->filter()->toArray();
+        $trasladosSums = DB::table('novedades')
+            ->where('tipo_novedad', 'ACUERDO DE PAGO')
+            ->whereIn('ide_aplicado', $idsSaldos)
+            ->select('ide_aplicado', DB::raw('SUM(valor) as total_traslado'))
+            ->groupBy('ide_aplicado')
+            ->pluck('total_traslado', 'ide_aplicado')
+            ->toArray();
 
         $congelados = DB::table('novedades')
             ->whereIn('manifiesto', $manifiestos)
@@ -523,7 +586,8 @@ class SolicitudController extends Controller
 
         foreach ($diarias as $diario) {
             $diario->fecha_tentativa = $this->calcularFechaTentativa($diario->fecha_envio, 9, $festivos);
-            $diario->total_novedades = $novedadesSums[$diario->razon] ?? 0;
+            $diario->total_traslado = floatval($trasladosSums[$diario->id] ?? 0);
+            $diario->total_novedades = floatval($novedadesSums[$diario->razon] ?? 0) + $diario->total_traslado;
             $diario->saldo_total = floatval($diario->valor_saldo) - floatval($diario->total_novedades);
             $diario->estado_pago = in_array($diario->razon, $congelados) ? 'CONGELADO' : 'PAGAR';
         }
@@ -1610,6 +1674,7 @@ class SolicitudController extends Controller
         if (! empty($idsPagina)) {
             $novedadesSums = DB::table('novedades')
                 ->whereIn('ide', $idsPagina)
+                ->where('tipo_novedad', '!=', 'ACUERDO DE PAGO')
                 ->select('ide', DB::raw('SUM(valor) as total_novedades'))
                 ->groupBy('ide')
                 ->pluck('total_novedades', 'ide')
@@ -1745,6 +1810,36 @@ class SolicitudController extends Controller
         $diarias = $query->orderBy('fecha_cargue', 'desc')
             ->paginate(200)
             ->appends($request->all());
+
+        // Novedades por solicitud (id) y detección de la fila principal (la que tiene costo_flete > 0)
+        $idsPagina = $diarias->pluck('id')->filter()->unique()->toArray();
+        $novedadesSums = [];
+        if (! empty($idsPagina)) {
+            $novedadesSums = DB::table('novedades')
+                ->whereIn('ide', $idsPagina)
+                ->where('tipo_novedad', '!=', 'ACUERDO DE PAGO')
+                ->select('ide', DB::raw('SUM(valor) as total_novedades'))
+                ->groupBy('ide')
+                ->pluck('total_novedades', 'ide')
+                ->toArray();
+        }
+
+        $principalPorId = [];
+        foreach ($diarias as $d) {
+            $id = $d->id;
+            $tieneCosto = floatval($d->costo_flete) > 0;
+            if (! isset($principalPorId[$id])) {
+                $principalPorId[$id] = ['guia' => $d->guia, 'tiene_costo' => $tieneCosto];
+            } elseif ($tieneCosto && ! $principalPorId[$id]['tiene_costo']) {
+                $principalPorId[$id] = ['guia' => $d->guia, 'tiene_costo' => true];
+            }
+        }
+
+        foreach ($diarias as $diario) {
+            $esPrincipal = ($principalPorId[$diario->id]['guia'] ?? null) === $diario->guia;
+            $diario->es_principal = $esPrincipal;
+            $diario->total_novedades = $esPrincipal ? ($novedadesSums[$diario->id] ?? 0) : 0;
+        }
 
         $services = DB::table('servicios')->orderBy('nombre')->get();
         $servicios = $services->map(function ($service) {
@@ -2627,6 +2722,9 @@ class SolicitudController extends Controller
                 // Hook: aplicar cuotas pendientes de acuerdos de pago de esta placa
                 $this->aplicarCuotasPendientesPlaca($request->value, $request->pk);
 
+                // Hook: enlazar acuerdos de pago pendientes (de servicios anteriores con pago completo)
+                $this->aplicarAcuerdosPendientesPlaca($request->value, $request->pk);
+
                 return response()->json(['success' => true]);
             }
 
@@ -3233,15 +3331,33 @@ class SolicitudController extends Controller
                 $nota = $cuotas === 0 ? 'Acuerdo de pago en perdida.' : $request->input('nota');
 
                 $solicitud = DB::table('solicitudes')->where('id', $ide)->first();
+                $paytypeAcuerdo = $solicitud->paytype ?? '';
+                $pagoCompletoAcuerdo = in_array($paytypeAcuerdo, ['CONTADO', 'CONTADO AM.', 'CONTADO PM.'])
+                    || (($solicitud->confirmado ?? '') === 'SI');
+
+                // Si el pago ya se realizó completo, el descuento no se puede aplicar al mismo id.
+                // Se traslada al siguiente servicio (consecutivo) de la misma placa.
+                $ideAplicado = null;
+                if ($pagoCompletoAcuerdo && $solicitud && $solicitud->placa) {
+                    $siguiente = DB::table('solicitudes')
+                        ->where('placa', $solicitud->placa)
+                        ->where('id', '!=', $ide)
+                        ->where('fecha_cargue', '>', $solicitud->fecha_cargue)
+                        ->orderBy('fecha_cargue', 'asc')
+                        ->orderBy('id', 'asc')
+                        ->first();
+                    $ideAplicado = $siguiente ? $siguiente->id : null;
+                }
 
                 DB::table('novedades')->insert([
                     'ide' => $ide,
+                    'ide_aplicado' => $ideAplicado,
                     'placa' => $solicitud ? $solicitud->placa : null,
                     'manifiesto' => $request->input('manifiesto'),
                     'tipo_novedad' => 'ACUERDO DE PAGO',
                     'clase_novedad' => null,
                     'valor' => $faltante,
-                    'valor_faltante' => $cuotas > 0 ? $faltante : 0,
+                    'valor_faltante' => (! $pagoCompletoAcuerdo && $cuotas > 0) ? $faltante : 0,
                     'cuotas' => $cuotas,
                     'nota' => $nota,
                     'soporte' => null,
@@ -3258,7 +3374,8 @@ class SolicitudController extends Controller
                     ->update(['valor_faltante' => 0]);
 
                 // Descontar cuotas de los saldos de los servicios de la misma placa
-                if ($cuotas > 0) {
+                // (solo cuando el pago NO está completo; si está completo se traslada al siguiente servicio)
+                if ($cuotas > 0 && ! $pagoCompletoAcuerdo) {
                     $this->aplicarCuotasAcuerdo($ide);
                 }
 
@@ -3347,11 +3464,35 @@ class SolicitudController extends Controller
     {
         $novedades = DB::table('novedades')
             ->where('manifiesto', $manifiesto)
-            ->select('tipo_novedad', 'clase_novedad', 'valor', 'nota', 'soporte', 'update_user', 'created_at')
+            ->select('manifiesto', 'tipo_novedad', 'clase_novedad', 'valor', 'nota', 'soporte', 'update_user', 'created_at')
             ->orderBy('created_at', 'asc')
             ->get();
 
+        // Acuerdos de pago trasladados a este servicio (vienen de un servicio anterior de la misma placa,
+        // porque el pago ya estaba completo y no se podían descontar al mismo id)
+        $solicitud = DB::table('solicitudes')->where('razon', $manifiesto)->first();
+        if ($solicitud) {
+            $traslados = DB::table('novedades')
+                ->where('tipo_novedad', 'ACUERDO DE PAGO')
+                ->where('ide_aplicado', $solicitud->id)
+                ->select('manifiesto as manifiesto_origen', 'tipo_novedad', 'clase_novedad', 'valor', 'nota', 'soporte', 'update_user', 'created_at')
+                ->orderBy('created_at', 'asc')
+                ->get();
+
+            foreach ($traslados as $t) {
+                $t->manifiesto = $manifiesto; // manifiesto nuevo (al que se descuenta)
+                $t->es_traslado = true;
+                $novedades->push($t);
+            }
+        }
+
         foreach ($novedades as $n) {
+            if (! isset($n->es_traslado)) {
+                $n->es_traslado = false;
+            }
+            if (! isset($n->manifiesto_origen)) {
+                $n->manifiesto_origen = null;
+            }
             if ($n->soporte) {
                 $firstBytes = substr($n->soporte, 0, 10);
                 if (str_starts_with($firstBytes, '/9j/')) {
@@ -3509,6 +3650,26 @@ class SolicitudController extends Controller
 
             Log::info("Cuota pendiente aplicada a nuevo servicio {$nuevoServicioId}: deducciones +{$aDescontar}");
         }
+    }
+
+    private function aplicarAcuerdosPendientesPlaca($placa, $nuevoServicioId)
+    {
+        if (! $placa) {
+            return;
+        }
+
+        // Acuerdos de pago de esta placa que aún no tienen servicio destino (porque el pago
+        // estaba completo y el descuento no se podía aplicar al mismo id). Se enlazan al nuevo
+        // servicio para descontarle el valor del acuerdo.
+        DB::table('novedades')
+            ->where('tipo_novedad', 'ACUERDO DE PAGO')
+            ->where('placa', $placa)
+            ->whereNull('ide_aplicado')
+            ->where('valor_faltante', 0)
+            ->where('ide', '!=', $nuevoServicioId)
+            ->update(['ide_aplicado' => $nuevoServicioId]);
+
+        Log::info("Acuerdos pendientes enlazados a nuevo servicio {$nuevoServicioId} (placa {$placa})");
     }
 
     public function toggleTrafico(Request $request, $id)
