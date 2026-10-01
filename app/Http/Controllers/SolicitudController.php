@@ -2079,58 +2079,167 @@ class SolicitudController extends Controller
         $rutaTemporal = $archivo->getPathname();
 
         $xlsx = \Shuchkin\SimpleXLSX::parse($rutaTemporal);
-        if (!$xlsx) {
+        if (! $xlsx) {
             return back()->withErrors(['archivo' => 'No se pudo leer el archivo']);
         }
 
-        $cantidad = 0;
-        $esPrimeraFila = true;
+        $filas = $xlsx->rows();
+        unset($xlsx);
 
-        foreach ($xlsx->rows() as $fila) {
-            if ($esPrimeraFila) {
-                $esPrimeraFila = false;
-                continue;
-            }
+        if (count($filas) < 2) {
+            return back()->with('error', 'El archivo no contiene registros para procesar');
+        }
 
-            $razon = trim((string) ($fila[0] ?? ''));
-            $recibido_cumplido = trim((string) ($fila[1] ?? ''));
-            $fecha_envio = trim((string) ($fila[2] ?? ''));
+        // Mapear columnas por encabezado (tolerante a mayúsculas, tildes y espacios)
+        $encabezado = array_shift($filas);
+        $columnas = [];
+        foreach ($encabezado as $indice => $titulo) {
+            $clave = strtoupper(trim(preg_replace('/\s+/', '_', $this->normalizarTexto($titulo))));
+            $columnas[$clave] = $indice;
+        }
 
+        $idxManifiesto = $columnas['MANIFIESTO'] ?? 0;
+        $idxRecibido = $columnas['RECIBIDO_CUMPLIDO'] ?? 1;
+        $idxFechaEnvio = $columnas['FECHA_ENVIO'] ?? 2;
+        $idxFactura = $columnas['FACTURA'] ?? 3;
+
+        // Agrupar por manifiesto: si se repite en el archivo, la última fila prevalece
+        $registros = [];
+        foreach ($filas as $fila) {
+            $razon = $this->normalizarManifiesto($fila[$idxManifiesto] ?? null);
             if ($razon === '') {
                 continue;
             }
 
-            if ($recibido_cumplido === '' && $fecha_envio === '') {
-                continue;
-            }
-
-            $camposActualizar = [
-                'updated_at' => now(),
+            $registros[$razon] = [
+                'recibido_cumplido' => $this->normalizarFechaExcel($fila[$idxRecibido] ?? null),
+                'fenv_cumplido' => $this->normalizarFechaExcel($fila[$idxFechaEnvio] ?? null),
+                'factura' => isset($fila[$idxFactura]) ? trim((string) $fila[$idxFactura]) : '',
             ];
+        }
 
-            if ($recibido_cumplido !== '') {
-                $camposActualizar['recibido_cumplido'] = $recibido_cumplido;
-            }
-            if ($fecha_envio !== '') {
-                $camposActualizar['fenv_cumplido'] = $fecha_envio;
-            }
+        if (empty($registros)) {
+            return back()->with('error', 'No se encontraron manifiestos válidos en el archivo');
+        }
 
-            if (count($camposActualizar) > 1) {
-                $updated = DB::table('solicitudes')
+        $cantidad = 0;
+        $noEncontrados = [];
+
+        // La tabla mostrada en la vista es la vista PostgreSQL "peticiones", que se alimenta
+        // de la tabla base "solicitudes"; por eso la actualización se hace sobre "solicitudes".
+        DB::beginTransaction();
+        try {
+            foreach ($registros as $razon => $valores) {
+                $camposActualizar = ['updated_at' => now()];
+
+                if ($valores['recibido_cumplido'] !== null && $valores['recibido_cumplido'] !== '') {
+                    $camposActualizar['recibido_cumplido'] = $valores['recibido_cumplido'];
+                }
+                if ($valores['fenv_cumplido'] !== null && $valores['fenv_cumplido'] !== '') {
+                    $camposActualizar['fenv_cumplido'] = $valores['fenv_cumplido'];
+                }
+                if ($valores['factura'] !== '') {
+                    $camposActualizar['factura'] = $valores['factura'];
+                }
+
+                // Solo se actualiza si hay al menos un campo con valor (además de updated_at)
+                if (count($camposActualizar) === 1) {
+                    continue;
+                }
+
+                $filasAfectadas = DB::table('solicitudes')
                     ->where('razon', $razon)
                     ->update($camposActualizar);
 
-                if ($updated) {
-                    $cantidad++;
+                if ($filasAfectadas > 0) {
+                    $cantidad += $filasAfectadas;
+                } else {
+                    $noEncontrados[] = $razon;
+                }
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error actualizando anticipos desde Excel: '.$e->getMessage());
+
+            return back()->with('error', 'No se pudieron actualizar los datos. Verifique el formato del archivo.');
+        }
+
+        $mensaje = 'Datos actualizados correctamente';
+        if (! empty($noEncontrados)) {
+            $mensaje .= '. Manifiestos no encontrados: '.count($noEncontrados);
+        }
+
+        return back()
+            ->with('success', $mensaje)
+            ->with('cantidad', $cantidad);
+    }
+
+    private function normalizarTexto($valor)
+    {
+        $texto = trim((string) $valor);
+
+        return str_replace(
+            ['á', 'é', 'í', 'ó', 'ú', 'Á', 'É', 'Í', 'Ó', 'Ú', 'ñ', 'Ñ'],
+            ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U', 'n', 'N'],
+            $texto
+        );
+    }
+
+    private function normalizarManifiesto($valor)
+    {
+        if ($valor === null) {
+            return '';
+        }
+
+        // Excel puede devolver valores numéricos; se evita la notación científica
+        if (is_float($valor)) {
+            return trim(number_format($valor, 0, '', ''));
+        }
+
+        return trim((string) $valor);
+    }
+
+    private function normalizarFechaExcel($valor)
+    {
+        if ($valor === null) {
+            return null;
+        }
+
+        if ($valor instanceof \DateTimeInterface) {
+            return $valor->format('Y-m-d');
+        }
+
+        $texto = trim((string) $valor);
+        if ($texto === '') {
+            return null;
+        }
+
+        // Fecha serial de Excel (las fechas entre 1900 y 2100 caen por debajo de 100000)
+        if (is_numeric($texto)) {
+            $numero = (float) $texto;
+            if ($numero > 0 && $numero < 100000) {
+                try {
+                    return \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($numero)->format('Y-m-d');
+                } catch (\Exception $e) {
+                    return null;
                 }
             }
         }
 
-        unset($xlsx);
+        foreach (['Y-m-d', 'Y-m-d H:i:s', 'd/m/Y', 'd-m-Y', 'd/m/Y H:i:s'] as $formato) {
+            $fecha = \DateTime::createFromFormat($formato, $texto);
+            if ($fecha !== false) {
+                return $fecha->format('Y-m-d');
+            }
+        }
 
-        return back()
-            ->with('success', 'Datos actualizados correctamente')
-            ->with('cantidad', $cantidad);
+        try {
+            return Carbon::parse($texto)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     public function subirManifiestos(Request $request)
