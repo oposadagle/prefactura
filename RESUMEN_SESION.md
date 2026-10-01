@@ -17,6 +17,7 @@ Tabla creada para registrar las novedades de los servicios (manifiestos).
 | `ide_aplicado` | bigint nullable | **nuevo** — servicio destino al que se traslada un ACUERDO DE PAGO |
 | `placa` | varchar nullable | **nuevo** — placa del servicio al crear la novedad |
 | `manifiesto` | varchar | `razon` de la solicitud |
+| `manifiesto_origen` | varchar nullable | **nuevo** — manifiesto de donde viene un `DESCUENTO` (origen) |
 | `tipo_novedad` | varchar | ver lista abajo |
 | `clase_novedad` | varchar nullable | CONGELAR/DESCONGELAR, DEVOLUCION TOTAL/PARCIAL, etc. |
 | `valor` | integer | valor de la novedad |
@@ -33,6 +34,7 @@ Tabla creada para registrar las novedades de los servicios (manifiestos).
 - `2026_08_20_000001_add_cuotas_to_novedades_table.php`
 - `2026_09_20_000000_add_placa_to_novedades_table.php`
 - `2026_09_23_000000_add_ide_aplicado_to_novedades_table.php`
+- `2026_09_30_000000_add_manifiesto_origen_to_novedades_table.php`
 
 > **Importante:** en producción (Laravel Cloud) la tabla `novedades` se creó **manualmente** y varias columnas también se aplicaron con SQL directo. Si se agregan migraciones nuevas, probablemente toque aplicarlas manualmente en producción (ver sección 9).
 
@@ -56,6 +58,7 @@ Definidos en `SolicitudController@guardarNovedad`.
 | PENDIENTES | especial | Excel (MANIFIESTO, NOTA) + CONGELAR/DESCONGELAR; deshabilita pagos |
 | VIAJE CANCELADO | especial | DEVOLUCION TOTAL / PARCIAL; saca el registro de Saldos (`confirmado = 'VC'`) |
 | ACUERDO DE PAGO | especial | solo permiso `acuerdo`; resuelve faltante; cuotas 0–3 (0–1 si hay VIAJE CANCELADO) |
+| DESCUENTO | especial | **nuevo** — automático desde ACUERDO DE PAGO de origen CONTADO; descuenta saldos sin confirmar de la placa; usuario `'sistema'` |
 
 ### Regla por `paytype` (muy importante)
 Al crear una novedad se determina si **el pago ya está completo**:
@@ -118,12 +121,26 @@ Esas placas se excluyen del editable-select PLACA. Se rehabilitan cuando se regi
 ### Traslado del ACUERDO DE PAGO al siguiente servicio (nuevo)
 Cuando el pago está completo, el acuerdo no puede aplicarse al mismo id:
 - Se busca el **siguiente servicio de la misma placa** (`fecha_cargue > actual`) y se guarda en `novedades.ide_aplicado`.
-- Hook `aplicarAcuerdosPendientesPlaca($placa, $nuevoId)`: si el siguiente servicio aún no existe, enlaza acuerdos pendientes (`ide_aplicado IS NULL` y `valor_faltante = 0`) cuando se asigne la placa.
+- Hook `aplicarAcuerdosPendientesPlaca($placa, $nuevoId)`: si el siguiente servicio aún no existe, enlaza acuerdos pendientes (`ide_aplicado IS NULL`, `valor > 0` y `valor_faltante = 0`) cuando se asigne la placa.
 - En el servicio destino:
   - **NOVEDADES** = novedades propias + traslado.
   - **CONTADO** → el traslado descuenta **VALOR A PAGAR**.
   - **No CONTADO** → el traslado descuenta **VALOR SALDO** (reflejado en SALDO TOTAL).
 - El modal DETALLE muestra `manifiesto_origen → manifiesto` (ej. `202607310089262 → 123456789101234`).
+
+### Descuento del faltante contra saldos sin confirmar (nuevo)
+Cuando el origen del ACUERDO DE PAGO es **CONTADO** (`CONTADO`, `CONTADO AM.`, `CONTADO PM.`) y el pago ya está completo, antes de buscar el siguiente servicio se ejecuta `SolicitudController@descontarFaltanteEnSaldosNoConfirmados($solicitud, $faltante, $ahora)`:
+1. Busca servicios de la misma placa con `confirmado = 'AC'` y paytype `PM. ANTICIPAR`, `AM. ANTICIPAR` o `ANTICIPO NOCHE` (los que aparecen en `/saldos`), ordenados por `fecha_cargue` asc.
+2. Por cada uno, saldo disponible = `valor_saldo − novedades propias − traslados de acuerdos` (igual que el SALDO TOTAL de `/saldos`).
+3. Inserta una novedad `DESCUENTO` con: `ide` = servicio destino, `manifiesto` = destino, `manifiesto_origen` = origen, `valor` = monto descontado, `update_user = 'sistema'`, fecha actual.
+4. Si el descuento cubre **todo** el saldo → confirmación automática del saldo (`confirmado = 'SI'`, `fecha_pago_saldo`, `nota_ps = 'DESCUENTO AUTOMATICO'`) y sale de Saldos.
+5. Si el faltante es **menor** al saldo → solo descuenta; el servicio permanece en Saldos con el saldo restante.
+6. Continúa con los demás servicios de la placa hasta agotar el faltante. El **sobrante** sigue la regla actual (siguiente servicio por `fecha_cargue` vía `ide_aplicado`, o el hook si aún no existe).
+
+Detalles de implementación:
+- La novedad `ACUERDO DE PAGO` se mantiene en el origen (excluida de sumas). Si hubo descuento a saldos, su `valor` queda igual al **sobrante** (0 si todo se cubrió) para no duplicar descuentos; la `nota` registra `Faltante | Descuento automático en saldos | Trasladado`.
+- `aplicarAcuerdosPendientesPlaca` ahora solo enlaza acuerdos con `valor > 0` (evita re-descontar acuerdos ya cubiertos por saldos).
+- El modal DETALLE resuelve `manifiesto_origen → manifiesto` desde la columna `manifiesto_origen` (también en `/vehiculo`).
 
 ---
 
@@ -173,6 +190,7 @@ Cuando el pago está completo, el acuerdo no puede aplicarse al mismo id:
 ### `/vehiculo` (Lista de vehículos)
 - Columna **DETALLE** después de ESTADO.
 - Modal que muestra **todas las novedades de la placa** (ordenadas por fecha desc) — endpoint `detalleNovedadesPorPlaca`.
+- En novedades `DESCUENTO` muestra `manifiesto_origen → manifiesto`.
 
 ---
 
@@ -227,7 +245,7 @@ Al crear permisos nuevos: `php artisan permission:cache-reset`.
 - `resources/views/Vehiculo/index.blade.php`
 - `resources/views/components/footer.blade.php`
 - `routes/web.php`
-- migraciones en `database/migrations/`
+- `database/migrations/2026_09_30_000000_add_manifiesto_origen_to_novedades_table.php` (nuevo)
 
 ---
 
@@ -236,6 +254,7 @@ Al crear permisos nuevos: `php artisan permission:cache-reset`.
   ```sql
   ALTER TABLE novedades ADD COLUMN placa VARCHAR NULL;
   ALTER TABLE novedades ADD COLUMN ide_aplicado BIGINT NULL;
+  ALTER TABLE novedades ADD COLUMN manifiesto_origen VARCHAR NULL;
   ```
 - Crear permiso `acuerdo` (si no existe) y limpiar cache de Spatie.
 - Verificar que `abrirModalSeguro` esté en el footer desplegado.
