@@ -303,8 +303,11 @@
                         var soporteHtml = n.soporte
                             ? '<a href="javascript:void(0)" onclick="verSoporteNovedadPlaca(\'' + n.soporte + '\', \'' + n.soporte_tipo + '\')" title="Ver soporte">📄</a>'
                             : '';
+                        var manifiestoMostrar = n.manifiesto_origen
+                            ? (n.manifiesto_origen + ' → ' + n.manifiesto)
+                            : (n.manifiesto || '');
                         html += '<tr>' +
-                            '<td>' + (n.manifiesto || '') + '</td>' +
+                            '<td>' + manifiestoMostrar + '</td>' +
                             '<td>' + n.tipo_novedad + '</td>' +
                             '<td>' + (n.clase_novedad || '') + '</td>' +
                             '<td style="text-align: right;">' + parseInt(n.valor).toLocaleString('es-CO') + '</td>' +

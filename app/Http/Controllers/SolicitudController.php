@@ -3332,21 +3332,51 @@ class SolicitudController extends Controller
 
                 $solicitud = DB::table('solicitudes')->where('id', $ide)->first();
                 $paytypeAcuerdo = $solicitud->paytype ?? '';
-                $pagoCompletoAcuerdo = in_array($paytypeAcuerdo, ['CONTADO', 'CONTADO AM.', 'CONTADO PM.'])
+                $esContadoOrigen = in_array($paytypeAcuerdo, ['CONTADO', 'CONTADO AM.', 'CONTADO PM.']);
+                $pagoCompletoAcuerdo = $esContadoOrigen
                     || (($solicitud->confirmado ?? '') === 'SI');
 
                 // Si el pago ya se realizó completo, el descuento no se puede aplicar al mismo id.
-                // Se traslada al siguiente servicio (consecutivo) de la misma placa.
+                // 1) Si el origen es CONTADO, primero se descuenta contra los saldos sin confirmar
+                //    de la misma placa (novedades DESCUENTO + confirmación automática de saldos cubiertos).
+                // 2) El valor que no alcance a cubrirse se traslada al siguiente servicio (consecutivo).
                 $ideAplicado = null;
+                $valorAcuerdo = $faltante;
+                $notaAcuerdo = $nota;
+
                 if ($pagoCompletoAcuerdo && $solicitud && $solicitud->placa) {
-                    $siguiente = DB::table('solicitudes')
-                        ->where('placa', $solicitud->placa)
-                        ->where('id', '!=', $ide)
-                        ->where('fecha_cargue', '>', $solicitud->fecha_cargue)
-                        ->orderBy('fecha_cargue', 'asc')
-                        ->orderBy('id', 'asc')
-                        ->first();
-                    $ideAplicado = $siguiente ? $siguiente->id : null;
+                    $restante = $faltante;
+                    $descontadoSaldos = 0;
+
+                    if ($esContadoOrigen) {
+                        $resultadoSaldos = $this->descontarFaltanteEnSaldosNoConfirmados($solicitud, $faltante, $ahora);
+                        $descontadoSaldos = $resultadoSaldos['descontado'];
+                        $restante = $resultadoSaldos['restante'];
+                    }
+
+                    if ($restante > 0) {
+                        $siguiente = DB::table('solicitudes')
+                            ->where('placa', $solicitud->placa)
+                            ->where('id', '!=', $ide)
+                            ->where('fecha_cargue', '>', $solicitud->fecha_cargue)
+                            ->orderBy('fecha_cargue', 'asc')
+                            ->orderBy('id', 'asc')
+                            ->first();
+                        $ideAplicado = $siguiente ? $siguiente->id : null;
+                    }
+
+                    if ($descontadoSaldos > 0) {
+                        // Si parte del faltante se cubrió con saldos, el acuerdo solo traslada el
+                        // sobrante (0 cuando todo quedó cubierto con saldos, para no descontar dos veces).
+                        $valorAcuerdo = $restante;
+
+                        $detalleSaldos = 'Faltante: $' . number_format($faltante, 0, ',', '.')
+                            . ' | Descuento automático en saldos: $' . number_format($descontadoSaldos, 0, ',', '.');
+                        if ($restante > 0) {
+                            $detalleSaldos .= ' | Trasladado al siguiente servicio: $' . number_format($restante, 0, ',', '.');
+                        }
+                        $notaAcuerdo = trim(($nota ? $nota . ' | ' : '') . $detalleSaldos);
+                    }
                 }
 
                 DB::table('novedades')->insert([
@@ -3356,10 +3386,10 @@ class SolicitudController extends Controller
                     'manifiesto' => $request->input('manifiesto'),
                     'tipo_novedad' => 'ACUERDO DE PAGO',
                     'clase_novedad' => null,
-                    'valor' => $faltante,
+                    'valor' => $valorAcuerdo,
                     'valor_faltante' => (! $pagoCompletoAcuerdo && $cuotas > 0) ? $faltante : 0,
                     'cuotas' => $cuotas,
-                    'nota' => $nota,
+                    'nota' => $notaAcuerdo,
                     'soporte' => null,
                     'update_user' => $usuario,
                     'created_at' => $ahora,
@@ -3464,7 +3494,7 @@ class SolicitudController extends Controller
     {
         $novedades = DB::table('novedades')
             ->where('manifiesto', $manifiesto)
-            ->select('manifiesto', 'tipo_novedad', 'clase_novedad', 'valor', 'nota', 'soporte', 'update_user', 'created_at')
+            ->select('manifiesto', 'manifiesto_origen', 'tipo_novedad', 'clase_novedad', 'valor', 'nota', 'soporte', 'update_user', 'created_at')
             ->orderBy('created_at', 'asc')
             ->get();
 
@@ -3487,11 +3517,14 @@ class SolicitudController extends Controller
         }
 
         foreach ($novedades as $n) {
-            if (! isset($n->es_traslado)) {
-                $n->es_traslado = false;
-            }
-            if (! isset($n->manifiesto_origen)) {
+            if (! isset($n->manifiesto_origen) || $n->manifiesto_origen === null) {
                 $n->manifiesto_origen = null;
+                if (! isset($n->es_traslado)) {
+                    $n->es_traslado = false;
+                }
+            } else {
+                // Novedad DESCUENTO: el valor viene de otro manifiesto y se descuenta a este.
+                $n->es_traslado = true;
             }
             if ($n->soporte) {
                 $firstBytes = substr($n->soporte, 0, 10);
@@ -3514,11 +3547,12 @@ class SolicitudController extends Controller
     {
         $novedades = DB::table('novedades')
             ->where('placa', $placa)
-            ->select('manifiesto', 'tipo_novedad', 'clase_novedad', 'valor', 'valor_faltante', 'cuotas', 'nota', 'soporte', 'update_user', 'created_at')
+            ->select('manifiesto', 'manifiesto_origen', 'tipo_novedad', 'clase_novedad', 'valor', 'valor_faltante', 'cuotas', 'nota', 'soporte', 'update_user', 'created_at')
             ->orderBy('created_at', 'desc')
             ->get();
 
         foreach ($novedades as $n) {
+            $n->es_traslado = ! empty($n->manifiesto_origen);
             if ($n->soporte) {
                 $firstBytes = substr($n->soporte, 0, 10);
                 if (str_starts_with($firstBytes, '/9j/')) {
@@ -3665,11 +3699,108 @@ class SolicitudController extends Controller
             ->where('tipo_novedad', 'ACUERDO DE PAGO')
             ->where('placa', $placa)
             ->whereNull('ide_aplicado')
+            ->where('valor', '>', 0)
             ->where('valor_faltante', 0)
             ->where('ide', '!=', $nuevoServicioId)
             ->update(['ide_aplicado' => $nuevoServicioId]);
 
         Log::info("Acuerdos pendientes enlazados a nuevo servicio {$nuevoServicioId} (placa {$placa})");
+    }
+
+    /**
+     * Aplica el faltante de un servicio CONTADO contra los saldos sin confirmar de la misma placa.
+     * Crea una novedad DESCUENTO por cada servicio afectado y confirma automáticamente los saldos
+     * que quedan totalmente cubiertos.
+     *
+     * @param  object  $solicitudOrigen  Servicio origen del faltante (tiene placa, razon e id).
+     * @param  int  $faltante  Valor a descontar.
+     * @param  \Carbon\Carbon  $ahora  Fecha/hora de la operación.
+     * @return array{descontado:int, restante:int}
+     */
+    private function descontarFaltanteEnSaldosNoConfirmados($solicitudOrigen, $faltante, $ahora)
+    {
+        $resultado = ['descontado' => 0, 'restante' => (int) $faltante];
+
+        $placa = $solicitudOrigen->placa ?? null;
+        if (! $placa || $faltante <= 0) {
+            return $resultado;
+        }
+
+        $origenManifiesto = $solicitudOrigen->razon ?? '';
+        $paytypesSaldo = ['PM. ANTICIPAR', 'AM. ANTICIPAR', 'ANTICIPO NOCHE'];
+
+        // Servicios de la misma placa con anticipo confirmado y saldo pendiente (los visibles en /saldos).
+        $destinos = DB::table('peticiones')
+            ->where('placa', $placa)
+            ->where('id', '!=', $solicitudOrigen->id)
+            ->where('confirmado', 'AC')
+            ->whereIn('paytype', $paytypesSaldo)
+            ->orderBy('fecha_cargue', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $restante = (int) $faltante;
+
+        foreach ($destinos as $destino) {
+            if ($restante <= 0) {
+                break;
+            }
+
+            // Saldo disponible tal como se muestra en /saldos: valor_saldo menos las
+            // novedades propias y los traslados de acuerdos ya aplicados.
+            $novedadesPropias = (int) DB::table('novedades')
+                ->where('ide', $destino->id)
+                ->where('tipo_novedad', '!=', 'ACUERDO DE PAGO')
+                ->sum('valor');
+
+            $traslados = (int) DB::table('novedades')
+                ->where('tipo_novedad', 'ACUERDO DE PAGO')
+                ->where('ide_aplicado', $destino->id)
+                ->sum('valor');
+
+            $saldoDisponible = (int) floatval($destino->valor_saldo ?? 0) - $novedadesPropias - $traslados;
+
+            if ($saldoDisponible <= 0) {
+                continue;
+            }
+
+            $aDescontar = min($restante, $saldoDisponible);
+
+            DB::table('novedades')->insert([
+                'ide' => $destino->id,
+                'placa' => $placa,
+                'manifiesto' => $destino->razon,
+                'manifiesto_origen' => $origenManifiesto,
+                'tipo_novedad' => 'DESCUENTO',
+                'clase_novedad' => null,
+                'valor' => $aDescontar,
+                'valor_faltante' => 0,
+                'cuotas' => 0,
+                'nota' => 'Descuento automático por faltante del manifiesto ' . $origenManifiesto,
+                'soporte' => null,
+                'update_user' => 'sistema',
+                'created_at' => $ahora,
+                'updated_at' => $ahora,
+            ]);
+
+            // Saldo totalmente cubierto: se confirma automáticamente y sale de Saldos.
+            if ($aDescontar >= $saldoDisponible) {
+                DB::table('solicitudes')->where('id', $destino->id)->update([
+                    'confirmado' => 'SI',
+                    'fecha_pago_saldo' => $ahora->toDateString(),
+                    'nota_ps' => 'DESCUENTO AUTOMATICO',
+                ]);
+            }
+
+            $restante -= $aDescontar;
+            $resultado['descontado'] += $aDescontar;
+
+            Log::info("Descuento automático aplicado: origen {$origenManifiesto} -> {$destino->razon} valor {$aDescontar}");
+        }
+
+        $resultado['restante'] = $restante;
+
+        return $resultado;
     }
 
     public function toggleTrafico(Request $request, $id)
