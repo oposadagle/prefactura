@@ -48,7 +48,11 @@ class EstatusExport implements FromQuery, WithHeadings, WithMapping
                 $this->month === 'todos' ? "{$this->year}-01-01" : sprintf('%04d-%02d-01', $this->year, $this->month),
                 $this->month === 'todos' ? "{$this->year}-12-31" : date('Y-m-t', strtotime(sprintf('%04d-%02d-01', $this->year, $this->month)))
             ])
-            ->orderBy('id');
+            // "id" no es único (una solicitud puede tener varias guías). Se usa "ide"
+            // (PK de estatus/unique) como desempate para que la paginación por chunks
+            // sea estable y no repita ni omita filas en el Excel.
+            ->orderBy('id')
+            ->orderBy('ide');
     }
 
     public function map($record): array

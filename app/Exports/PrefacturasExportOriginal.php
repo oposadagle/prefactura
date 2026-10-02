@@ -44,8 +44,11 @@ class PrefacturasExportOriginal implements FromQuery, WithHeadings, WithMapping
             )
             ->whereBetween('fecha_cargue', [$startDate, $endDate])
             ->where('facturar', 'SI')
+            // "fecha_cargue" e "id" no son únicos; "ide" (PK de estatus) desempata
+            // para que la paginación por chunks no repita ni omita filas.
             ->orderBy('fecha_cargue', 'asc')
-            ->orderBy('id', 'asc');
+            ->orderBy('id', 'asc')
+            ->orderBy('ide', 'asc');
     }
 
     public function map($record): array
