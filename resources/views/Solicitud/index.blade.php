@@ -2615,10 +2615,9 @@
                             <option value="AUXILIARES">AUXILIARES</option>
                             <option value="AVERIA">AVERIA</option>
                             <option value="DAÑO A TERCEROS">DAÑO A TERCEROS</option>
-                            <option value="ESCOLTA Y CANDADO SATELITAL">ESCOLTA Y CANDADO SATELITAL</option>
+                            <option value="ESCOLTA Y CANDADO SATELITAL">ESCOLTA</option>
                             <option value="HURTO">HURTO</option>
                             <option value="PENALIZACIONES">PENALIZACIONES</option>
-                            <option value="PENDIENTES">PENDIENTES</option>
                             <option value="PUNTO ADICIONAL">PUNTO ADICIONAL</option>
                             <option value="PUNTO NO CARGADO">PUNTO NO CARGADO</option>
                             <option value="TRANSBORDO">TRANSBORDO</option>
