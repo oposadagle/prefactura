@@ -1881,7 +1881,8 @@ class SolicitudController extends Controller
             'AUTOMOTORES COMERCIALES AUTOCOM S.A',
             'DISCOLPARTES S.A.S.',
             'DISTRIBUIDORA TOYOTA SAS',
-            'DISTRIBUIDORA NISSAN S.A'
+            'DISTRIBUIDORA NISSAN S.A',
+            'ARMCOL S.A.S.'
         ];
 
         // Primero definir la función de limpieza fuera del scope
@@ -2610,7 +2611,8 @@ class SolicitudController extends Controller
                 'AUTOMOTORES COMERCIALES AUTOCOM S.A',
                 'DISCOLPARTES S.A.S.',
                 'DISTRIBUIDORA TOYOTA SAS',
-                'DISTRIBUIDORA NISSAN S.A'
+                'DISTRIBUIDORA NISSAN S.A',
+                'ARMCOL S.A.S.'
             ];
 
             $dataSolicitud = request()->only([
@@ -2787,7 +2789,8 @@ class SolicitudController extends Controller
                             'AUTOMOTORES COMERCIALES AUTOCOM S.A',
                             'DISCOLPARTES S.A.S.',
                             'DISTRIBUIDORA TOYOTA SAS',
-                            'DISTRIBUIDORA NISSAN S.A'
+                            'DISTRIBUIDORA NISSAN S.A',
+                            'ARMCOL S.A.S.'
                         ];
 
                         if (! in_array($cliente, $excluidos)) {
