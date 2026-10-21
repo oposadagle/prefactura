@@ -1854,13 +1854,14 @@
                                 <select class="form-select" id="floatingTextarea2" name="cannote"
                                     autocomplete="off" aria-label="Floating label select example">
                                     <option selected disabled>Seleccionar</option>
-                                    <option>NO TIENE MERCANCIA PARA DESPACHAR</option>
+                                    <option>ERROR EN DIGITACION</option>
                                     <option>NO ACEPTA TARIFA</option>
-                                    <option>SERVICIO DUPLICADO</option>
-                                    <option>PROBLEMAS DE ORDEN PUBLICO</option>
-                                    <option>VEHICULO VARADO</option>
-                                    <option>PROBLEMAS EXTERNOS</option>
                                     <option>NO SE UBICA VEH PARA REALIZAR SERVICIO</option>
+                                    <option>NO TIENE MERCANCIA PARA DESPACHAR</option>
+                                    <option>PROBLEMAS DE ORDEN PUBLICO</option>
+                                    <option>PROBLEMAS EXTERNOS</option>
+                                    <option>SERVICIO DUPLICADO</option>
+                                    <option>VEHICULO VARADO</option>
                                 </select>
                                 <label>Observacion evento</label>
                             </div>
