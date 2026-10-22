@@ -20,12 +20,19 @@ SELECT EXTRACT(year FROM masivas."FECHA") AS "AÑO",
     EXTRACT(month FROM masivas."FECHA") AS "MES",
     count(masivas."GUIA") AS "CANTIDAD_GUIAS",
     masivas."CLIENTE",
-    masivas."REGIONAL",
+    CASE
+        WHEN UPPER(BTRIM(masivas."REGIONAL")) = 'BOGOTÁ' THEN 'BOGOTA'
+        ELSE UPPER(BTRIM(masivas."REGIONAL"))
+    END AS "REGIONAL",
     sum(masivas."TOTAL_GLE") AS "TOTAL_GLE",
     sum(masivas."TOTAL_PROVEEDOR") AS "TOTAL_PROVEEDOR",
     round((sum(masivas."TOTAL_GLE") - sum(masivas."TOTAL_PROVEEDOR")) / NULLIF(sum(masivas."TOTAL_GLE"), 0::numeric) * 100::numeric, 2) AS "UTILIDAD"
 FROM masivas
-GROUP BY (EXTRACT(year FROM masivas."FECHA")), (EXTRACT(month FROM masivas."FECHA")), masivas."CLIENTE", masivas."REGIONAL";
+GROUP BY (EXTRACT(year FROM masivas."FECHA")), (EXTRACT(month FROM masivas."FECHA")), masivas."CLIENTE",
+    CASE
+        WHEN UPPER(BTRIM(masivas."REGIONAL")) = 'BOGOTÁ' THEN 'BOGOTA'
+        ELSE UPPER(BTRIM(masivas."REGIONAL"))
+    END;
 
 CREATE INDEX IF NOT EXISTS idx_masas_mat_ano ON masas_mat("AÑO");
 CREATE INDEX IF NOT EXISTS idx_masas_mat_mes ON masas_mat("MES");
