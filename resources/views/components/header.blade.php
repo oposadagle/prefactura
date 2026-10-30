@@ -208,7 +208,9 @@
                                     <li>
                                         <a href="javascript: void(0);"><i class="ti-control-record"></i>Precios<span class="menu-arrow left-has-menu"><i class="mdi mdi-chevron-right"></i></span></a>
                                         <ul class="nav-second-level" aria-expanded="false"> 
-                                                <li class="nav-item"><a class="nav-link" href="{{ route('price.cotizar') }}">Cotización</a></li>                                       
+                                            @can('cotizaciones')
+                                                <li class="nav-item"><a class="nav-link" href="{{ route('price.cotizar') }}">Cotización</a></li>
+                                            @endcan
                                             @can('edita.cotizacion')
                                                 <li class="nav-item"><a class="nav-link" href="{{ route('price.create') }}">Ingresar cotización</a></li>
                                             @endcan

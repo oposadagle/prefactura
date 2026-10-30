@@ -27,7 +27,9 @@ class VehiculoController extends Controller
             }
             $vehiculo->fecha_calculada = $fechaMayor ? $fechaMayor->addYear()->format('Y-m-d') : null;
         }
-        return view('Vehiculo.index', compact('vehiculos'));
+        $soloLectura = auth()->user()->hasRole('Control trafico');
+
+        return view('Vehiculo.index', compact('vehiculos', 'soloLectura'));
     }
 
     public function vehicular()

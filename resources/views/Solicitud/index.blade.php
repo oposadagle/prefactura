@@ -944,6 +944,7 @@
 
                                 <td class="celdas"
                                     style="border: 1px solid #9FAACC;padding-top:10px;padding-bottom:10px;">
+                                    @unless ($soloLectura ?? false)
                                     <a href="#" data-id="{{ $diario->id }}"
                                         class="btn btn-icon-square-xs py-0 my-0" data-bs-toggle="modal"
                                         data-bs-target="#exampleModalCenter6"
@@ -967,6 +968,7 @@
                                                 </g>
                                             </g>
                                         </svg></a>
+                                    @endunless
                                 </td>
 
                                 <td class="celdas"

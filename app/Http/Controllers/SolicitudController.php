@@ -34,6 +34,7 @@ class SolicitudController extends Controller
     public function index()
     {
         $userName = Auth::user()->name;
+        $soloLectura = auth()->user()->hasRole('Control trafico');
         $actual = Carbon::now('America/Bogota');
         $vehiculos = DB::table('vehiculares')->where('estado', 'ACTIVO')->where('especificacion', '>', 0)->get();
         $placasConFaltante = DB::table('novedades')
@@ -162,7 +163,7 @@ class SolicitudController extends Controller
             $diario->tiene_viaje_cancelado = in_array($diario->id, $viajeCanceladoIds);
         }
 
-        return view('Solicitud.index', compact('vehiculos', 'placas', 'medios', 'diarias', 'userName', 'actual', 'clientes', 'estados', 'radicados', 'pagos', 'cargues', 'descargues', 'matriculas', 'manifiestos', 'sucursales', 'tipos', 'types', 'municipios', 'places', 'ciudades', 'trayectos', 'licencias', 'festivos', 'regionales'));
+        return view('Solicitud.index', compact('vehiculos', 'placas', 'medios', 'diarias', 'userName', 'soloLectura', 'actual', 'clientes', 'estados', 'radicados', 'pagos', 'cargues', 'descargues', 'matriculas', 'manifiestos', 'sucursales', 'tipos', 'types', 'municipios', 'places', 'ciudades', 'trayectos', 'licencias', 'festivos', 'regionales'));
     }
 
     public function trafico()
