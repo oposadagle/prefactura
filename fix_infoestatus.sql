@@ -61,15 +61,15 @@ CREATE OR REPLACE VIEW public.infoestatus
     a.updated_at,
     COALESCE(a.costo_flete, 0)::numeric + COALESCE(a.monto_costo, 0::numeric) + COALESCE(a.costo_seguro, 0::numeric) + COALESCE(a.costo_tiposerv, 0)::numeric + COALESCE(
         CASE
-            WHEN e.ide IS NOT NULL THEN e.cargaone
+            WHEN f.cargaone <> 0 AND f.avalado = true THEN f.cargaone
             ELSE a.costo_cardes
         END, 0)::numeric + COALESCE(
         CASE
-            WHEN e.ide IS NOT NULL THEN e.cargatwo
+            WHEN f.cargatwo <> 0 AND f.avalado = true THEN f.cargatwo
             ELSE a.costo_auxiliar
         END, 0)::numeric + COALESCE(
         CASE
-            WHEN e.ide IS NOT NULL THEN e.standby
+            WHEN f.standby <> 0 AND f.avalado = true THEN f.standby
             ELSE a.costo_standby
         END, 0)::numeric + COALESCE(
         CASE
@@ -78,15 +78,15 @@ CREATE OR REPLACE VIEW public.infoestatus
         END, 0)::numeric + COALESCE(a.costo_montacarga, 0)::numeric + COALESCE(a.costo_escolta, 0)::numeric + COALESCE(a.costo_cs, 0)::numeric + COALESCE(a.costo_monitoreo, 0)::numeric + COALESCE(a.costo_estudio, 0)::numeric + COALESCE(a.costo_ampoliza, 0)::numeric + COALESCE(a.sobrecosto_op, 0)::numeric - COALESCE(a.desconductor, 0)::numeric AS costo_total,
     a.valor_cobrar - (COALESCE(a.costo_flete, 0)::numeric + COALESCE(a.monto_costo, 0::numeric) + COALESCE(a.costo_seguro, 0::numeric) + COALESCE(a.costo_tiposerv, 0)::numeric + COALESCE(
         CASE
-            WHEN e.ide IS NOT NULL THEN e.cargaone
+            WHEN f.cargaone <> 0 AND f.avalado = true THEN f.cargaone
             ELSE a.costo_cardes
         END, 0)::numeric + COALESCE(
         CASE
-            WHEN e.ide IS NOT NULL THEN e.cargatwo
+            WHEN f.cargatwo <> 0 AND f.avalado = true THEN f.cargatwo
             ELSE a.costo_auxiliar
         END, 0)::numeric + COALESCE(
         CASE
-            WHEN e.ide IS NOT NULL THEN e.standby
+            WHEN f.standby <> 0 AND f.avalado = true THEN f.standby
             ELSE a.costo_standby
         END, 0)::numeric + COALESCE(
         CASE
@@ -95,15 +95,15 @@ CREATE OR REPLACE VIEW public.infoestatus
         END, 0)::numeric + COALESCE(a.costo_montacarga, 0)::numeric + COALESCE(a.costo_escolta, 0)::numeric + COALESCE(a.costo_cs, 0)::numeric + COALESCE(a.costo_monitoreo, 0)::numeric + COALESCE(a.costo_estudio, 0)::numeric + COALESCE(a.costo_ampoliza, 0)::numeric + COALESCE(a.sobrecosto_op, 0)::numeric - COALESCE(a.desconductor, 0)::numeric) AS utilidad,
     round(COALESCE((a.valor_cobrar - (COALESCE(a.costo_flete, 0)::numeric + COALESCE(a.monto_costo, 0::numeric) + COALESCE(a.costo_seguro, 0::numeric) + COALESCE(a.costo_tiposerv, 0)::numeric + COALESCE(
         CASE
-            WHEN e.ide IS NOT NULL THEN e.cargaone
+            WHEN f.cargaone <> 0 AND f.avalado = true THEN f.cargaone
             ELSE a.costo_cardes
         END, 0)::numeric + COALESCE(
         CASE
-            WHEN e.ide IS NOT NULL THEN e.cargatwo
+            WHEN f.cargatwo <> 0 AND f.avalado = true THEN f.cargatwo
             ELSE a.costo_auxiliar
         END, 0)::numeric + COALESCE(
         CASE
-            WHEN e.ide IS NOT NULL THEN e.standby
+            WHEN f.standby <> 0 AND f.avalado = true THEN f.standby
             ELSE a.costo_standby
         END, 0)::numeric + COALESCE(
         CASE
