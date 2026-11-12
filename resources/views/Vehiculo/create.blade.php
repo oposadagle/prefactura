@@ -240,6 +240,52 @@
 
                     </div><!--end row-->
 
+                    {{-- linea 3.1: referencias personales --}}
+                    <div class="row">
+                        <div class="col-lg-2 col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control @error('refpera') is-invalid @enderror"
+                                    id="refpera" name="refpera" value="{{ old('refpera') }}" placeholder="Referencia personal a">
+                                <label style="font-size: 11px;">Referencia personal a</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" inputmode="numeric" class="form-control @error('cela') is-invalid @enderror"
+                                    id="cela" name="cela" value="{{ old('cela') }}" placeholder="Celular a">
+                                <label style="font-size: 11px;">Celular a</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control @error('parenta') is-invalid @enderror"
+                                    id="parenta" name="parenta" value="{{ old('parenta') }}" placeholder="Parentesco a">
+                                <label style="font-size: 11px;">Parentesco a</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control @error('refperb') is-invalid @enderror"
+                                    id="refperb" name="refperb" value="{{ old('refperb') }}" placeholder="Referencia personal b">
+                                <label style="font-size: 11px;">Referencia personal b</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" inputmode="numeric" class="form-control @error('celb') is-invalid @enderror"
+                                    id="celb" name="celb" value="{{ old('celb') }}" placeholder="Celular b">
+                                <label style="font-size: 11px;">Celular b</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control @error('parentb') is-invalid @enderror"
+                                    id="parentb" name="parentb" value="{{ old('parentb') }}" placeholder="Parentesco b">
+                                <label style="font-size: 11px;">Parentesco b</label>
+                            </div>
+                        </div>
+                    </div><!--end row-->
+
                     {{-- linea 4 --}}
                     <div class="row">
 
@@ -500,6 +546,14 @@
                         {{-- linea 8 --}}
                         <div class="row">
                             <div class="col-lg-2 col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="date" class="form-control @error('esegcon') is-invalid @enderror"
+                                        id="esegcon" name="esegcon" value="{{ old('esegcon') }}">
+                                    <label style="font-size: 11px;">Fecha ES conductor</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 col-md-6">
                                 <div class="mb-3">
                                     <label for="certia" class="form-label mb-0" style="font-size: 11px; margin-left: 10px; color: #656C82;">Certificación bancaria 1</label>
                                     <input type="file" class="form-control @error('certia') is-invalid @enderror" id="certia" name="certia" accept=".pdf,.png,.jpg,.jpeg">
@@ -513,7 +567,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-8 col-md-12">
+                            <div class="col-lg-6 col-md-12">
                                 <div class="form-floating mb-3">
                                     <textarea name="observacion" id="textarea" class="form-control" maxlength="255" rows="4" autocomplete="off"
                                         placeholder="This textarea has a limit of 225 chars.">{{ old('observacion') }}</textarea>
