@@ -593,19 +593,22 @@ class SolicitudController extends Controller
         $excluidos = ['Servicio cancelado'];
         $excluidosPaytype = ['CONTADO', 'CONTADO AM.', 'CONTADO PM.'];
 
-        // Fecha de pago del saldo: se usa fecha_pago_saldo y, si está vacía,
-        // la fecha del log de confirmación (registrado al confirmar el saldo).
-        $fechaPagoExpr = "COALESCE(solicitudes.fecha_pago_saldo, (SELECT MIN(l.created_at)::date FROM solicitudes_logs l WHERE l.solicitud_id = solicitudes.id AND l.campo = 'confirmado'))";
+        // Fecha de pago del saldo: fecha_pago_saldo o, si está vacía, la fecha
+        // del log de confirmación. Se pre-agrega una sola vez para evitar
+        // subconsultas correlacionadas por fila.
+        $logsConfirmado = DB::raw("(SELECT solicitud_id, MIN(created_at)::date as fecha_log FROM solicitudes_logs WHERE campo = 'confirmado' GROUP BY solicitud_id) as logs_conf");
+        $fechaPagoExpr = 'COALESCE(s.fecha_pago_saldo, logs_conf.fecha_log)';
 
-        $base = function () use ($incluidos, $excluidos, $excluidosPaytype) {
-            return DB::table('peticiones')
-                ->join('solicitudes', 'peticiones.id', '=', 'solicitudes.id')
-                ->where('peticiones.confirmado', 'SI')
-                ->where('peticiones.pago_completo', 'NO')
-                ->whereNotNull('peticiones.razon')
-                ->whereIn('peticiones.paytype', $incluidos)
-                ->whereNotIn('peticiones.paytype', $excluidosPaytype)
-                ->whereNotIn('peticiones.states', $excluidos);
+        // Consulta liviana sobre solicitudes (evita la vista peticiones, que es costosa)
+        $base = function () use ($logsConfirmado, $incluidos, $excluidos, $excluidosPaytype) {
+            return DB::table('solicitudes as s')
+                ->leftJoin($logsConfirmado, 'logs_conf.solicitud_id', '=', 's.id')
+                ->where('s.confirmado', 'SI')
+                ->where('s.pago_completo', 'NO')
+                ->whereNotNull('s.razon')
+                ->whereIn('s.paytype', $incluidos)
+                ->whereNotIn('s.paytype', $excluidosPaytype)
+                ->whereNotIn('s.states', $excluidos);
         };
 
         // Años/meses disponibles según la fecha de pago calculada
@@ -641,14 +644,27 @@ class SolicitudController extends Controller
             $mes = 0; // Año seleccionado, todos sus meses
         }
 
-        $diarias = $base()
-            ->leftJoin(DB::raw("(SELECT solicitud_id, MIN(created_at)::date as fecha_llegada FROM solicitudes_logs WHERE campo = 'enviado' GROUP BY solicitud_id) as logs_envio"), 'peticiones.id', '=', 'logs_envio.solicitud_id')
-            ->select('peticiones.*', 'logs_envio.fecha_llegada', 'solicitudes.fecha_pago_anticipo', 'solicitudes.nota_pa', 'solicitudes.fecha_pago_completo', 'solicitudes.nota_pc', 'solicitudes.fecha_pago_saldo', 'solicitudes.nota_ps')
-            ->selectRaw("$fechaPagoExpr as fecha_pago")
+        // IDs del período (consulta liviana sobre solicitudes)
+        $ids = $base()
             ->when($anio > 0, fn ($query) => $query->whereRaw("EXTRACT(YEAR FROM $fechaPagoExpr) = ?", [$anio]))
             ->when($mes > 0, fn ($query) => $query->whereRaw("EXTRACT(MONTH FROM $fechaPagoExpr) = ?", [$mes]))
             ->orderByRaw("$fechaPagoExpr DESC NULLS LAST")
-            ->get();
+            ->pluck('s.id')
+            ->toArray();
+
+        if (empty($ids)) {
+            $diarias = collect();
+        } else {
+            // Solo se consulta la vista peticiones para los IDs del período
+            $diarias = DB::table('peticiones')
+                ->join('solicitudes', 'peticiones.id', '=', 'solicitudes.id')
+                ->leftJoin($logsConfirmado, 'logs_conf.solicitud_id', '=', 'solicitudes.id')
+                ->select('peticiones.*', 'solicitudes.fecha_pago_anticipo', 'solicitudes.nota_pa', 'solicitudes.fecha_pago_completo', 'solicitudes.nota_pc', 'solicitudes.fecha_pago_saldo', 'solicitudes.nota_ps')
+                ->selectRaw('COALESCE(solicitudes.fecha_pago_saldo, logs_conf.fecha_log) as fecha_pago')
+                ->whereIn('peticiones.id', $ids)
+                ->orderByRaw('COALESCE(solicitudes.fecha_pago_saldo, logs_conf.fecha_log) DESC NULLS LAST')
+                ->get();
+        }
 
         $this->procesarSaldos($diarias, $festivos);
 
