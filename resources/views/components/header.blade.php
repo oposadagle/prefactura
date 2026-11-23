@@ -242,6 +242,7 @@
                                             @endcan
                                             @can('anticipo')                                               
                                                 <li><a href="{{ route('solicitud.saldos') }}">Saldos</a></li>
+                                                <li><a href="{{ route('solicitud.historicoSaldos') }}">Histórico pago saldos</a></li>
                                                 <li><a href="{{ route('solicitud.historicoPagos') }}">Histórico pagos</a></li>
                                                 <li><a href="{{ route('solicitud.cuentas') }}">Cuentas de cobro</a></li>
                                                 <li><a href="{{ route('solicitud.historicoCuentas') }}">Histórico cuentas</a></li>

@@ -97,6 +97,7 @@ Route::get('/solicitud/anticipos/descargar-manifiestos', [SolicitudController::c
 Route::get('/saldos', [SolicitudController::class, 'saldos'])->name('solicitud.saldos');
 Route::post('/solicitud/saldos/confirmar', [SolicitudController::class, 'confirmarSaldos'])->name('solicitud.confirmarSaldos');
 Route::get('/historico-pagos', [SolicitudController::class, 'historicoPagos'])->name('solicitud.historicoPagos');
+Route::get('/historico-saldos', [SolicitudController::class, 'historicoSaldos'])->name('solicitud.historicoSaldos');
 Route::get('/cuentas', [SolicitudController::class, 'cuentas'])->name('solicitud.cuentas');
 Route::get('/historico-cuentas', [SolicitudController::class, 'historicoCuentas'])->name('solicitud.historicoCuentas');
 Route::get('/prefactura', [SolicitudController::class, 'prefactura'])->name('solicitud.prefactura');

@@ -545,11 +545,34 @@ class SolicitudController extends Controller
         $excluidos = (['Servicio cancelado']);
         $excluidosPaytype = (['CONTADO', 'CONTADO AM.', 'CONTADO PM.']);
 
+        // Los servicios con pago completo (pago_completo = 'SI') no tienen saldo
+        // pendiente: se confirman automáticamente para que no queden en la lista.
+        $ahora = Carbon::now('America/Bogota')->toDateString();
+        $idsPagoCompleto = DB::table('peticiones')
+            ->join('solicitudes', 'peticiones.id', '=', 'solicitudes.id')
+            ->where('peticiones.confirmado', 'AC')
+            ->whereNotNull('peticiones.razon')
+            ->whereIn('peticiones.paytype', $incluidos)
+            ->whereNotIn('peticiones.paytype', $excluidosPaytype)
+            ->whereNotIn('peticiones.states', $excluidos)
+            ->where('peticiones.pago_completo', 'SI')
+            ->pluck('peticiones.id')
+            ->toArray();
+
+        if (! empty($idsPagoCompleto)) {
+            DB::table('solicitudes')->whereIn('id', $idsPagoCompleto)->update([
+                'confirmado' => 'SI',
+                'fecha_pago_saldo' => $ahora,
+                'nota_ps' => 'SALDOS MASIVOS '.$ahora,
+            ]);
+        }
+
         $diarias = DB::table('peticiones')
             ->join('solicitudes', 'peticiones.id', '=', 'solicitudes.id')
             ->leftJoin(DB::raw("(SELECT solicitud_id, MIN(created_at)::date as fecha_llegada FROM solicitudes_logs WHERE campo = 'enviado' GROUP BY solicitud_id) as logs_envio"), 'peticiones.id', '=', 'logs_envio.solicitud_id')
             ->select('peticiones.*', 'logs_envio.fecha_llegada', 'solicitudes.fecha_pago_anticipo', 'solicitudes.nota_pa', 'solicitudes.fecha_pago_completo', 'solicitudes.nota_pc', 'solicitudes.fecha_pago_saldo', 'solicitudes.nota_ps')
             ->where('peticiones.confirmado', 'AC')
+            ->where('peticiones.pago_completo', 'NO')
             ->whereNotNull('peticiones.razon')
             ->whereIn('peticiones.paytype', $incluidos)
             ->whereNotIn('peticiones.paytype', $excluidosPaytype)
@@ -557,7 +580,91 @@ class SolicitudController extends Controller
             ->orderBy('solicitudes.fecha_pago_anticipo', 'desc')
             ->get();
 
+        $this->procesarSaldos($diarias, $festivos);
+
+        return view('Solicitud.saldos', compact('diarias', 'festivos', 'userName'));
+    }
+
+    public function historicoSaldos(Request $request)
+    {
+        $userName = Auth::user()->name;
+        $festivos = DB::table('festivos')->pluck('festivo')->toArray();
+        $incluidos = ['PM. ANTICIPAR', 'AM. ANTICIPAR', 'CONTADO', 'CONTADO AM.', 'CONTADO PM.', 'ANTICIPO NOCHE'];
+        $excluidos = ['Servicio cancelado'];
+        $excluidosPaytype = ['CONTADO', 'CONTADO AM.', 'CONTADO PM.'];
+
+        // Fecha de pago del saldo: se usa fecha_pago_saldo y, si está vacía,
+        // la fecha del log de confirmación (registrado al confirmar el saldo).
+        $fechaPagoExpr = "COALESCE(solicitudes.fecha_pago_saldo, (SELECT MIN(l.created_at)::date FROM solicitudes_logs l WHERE l.solicitud_id = solicitudes.id AND l.campo = 'confirmado'))";
+
+        $base = function () use ($incluidos, $excluidos, $excluidosPaytype) {
+            return DB::table('peticiones')
+                ->join('solicitudes', 'peticiones.id', '=', 'solicitudes.id')
+                ->where('peticiones.confirmado', 'SI')
+                ->where('peticiones.pago_completo', 'NO')
+                ->whereNotNull('peticiones.razon')
+                ->whereIn('peticiones.paytype', $incluidos)
+                ->whereNotIn('peticiones.paytype', $excluidosPaytype)
+                ->whereNotIn('peticiones.states', $excluidos);
+        };
+
+        // Años/meses disponibles según la fecha de pago calculada
+        $fechasDisponibles = $base()
+            ->whereRaw("$fechaPagoExpr IS NOT NULL")
+            ->selectRaw("EXTRACT(YEAR FROM $fechaPagoExpr) as anio, EXTRACT(MONTH FROM $fechaPagoExpr) as mes")
+            ->distinct()
+            ->orderBy('anio', 'desc')
+            ->orderBy('mes', 'desc')
+            ->get();
+
+        $mesesMap = [];
+        foreach ($fechasDisponibles as $fecha) {
+            $mesesMap[(int) $fecha->anio][] = (int) $fecha->mes;
+        }
+
+        $aniosDisponibles = array_keys($mesesMap);
+        rsort($aniosDisponibles);
+
+        // Por defecto, el último mes con pagos registrados. 0 = todos.
+        $ultimoAnio = $fechasDisponibles->isNotEmpty() ? (int) $fechasDisponibles->first()->anio : Carbon::now()->year;
+        $ultimoMes = $fechasDisponibles->isNotEmpty() ? (int) $fechasDisponibles->first()->mes : Carbon::now()->month;
+
+        $anio = (int) $request->input('anio', $ultimoAnio);
+        $mes = (int) $request->input('mes', $ultimoMes);
+
+        if ($anio === 0) {
+            $mes = 0; // Todos los años
+        } elseif (! isset($mesesMap[$anio])) {
+            $anio = $ultimoAnio;
+            $mes = $ultimoMes;
+        } elseif ($mes > 0 && ! in_array($mes, $mesesMap[$anio])) {
+            $mes = 0; // Año seleccionado, todos sus meses
+        }
+
+        $diarias = $base()
+            ->leftJoin(DB::raw("(SELECT solicitud_id, MIN(created_at)::date as fecha_llegada FROM solicitudes_logs WHERE campo = 'enviado' GROUP BY solicitud_id) as logs_envio"), 'peticiones.id', '=', 'logs_envio.solicitud_id')
+            ->select('peticiones.*', 'logs_envio.fecha_llegada', 'solicitudes.fecha_pago_anticipo', 'solicitudes.nota_pa', 'solicitudes.fecha_pago_completo', 'solicitudes.nota_pc', 'solicitudes.fecha_pago_saldo', 'solicitudes.nota_ps')
+            ->selectRaw("$fechaPagoExpr as fecha_pago")
+            ->when($anio > 0, fn ($query) => $query->whereRaw("EXTRACT(YEAR FROM $fechaPagoExpr) = ?", [$anio]))
+            ->when($mes > 0, fn ($query) => $query->whereRaw("EXTRACT(MONTH FROM $fechaPagoExpr) = ?", [$mes]))
+            ->orderByRaw("$fechaPagoExpr DESC NULLS LAST")
+            ->get();
+
+        $this->procesarSaldos($diarias, $festivos);
+
+        foreach ($diarias as $diario) {
+            if ($diario->estado_pago !== 'CONGELADO') {
+                $diario->estado_pago = 'PAGADO';
+            }
+        }
+
+        return view('Solicitud.historico_saldos', compact('diarias', 'userName', 'mes', 'anio', 'aniosDisponibles', 'mesesMap'));
+    }
+
+    private function procesarSaldos($diarias, array $festivos)
+    {
         $manifiestos = $diarias->pluck('razon')->filter()->unique()->toArray();
+
         $novedadesSums = DB::table('novedades')
             ->whereIn('manifiesto', $manifiestos)
             ->where('tipo_novedad', '!=', 'ACUERDO DE PAGO')
@@ -593,7 +700,7 @@ class SolicitudController extends Controller
             $diario->estado_pago = in_array($diario->razon, $congelados) ? 'CONGELADO' : 'PAGAR';
         }
 
-        return view('Solicitud.saldos', compact('diarias', 'festivos', 'userName'));
+        return $diarias;
     }
 
     public function confirmarSaldos(Request $request)
