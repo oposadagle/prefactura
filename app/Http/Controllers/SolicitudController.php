@@ -2007,7 +2007,8 @@ class SolicitudController extends Controller
             'DISTRIBUIDORA TOYOTA SAS',
             'DISTRIBUIDORA NISSAN S.A',
             'ARMCOL S.A.S.',
-			'MAKITA COLOMBIA S.A.S.'
+			'MAKITA COLOMBIA S.A.S.',
+			'EQUIPOS TOYAMA DE COLOMBIA SAS'
         ];
 
         // Primero definir la función de limpieza fuera del scope
@@ -2738,7 +2739,8 @@ class SolicitudController extends Controller
                 'DISTRIBUIDORA TOYOTA SAS',
                 'DISTRIBUIDORA NISSAN S.A',
                 'ARMCOL S.A.S.',
-				'MAKITA COLOMBIA S.A.S.'
+				'MAKITA COLOMBIA S.A.S.',
+				'EQUIPOS TOYAMA DE COLOMBIA SAS'
             ];
 
             $dataSolicitud = request()->only([
@@ -2917,7 +2919,8 @@ class SolicitudController extends Controller
                             'DISTRIBUIDORA TOYOTA SAS',
                             'DISTRIBUIDORA NISSAN S.A',
                             'ARMCOL S.A.S.',
-							'MAKITA COLOMBIA S.A.S.'
+							'MAKITA COLOMBIA S.A.S.',
+							'EQUIPOS TOYAMA DE COLOMBIA SAS'
                         ];
 
                         if (! in_array($cliente, $excluidos)) {
