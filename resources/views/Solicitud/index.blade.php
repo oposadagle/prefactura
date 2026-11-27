@@ -745,6 +745,7 @@
                                                     $estadoClase = 'badge badge-outline-warning';
                                                     break;
                                                 case 'SEMANAL':
+                                                case 'OPERACIONES':
                                                     $estadoClase = 'badge badge-outline-danger';
                                                     break;
                                                 case 'ANTICIPO NOCHE':
@@ -807,6 +808,7 @@
                                                     $estadoClase = 'badge badge-outline-warning';
                                                     break;
                                                 case 'SEMANAL':
+                                                case 'OPERACIONES':
                                                     $estadoClase = 'badge badge-outline-danger';
                                                     break;
                                                 case 'ANTICIPO NOCHE':

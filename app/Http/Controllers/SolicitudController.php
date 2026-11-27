@@ -55,7 +55,11 @@ class SolicitudController extends Controller
         $licencias = DB::table('matriculas')->get();
         $pagos = DB::table('medios')->orderBy('medio')->get();
         $medios = $pagos->map(function ($pago) {
-            return ['value' => $pago->medio, 'text' => $pago->medio];
+            // De ahora en adelante las nuevas selecciones se guardan como OPERACIONES.
+            // Los registros históricos con SEMANAL no se modifican.
+            $medio = $pago->medio === 'SEMANAL' ? 'OPERACIONES' : $pago->medio;
+
+            return ['value' => $medio, 'text' => $medio];
         });
         $municipios = DB::table('municipios')->selectRaw('UPPER(municipio) as municipio')->orderBy('municipio')->get();
         $places = $municipios->map(function ($municipio) {
@@ -174,7 +178,11 @@ class SolicitudController extends Controller
         });
         $pagos = DB::table('medios')->orderBy('medio')->get();
         $medios = $pagos->map(function ($pago) {
-            return ['value' => $pago->medio, 'text' => $pago->medio];
+            // De ahora en adelante las nuevas selecciones se guardan como OPERACIONES.
+            // Los registros históricos con SEMANAL no se modifican.
+            $medio = $pago->medio === 'SEMANAL' ? 'OPERACIONES' : $pago->medio;
+
+            return ['value' => $medio, 'text' => $medio];
         });
         $diarias = DB::table('peticiones')->where('trafico', 1)->get();
         $userName = Auth::user()->name;
